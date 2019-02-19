@@ -1,4 +1,4 @@
-# 操作流程
+# 功能
 
 1. 分析工程的 **Cartfile**和**Cartfile.private** 的依赖情况。
 2. 如果有新的 repo 记录，需要将新的 repo 进行*Checkout*依赖 Repo 到*Carthage/Repo*目录下。否则进入第 5 步。

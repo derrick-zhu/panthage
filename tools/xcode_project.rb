@@ -79,27 +79,18 @@ repo_base = "#{current_dir}/Carthage/Repo"
 checkout_base = "#{current_dir}/Carthage/Checkouts"
 build_base = "#{current_dir}/Carthage/Build"
 
-env_paths = Array[
-    "#{current_dir}/Carthage",
-    "#{current_dir}/Carthage/.tmp",
-    "#{current_dir}/Carthage/Checkouts",
-    "#{current_dir}/Carthage/Build",
-    "#{current_dir}/Carthage/Repo"
-]
-
-# mkdir if folder is NOT existed.
-env_paths.each do |each_path|
-  FileUtils.mkdir_p each_path.to_s unless File.exist? each_path.to_s
-end
+setup_carthage_env(current_dir.to_s)
 
 # analysis the Cartfile to grab workspace's basic information
-cartfile.merge!(read_cart_file("#{current_dir}/Cartfile"))
-cartfile.merge!(read_cart_file("#{current_dir}/Cartfile.private"))
+cartfile.merge!(read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile"))
+cartfile.merge!(read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile.private"))
+
+# after merged cartfile data, before next parse cartfile detail, pls check the `conflict` property of the `Cartfile` instance. 
 
 # setup and sync git repo
-cartfile.select { |_, v| v[:type] == 'git' }
+cartfile.select { |_, v| GitRepo.type(v) == GitRepoType::TAG }
         .each do |name, value|
-  clone_bare_repo(repo_base, name, value)
+  clone_bare_repo(repo_base, name, value, command_install?(job_command))
 end
 
 # generate Cartfile.resolved file.
@@ -109,27 +100,28 @@ solve_cart_file(current_dir.to_s, cartfile, using_carthage)
 cartfile_resolved = read_cart_solved_file(current_dir.to_s)
 
 # fetch binary framework first
-cartfile_resolved.select { |_, value| value[:type] == 'binary' }
+cartfile_resolved.select { |_, value| value.type == 'binary' }
                  .each do |name, value|
   puts name.to_s + ': ' + value.to_s if PanConstants.debuging
-  download_binary_file(value[:url], value[:hash], "#{current_dir}/Carthage/.tmp/#{name}.zip")
+  download_binary_file(value.url, value.hash, "#{current_dir}/Carthage/.tmp/#{name}.zip")
 end
 
-# # deal with git repo first
-# cartfile_resolved.select { |_, value| value[:type] == 'git' }.each do |name, _|
-#   command = "git init --separate-git-dir=#{current_dir}/Carthage/Repo/#{name}.git;"
-#   command += if using_sync
-#                'git reset --hard -q; git pull;'
-#              else
-#                'git reset -q;'
-#              end
+# deal with git repo first
+cartfile_resolved.select { |_, value| value.type == 'git' }
+                 .each do |name, _|
+  command = "git init --separate-git-dir=#{current_dir}/Carthage/Repo/#{name}.git;"
+  command += if using_sync
+               'git reset --hard -q; git pull;'
+             else
+               'git reset -q;'
+             end
 
-#   system("cd #{current_dir}; carthage bootstrap --platform iOS --verbose --no-build #{name};" \
-#       + "mkdir -p #{current_dir}/Carthage/Checkouts/#{name}/Carthage/ ; cd $_ ;" \
-#       + "ln -s #{current_dir}/Carthage/Build . ; cd #{current_dir}/Carthage/Checkouts/#{name}/;" \
-#       + command)
-#   next if using_sync
-# end
+  system("cd #{current_dir}; carthage bootstrap --platform iOS --verbose --no-build #{name};" \
+      + "mkdir -p #{current_dir}/Carthage/Checkouts/#{name}/Carthage/ ; cd $_ ;" \
+      + "ln -s #{current_dir}/Carthage/Build . ; cd #{current_dir}/Carthage/Checkouts/#{name}/;" \
+      + command)
+  next if using_sync
+end
 
 # project_path = current_dir + '/' + scheme_target + '.xcodeproj'
 # # puts "project_path: "+project_path.to_s

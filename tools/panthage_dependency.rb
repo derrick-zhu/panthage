@@ -72,23 +72,9 @@ def command_bootstrap?(cmd)
   cmd == CMD_BOOTSTRAP
 end
 
-
 module GitRepoType
   UNKNOWN = -1
   TAG = 0
   BRANCH = TAG + 1
 end
 
-class GitRepo 
-
-  def self.type(value) 
-    if value[:branch]
-      GitRepoType::BRANCH
-    elsif value[:tag]
-      GitRepoType::TAG
-    else
-      GitRepoType::UNKNOWN
-    end
-  end
-
-end
