@@ -1,0 +1,53 @@
+# Slice
+git "git@gitlab.fftech.info:dragon/consumer-app/HomeSlice.git" ~> 3.0.0
+git "git@gitlab.fftech.info:dragon/consumer-app/PCOCheckout.git" ~> 15.0.1
+git "git@gitlab.fftech.info:dragon/consumer-app/PPDSlice-pdp-ios.git" ~> 9.4.0
+
+# LegacyAPI
+git "git@gitlab.fftech.info:dragon/consumer-app/ECommerceAPI.git" ~> 5.0.0
+git "git@gitlab.fftech.info:dragon/consumer-app/fabs-ios.git" ~> 3.0.0
+git "git@gitlab.fftech.info:dragon/consumer-app/marketingapi-ios.git" ~> 4.0.0
+git "git@gitlab.fftech.info:dragon/consumer-app/PCAContentAPI-ios.git" ~> 3.0.0
+git "git@gitlab.fftech.info:dragon/consumer-app/PPAPaymentsAPI.git" ~> 3.0.0
+git "git@gitlab.fftech.info:dragon/consumer-app/PCSChannelServiceAPI.git" ~> 4.0.0
+git "git@gitlab.fftech.info:dragon/consumer-app/frameworkCMS-ios.git" ~> 5.0.0
+
+# LegacyKit
+git "git@gitlab.fftech.info:dragon/consumer-app/helpers-ios.git" ~> 3.0.0
+git "git@gitlab.fftech.info:dragon/consumer-app/managers-ios.git" ~> 7.0.0
+git "git@gitlab.fftech.info:dragon/consumer-app/panda-ui-ios.git" ~> 9.1.0
+git "git@gitlab.fftech.info:dragon/consumer-app/panda-kit-ios.git" ~> 8.0.0
+git "git@gitlab.fftech.info:dragon/consumer-app/RuleSystem.git" ~> 3.0.0
+git "git@gitlab.fftech.info:dragon/consumer-app/FNMNetworkMonitor.git" ~> 6.0.1
+
+# Foundation
+git "git@gitlab.fftech.info:dragon/consumer-app/PDFoundation.git" ~> 0.0.4
+git "git@gitlab.fftech.info:dragon/consumer-app/PDAppKit.git" ~> 0.1.2
+git "git@gitlab.fftech.info:dragon/consumer-app/PandaService.git" ~> 0.0.2
+
+# SocialSDK
+git "git@gitlab.fftech.info:dragon/consumer-app/SocialSDK.git" ~> 1.2.0
+
+# PaymentSDK
+git "git@gitlab.fftech.info:dragon/consumer-app/alipay-ios.git" ~> 3.0.0
+git "git@gitlab.fftech.info:dragon/consumer-app/wechat-ios.git" ~> 3.0.0
+git "git@gitlab.fftech.info:dragon/consumer-app/unionpay-ios.git" ~> 2.0.0
+git "git@gitlab.fftech.info:dragon/consumer-app/FFCardIO.git" "master"
+
+# AnalyticsSDK
+git "git@gitlab.fftech.info:dragon/consumer-app/BlackDragon.git" ~> 1.0.0
+git "git@gitlab.fftech.info:dragon/consumer-app/certona-ios.git" ~> 2.0.0
+git "git@gitlab.fftech.info:dragon/consumer-app/RelevantBrands.git" ~> 2.0.0
+binary "https://downloads.localytics.com/SDKs/iOS/Localytics.json" == 5.4.0
+binary "https://raw.githubusercontent.com/AppsFlyerSDK/AppsFlyerFramework/master/AppsFlyerTracker.json" == 4.8.0
+binary "https://raw.githubusercontent.com/xcodefarfetchina/frameworks-ios/master/Answers.json" == 1.4.0
+binary "https://raw.githubusercontent.com/xcodefarfetchina/frameworks-ios/master/Fabric.json" == 1.8.1
+binary "https://raw.githubusercontent.com/xcodefarfetchina/frameworks-ios/master/Crashlytics.json" == 3.11.1
+binary "https://raw.githubusercontent.com/xcodefarfetchina/frameworks-ios/master/NewRelic.json" == 6.1.1
+
+
+# External Frameworks
+github "SDWebImage/SDWebImage" == 4.4.2
+
+git "git@gitlab.fftech.info:dragon/consumer-app/RiskifiedBeacon.git" "master"
+git "git@gitlab.fftech.info:mobile/ios/frameworks/PushIOManager_iOS.git" "master"
