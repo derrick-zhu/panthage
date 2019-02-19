@@ -9,3 +9,4 @@ gem 'git'
 # debug
 gem 'ruby-debug-ide'
 gem 'debase'
+gem 'byebug'

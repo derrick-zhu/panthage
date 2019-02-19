@@ -1,0 +1,19 @@
+{
+    "ruby.codeCompletion": "rcodetools",
+    "ruby.format": "rubocop",
+    "ruby.intellisense": "rubyLocate",
+    "[ruby]": {
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true,
+        "editor.formatOnType": true
+    },
+    "ruby.lint": {
+        "ruby": false,
+        "ruby-lint": false,
+        "rubocop": true
+    },
+    "ruby.locate": {
+        "exclude": "{**/@(test|spec|tmp|.*),**/@(test|spec|tmp|.*)/**,**/*_spec.rb}",
+        "include": "**/*.rb"
+    },
+}

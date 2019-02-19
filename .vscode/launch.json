@@ -1,6 +1,11 @@
 {
   "version": "0.2.0",
-  "configurations": [
+  "configurations": [{
+      "name": "Debug Local File",
+      "type": "Ruby",
+      "request": "launch",
+      "program": "${workspaceRoot}/test/panthage_repo_helper_test.rb"
+    },
     {
       "name": "xcode-project",
       "type": "Ruby",
@@ -11,7 +16,6 @@
         "--workspace=../login",
         "--target=LoginSlice",
         "--command=1",
-        "--sync"
       ]
     }
   ]

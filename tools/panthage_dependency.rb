@@ -3,8 +3,14 @@
 
 # PanConstants constants for panthage
 class PanConstants
-  @@debuging = true
+  @@debuging = false
   @@maximum_dummy_number_in_template = 10
+
+  @@quiet = '--quiet'
+
+  def self.disable_verbose
+    PanConstants.debuging ? '' : @@quiet
+  end
 
   def self.debuging
     @@debuging
@@ -18,12 +24,9 @@ class PanConstants
   def initialize; end
 end
 
-$g_verbose = '--quiet'
-$g_verbose = '' if PanConstants.debuging == true
-
 # class panthage_depend_map
 $panda_dep_table = {
-  "Panda": [
+  'Panda' => [
     'HomeSlice' => { fw_name: 'HomeSlice', xc_path: '' },
     'PCOCheckout' => { fw_name: 'PCOCheckout', xc_path: 'PCOCheckout/Checkout.xcodeproj' },
     'PPDSlice-pdp-ios' => { fw_name: 'PPDSlice-pdp-ios', xc_path: 'PPDSlice-pdp-ios/FPDProductDetailSlice.xcodeproj' },

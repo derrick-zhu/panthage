@@ -79,8 +79,7 @@ cartfile = merge_cart_file(cartfile, read_cart_file(scheme_target.to_s, "#{curre
 # after merged cartfile data, before next parse cartfile detail, pls check the `conflict` property of the `Cartfile` instance.
 
 # setup and sync git repo
-cartfile.select { |_, v| v.lib_type == LibType::GIT }
-        .each do |name, value|
+cartfile.select { |_, v| v.lib_type == LibType::GIT }.each do |name, value|
   clone_bare_repo(repo_base, name, value, Command.command_install?(job_command))
 end
 
@@ -91,8 +90,7 @@ solve_cart_file(current_dir.to_s, cartfile, using_carthage)
 cartfile_resolved = read_cart_solved_file(current_dir.to_s)
 
 # save the cartfile and cartfile_resolved into cartfile_main
-cartfile.select { |_, v| v.is_new == true && v.lib_type == LibType::GIT }
-        .each do |name, value|
+cartfile.select { |_, v| v.is_new == true && v.lib_type == LibType::GIT }.each do |name, value|
   unless cartfile_resolved.key?(name.to_s)
     raise "could find resolved cartfile information for #{name}"
   end
@@ -106,15 +104,13 @@ end
 puts cartfile_main if PanConstants.debuging
 
 # fetch binary framework first
-cartfile_resolved.select { |_, value| value.type == 'binary' }
-                 .each do |name, value|
+cartfile_resolved.select { |_, value| value.type == 'binary' }.each do |name, value|
   puts name.to_s + ': ' + value.to_s if PanConstants.debuging
   download_binary_file(value.url, value.hash, "#{current_dir}/Carthage/.tmp/#{name}.zip")
 end
 
 # deal with git repo first
-cartfile_resolved.select { |_, value| value.type == 'git' }
-                 .each do |name, _|
+cartfile_resolved.select { |_, value| value.type == 'git' }.each do |name, _|
   command = ''
 
   command +=  "mkdir #{current_dir}/Carthage/Checkouts/#{name}; cd $_;"

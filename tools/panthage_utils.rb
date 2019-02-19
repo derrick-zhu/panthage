@@ -3,14 +3,9 @@
 
 require_relative 'panthage_dependency'
 require_relative 'panthage_cartfile_model'
+require_relative 'panthage_project_cart'
 require_relative 'panthage_ver_helper'
-
-# GitRepo git repo helper class
-class GitRepo
-  def self.repo_type(value)
-    value.repo_type
-  end
-end
+require_relative 'panthage_repo_helpers'
 
 # setup_carthage_env check and setup the environments
 def setup_carthage_env(current_dir)
@@ -148,11 +143,11 @@ def read_cart_file(proj_name, cart_file)
 
       if meta && (meta[1] == 'git')
         f_name = %r{/([^./]+)(.git)?$}.match(meta[2])[1]
-        cartFileData[f_name] = CartfileGit.new(proj_name, meta[2], meta[6], meta[9])
+        cartFileData[f_name] = CartfileGit.new(f_name, proj_name, meta[2], meta[6], meta[9])
 
       elsif meta && (meta[1] == 'binary')
         f_name = %r{/([^./]+)(.json)?$}.match(meta[2])[1]
-        cartFileData[f_name] = CartfileBinary.new(proj_name, meta[2], meta[6], meta[5])
+        cartFileData[f_name] = CartfileBinary.new(f_name, proj_name, meta[2], meta[6], meta[5])
 
       elsif meta && (meta[1] == 'github')
         puts meta[1]
@@ -195,14 +190,13 @@ def solve_cart_file(current_dir, cartfile)
   #   system "cd #{current_dir}; carthage update --no-build --no-checkout --verbose --new-resolver;"
   # else
   array_cartfile_resolve = []
-  cartfile.each do |_name, value|
+  cartfile.each do |_, value|
     if value.lib_type == LibType::BINARY
       uri = URI(value.url)
       raw = Net::HTTP.get(uri)
       data = JSON.parse(raw)
       finded = false
-      data.sort_by { |k, _v| Gem::Version.new(k) }
-          .reverse_each do |ver|
+      data.sort_by { |k, _v| Gem::Version.new(k) }.reverse_each do |ver|
         case value.operator
         when '~>'
           ovn = to_i(ver[0])
@@ -241,14 +235,15 @@ def solve_cart_file(current_dir, cartfile)
     end
   end
 
-  carfile_resolve_content = array_cartfile_resolve.sort_by { |a, _b| a }
-                                                  .join("\n")
-  puts carfile_resolve_content.to_s
+  carfile_resolve_content = array_cartfile_resolve.sort_by { |a, _b| a }.join("\n")
 
-  File.open("#{current_dir}/Cartfile.resolved", 'w+') do |fd|
-    fd.puts carfile_resolve_content
+  puts carfile_resolve_content.to_s if PanConstants.debuging
+
+  unless carfile_resolve_content.empty?
+    File.open("#{current_dir}/Cartfile.resolved", 'w+') do |fd|
+      fd.puts carfile_resolve_content
+    end
   end
-  # end
 end
 
 # clone_bare_repo - clone the bare repo
@@ -261,10 +256,11 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
   puts value.to_s if PanConstants.debuging
 
   # using tag or branch ?
-  if GitRepo.repo_type(value) == GitRepoType::TAG
+  if value.repo_type == GitRepoType::TAG
     puts 'its tag' if PanConstants.debuging
-    git_target_head = value.tag
-  elsif GitRepo.repo_type(value) == GitRepoType::BRANCH
+    git_target_head = VersionHelper.identify(value.tag)
+
+  elsif value.repo_type == GitRepoType::BRANCH
     puts 'its branch' if PanConstants.debuging
     git_target_head = value.branch
   else
@@ -275,52 +271,41 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
 
   # clone
   unless File.exist? repo_dir
-    command = "git clone --bare -b #{git_target_head} "
-    command += '--depth 1 ' if using_install
-    command += "#{value.url} #{repo_dir} #{$g_verbose}; "
-
     puts "#{'***'.cyan} Cloning #{name.green.bold}"
 
-    system(command)
-    system("cd #{repo_dir}; git remote remove origin; git remote add origin #{value.url};")
+    RepoHelper.clone_bare(repo_dir_base, value.url, name, using_install, PanConstants.disable_verbose)
 
     puts "#{'***'.cyan} Finished!"
   end
 
   # fetch the commit hash value by using branch name or tags
-  system("cd #{repo_dir}; git fetch --all  #{$g_verbose}")
+  if value.repo_type == GitRepoType::TAG
+    commit_hash = RepoHelper.clone_with_tag(
+      value.url,
+      name,
+      git_target_head,
+      repo_dir_base,
+      using_install,
+      PanConstants.disable_verbose
+    )
 
-  if GitRepo.repo_type(value) == GitRepoType::TAG
-    commit_hash = `cd #{repo_dir}; git rev-parse refs/tags/#{git_target_head} 2> /dev/null;`.strip.freeze
-
-    if commit_hash.length == 40
-      system("cd #{repo_dir}; git symbolic-ref HEAD refs/tags/#{git_target_head};")
-
-    elsif `cd #{repo_dir}; git cat-file -t #{git_target_head}`.strip == 'commit'
-      system("cd #{repo_dir}; git update-ref HEAD #{git_target_head};")
-      commit_hash = git_target_head.to_s
-
-    end
-
-  elsif GitRepo.repo_type(value) == GitRepoType::BRANCH
+  elsif value.repo_type == GitRepoType::BRANCH
     print "#{'***'.cyan} "
-
-    commit_hash = `cd #{repo_dir}; git rev-parse refs/remotes/origin/#{git_target_head} 2> /dev/null;`.strip.freeze
-
-    if commit_hash.length == 40
-      system("cd #{repo_dir};" \
-        + "git branch #{git_target_head} 2> /dev/null;" \
-        + "git update-ref refs/heads/#{git_target_head} #{commit_hash};" \
-        + "git symbolic-ref HEAD refs/heads/#{git_target_head};" \
-        + "git branch --set-upstream-to=origin/#{git_target_head} #{git_target_head}")
-    end
+    commit_hash = RepoHelper.clone_with_branch(
+      value.url,
+      name,
+      git_target_head,
+      repo_dir_base,
+      using_install,
+      PanConstants.disable_verbose
+    )
 
   end
 
   raise "unknow branch or tag or commit #{value} and commit hash:#{commit_hash}." unless commit_hash.length == 40
 
   # save the commit's SHA1 hash.
-  value.hash = commit_hash.strip
+  # value.is_new = (value.hash == commit_hash.strip)
 
   print "#{'***'.cyan} Fetch #{name.green.bold} Done.\n\n"
 end
@@ -339,14 +324,6 @@ def download_binary_file(url, version, dst_file_path)
     max_limited = 10
     cur_limited = 0
 
-    # resp_head = nil
-    # uri = URI(binary_uri)
-    # Net::HTTP.start(uri.host) do |http|
-    #   resp_head = http.head(uri.path)
-    # end
-
-    # p resp_head['content-length'].to_s
-
     begin
       resp = Net::HTTP.get_response(URI.parse(binary_uri))
       binary_uri = resp['location']
@@ -361,68 +338,69 @@ def download_binary_file(url, version, dst_file_path)
   end
 end
 
-def solve_project_carthage(repo_base, scheme_target, current_dir, is_install, is_sync)
-  result = {}
-
+def solve_project_carthage(workspace_base_dir, scheme_target, belong_to_proj_name, current_dir, is_install, is_sync)
   cartfile = {}
-  cartfile_resolved = {}
 
   # analysis the Cartfile to grab workspace's basic information
   cartfile = merge_cart_file(cartfile, read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile"))
   cartfile = merge_cart_file(cartfile, read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile.private"))
 
-  # after merged cartfile data, before next parse cartfile detail, pls check the `conflict` property of the `Cartfile` instance.
-
   # setup and sync git repo
-  cartfile.select { |_, v| v.lib_type == LibType::GIT }
-          .each do |name, value|
-    clone_bare_repo(repo_base, name, value, is_install)
+  git_repo_for_checkout = {}
+
+  cartfile.select { |_, v| v.lib_type == LibType::GIT }.each do |name, value|
+    clone_bare_repo("#{workspace_base_dir}/Carthage/Repo", name, value, is_install)
+    git_repo_for_checkout[name] = value if value.is_new
+  end
+
+  result = CartfileBase.new(scheme_target, belong_to_proj_name)
+
+  # add each cartfile data into result's dependency
+  cartfile.each do |_, value|
+    result.appendDependency(value)
+  end
+
+  cartfile.each do |_, value|
+    ProjectCartManager.instance.append_framework(value)
   end
 
   # generate Cartfile.resolved file.
   solve_cart_file(current_dir.to_s, cartfile)
 
-  # read the latest version of Cartfile.resolved file.
-  cartfile_resolved = read_cart_solved_file(current_dir.to_s)
-
-  # save the cartfile and cartfile_resolved into result
-  cartfile.select { |_, v| v.is_new == true && v.lib_type == LibType::GIT }
-          .each do |name, value|
-    unless cartfile_resolved.key?(name.to_s)
-      raise "could find resolved cartfile information for #{name}"
-    end
-
-    resolved_data = cartfile_resolved[name]
-    value.hash = resolved_data.hash
-    value.is_new = true
-
-    result[name] = value
-  end
-
-  result.select { |_, value| value.is_new == true }
-        .each do |name, value|
+  git_repo_for_checkout.select { |_, value| value.is_new == true }.each do |name, value|
     if value.lib_type == LibType::BINARY
-      download_binary_file(value.url, value.hash, "#{current_dir}/Carthage/.tmp/#{name}.zip")
-
+      download_binary_file(value.url, value.hash, "#{workspace_base_dir}/Carthage/.tmp/#{name}.zip")
     elsif value.lib_type == LibType::GIT
-      command = ''
-
-      command += "mkdir #{current_dir}/Carthage/Checkouts/#{name}; cd $_;"
-      command += "git init --separate-git-dir=#{current_dir}/Carthage/Repo/#{name}.git;"
-      command += if is_sync
-                   'git reset --hard -q; git pull;'
-                 else
-                   'git reset -q;'
-                 end
-
-      command += "mkdir -p #{current_dir}/Carthage/Checkouts/#{name}/Carthage/; cd $_;"
-      command += "ln -s #{current_dir}/Carthage/Build/ . ; cd #{current_dir}/Carthage/Checkouts/#{name}/;"
-
-      system(command)
-
+      RepoHelper.checkout_source("#{workspace_base_dir}/Carthage", name.to_s, is_sync, PanConstants.disable_verbose)
     else
       puts "???#{value.url} -> #{value.lib_type}"
-
     end
+  end
+
+  result
+end
+
+# solve_project_dependency
+def solve_project_dependency(proj_cart_data, workspace_base_dir, is_install, is_sync)
+  return if proj_cart_data.nil?
+  return unless proj_cart_data.numberOfDependency.positive?
+
+  proj_cart_data.dependency.select { |block| block.is_new == true }.each do |value|
+    puts "#{value.proj_name} -> #{value}" if PanConstants.debuging
+    new_sub_dir = solve_project_carthage(
+      workspace_base_dir.to_s,
+      value.proj_name.to_s,
+      proj_cart_data.proj_name.to_s,
+      "#{workspace_base_dir}/Carthage/Checkouts/#{value.proj_name}",
+      is_install,
+      is_sync
+    )
+
+    value.appendDependency(new_sub_dir)
+    value.is_new = false
+  end
+
+  proj_cart_data.dependency.each do |value|
+    solve_project_dependency(value, workspace_base_dir, is_install, is_sync)
   end
 end
