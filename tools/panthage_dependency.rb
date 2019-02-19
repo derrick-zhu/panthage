@@ -1,17 +1,18 @@
+#!/usr/bin/ruby
 # frozen_string_literal: true
 
 # PanConstants constants for panthage
 class PanConstants
-  @@DEBUGING = false
+  @@debuging = true
+  @@maximum_dummy_number_in_template = 10
 
   def self.debuging
-    @@DEBUGING
+    @@debuging
   end
 
   # dummy fw count (max)
-  @@MAXIMUM_DUMMY_NUMBER_IN_TEMPLATE = 10
   def self.max_dummy_template
-    @@MAXIMUM_DUMMY_NUMBER_IN_TEMPLATE
+    @@maximum_dummy_number_in_template
   end
 
   def initialize; end
@@ -55,26 +56,21 @@ $panda_dep_table = {
 }
 
 # main command
-CMD_UNKNOW = -1
-CMD_INSTALL = CMD_UNKNOW + 1
-CMD_UPDATE = CMD_INSTALL + 1
-CMD_BOOTSTRAP = CMD_UPDATE + 1
+class Command
+  CMD_UNKNOW = -1
+  CMD_INSTALL = CMD_UNKNOW + 1
+  CMD_UPDATE = CMD_INSTALL + 1
+  CMD_BOOTSTRAP = CMD_UPDATE + 1
 
-def command_install?(cmd)
-  cmd == CMD_INSTALL
+  def self.command_install?(cmd)
+    cmd == CMD_INSTALL
+  end
+
+  def self.command_update?(cmd)
+    cmd == CMD_UPDATE
+  end
+
+  def self.command_bootstrap?(cmd)
+    cmd == CMD_BOOTSTRAP
+  end
 end
-
-def command_update?(cmd)
-  cmd == CMD_UPDATE
-end
-
-def command_bootstrap?(cmd)
-  cmd == CMD_BOOTSTRAP
-end
-
-module GitRepoType
-  UNKNOWN = -1
-  TAG = 0
-  BRANCH = TAG + 1
-end
-

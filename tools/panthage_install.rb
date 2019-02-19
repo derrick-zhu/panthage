@@ -18,5 +18,4 @@ end
 # Panthage command for install operation
 class PanthageInstall < IPanthageCommandProtocol
   def initialize; end
-  
 end

@@ -1,0 +1,1811 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		043127211DAFD1910039E45D /* BiliIMessageBrowserView.m in Sources */ = {isa = PBXBuildFile; fileRef = 043127201DAFD1910039E45D /* BiliIMessageBrowserView.m */; };
+		0437922F1DAC94D800A51E65 /* BiliIMessageReport.m in Sources */ = {isa = PBXBuildFile; fileRef = 0437922E1DAC94D800A51E65 /* BiliIMessageReport.m */; };
+		043E1E6E1DAA4AAC0094CD08 /* MessagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 043E1E6D1DAA4AAC0094CD08 /* MessagesViewController.m */; };
+		043E1E711DAA4AAC0094CD08 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 043E1E6F1DAA4AAC0094CD08 /* MainInterface.storyboard */; };
+		043E1E731DAA4AAC0094CD08 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 043E1E721DAA4AAC0094CD08 /* Assets.xcassets */; };
+		043E1E771DAA4AAC0094CD08 /* BiliIMessageExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 043E1E691DAA4AAC0094CD08 /* BiliIMessageExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		045908721E1E2D7E00801415 /* 1@2x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0459085A1E1E2D7E00801415 /* 1@2x.gif */; };
+		045908731E1E2D7E00801415 /* 1@3x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0459085B1E1E2D7E00801415 /* 1@3x.gif */; };
+		045908741E1E2D7E00801415 /* 2@2x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0459085C1E1E2D7E00801415 /* 2@2x.gif */; };
+		045908751E1E2D7E00801415 /* 2@3x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0459085D1E1E2D7E00801415 /* 2@3x.gif */; };
+		045908761E1E2D7E00801415 /* 3@2x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0459085E1E1E2D7E00801415 /* 3@2x.gif */; };
+		045908771E1E2D7E00801415 /* 3@3x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0459085F1E1E2D7E00801415 /* 3@3x.gif */; };
+		045908781E1E2D7E00801415 /* 4@2x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 045908601E1E2D7E00801415 /* 4@2x.gif */; };
+		045908791E1E2D7E00801415 /* 4@3x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 045908611E1E2D7E00801415 /* 4@3x.gif */; };
+		0459087A1E1E2D7E00801415 /* 5@2x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 045908621E1E2D7E00801415 /* 5@2x.gif */; };
+		0459087B1E1E2D7E00801415 /* 5@3x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 045908631E1E2D7E00801415 /* 5@3x.gif */; };
+		0459087C1E1E2D7E00801415 /* 6@2x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 045908641E1E2D7E00801415 /* 6@2x.gif */; };
+		0459087D1E1E2D7E00801415 /* 6@3x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 045908651E1E2D7E00801415 /* 6@3x.gif */; };
+		0459087E1E1E2D7E00801415 /* 7@2x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 045908661E1E2D7E00801415 /* 7@2x.gif */; };
+		0459087F1E1E2D7E00801415 /* 7@3x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 045908671E1E2D7E00801415 /* 7@3x.gif */; };
+		045908801E1E2D7E00801415 /* 8@2x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 045908681E1E2D7E00801415 /* 8@2x.gif */; };
+		045908811E1E2D7E00801415 /* 8@3x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 045908691E1E2D7E00801415 /* 8@3x.gif */; };
+		045908821E1E2D7E00801415 /* 9@2x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0459086A1E1E2D7E00801415 /* 9@2x.gif */; };
+		045908831E1E2D7E00801415 /* 9@3x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0459086B1E1E2D7E00801415 /* 9@3x.gif */; };
+		045908841E1E2D7E00801415 /* 10@2x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0459086C1E1E2D7E00801415 /* 10@2x.gif */; };
+		045908851E1E2D7E00801415 /* 10@3x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0459086D1E1E2D7E00801415 /* 10@3x.gif */; };
+		045908861E1E2D7E00801415 /* 11@2x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0459086E1E1E2D7E00801415 /* 11@2x.gif */; };
+		045908871E1E2D7E00801415 /* 11@3x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0459086F1E1E2D7E00801415 /* 11@3x.gif */; };
+		045908881E1E2D7E00801415 /* 12@2x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 045908701E1E2D7E00801415 /* 12@2x.gif */; };
+		045908891E1E2D7E00801415 /* 12@3x.gif in Resources */ = {isa = PBXBuildFile; fileRef = 045908711E1E2D7E00801415 /* 12@3x.gif */; };
+		5237592D1EC316FC00FD8111 /* BiliWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 523759201EC316FB00FD8111 /* BiliWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		523759491EC317BA00FD8111 /* BiliTodayWidgetApi.m in Sources */ = {isa = PBXBuildFile; fileRef = 523759371EC317BA00FD8111 /* BiliTodayWidgetApi.m */; };
+		5237594A1EC317BA00FD8111 /* BiliTodayVideoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5237593A1EC317BA00FD8111 /* BiliTodayVideoModel.m */; };
+		5237594B1EC317BA00FD8111 /* NSURL+Today.m in Sources */ = {isa = PBXBuildFile; fileRef = 5237593D1EC317BA00FD8111 /* NSURL+Today.m */; };
+		5237594C1EC317BA00FD8111 /* UIImageView+Today.m in Sources */ = {isa = PBXBuildFile; fileRef = 523759401EC317BA00FD8111 /* UIImageView+Today.m */; };
+		5237594D1EC317BA00FD8111 /* BiliTodayVideoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 523759431EC317BA00FD8111 /* BiliTodayVideoCell.m */; };
+		5237594E1EC317BA00FD8111 /* BiliTodayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 523759451EC317BA00FD8111 /* BiliTodayViewController.m */; };
+		5237594F1EC317BA00FD8111 /* BiliTodayViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 523759481EC317BA00FD8111 /* BiliTodayViewModel.m */; };
+		523759541EC3181000FD8111 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 523759531EC3181000FD8111 /* Assets.xcassets */; };
+		529E7B312020787000E6B141 /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 529E7B302020787000E6B141 /* NotificationCenter.framework */; };
+		5412E7141F5678DD00EC6134 /* QLBase.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5412E7101F5678DC00EC6134 /* QLBase.bundle */; };
+		5412E7151F5678DD00EC6134 /* QLFacility.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5412E7111F5678DD00EC6134 /* QLFacility.bundle */; };
+		5412E7161F5678DD00EC6134 /* TADAdVideo.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5412E7121F5678DD00EC6134 /* TADAdVideo.bundle */; };
+		5412E7171F5678DD00EC6134 /* TADQQVideo.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5412E7131F5678DD00EC6134 /* TADQQVideo.bundle */; };
+		543BEA1C207391FA00A1D112 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 543BEA1B207391FA00A1D112 /* CoreTelephony.framework */; };
+		543BEA1E2073920600A1D112 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 543BEA1D2073920600A1D112 /* SystemConfiguration.framework */; };
+		543BEA202073921300A1D112 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 543BEA1F2073921200A1D112 /* libsqlite3.tbd */; };
+		543BEA222073921700A1D112 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 543BEA212073921700A1D112 /* libz.tbd */; };
+		543BEA262073941600A1D112 /* libmtasdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 543BEA252073941600A1D112 /* libmtasdk.a */; };
+		543BEA282073943400A1D112 /* libMobClickLibrary.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 543BEA272073943400A1D112 /* libMobClickLibrary.a */; };
+		543BEA2C207396C500A1D112 /* AlipaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 543BEA2B207396C500A1D112 /* AlipaySDK.framework */; };
+		543BEA2E2073970C00A1D112 /* Bugly.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 543BEA2D2073970B00A1D112 /* Bugly.framework */; };
+		543BEA312073972900A1D112 /* libmtasdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 543BEA252073941600A1D112 /* libmtasdk.a */; };
+		543BEA33207397C400A1D112 /* TencentOpenAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 543BEA32207397C400A1D112 /* TencentOpenAPI.framework */; };
+		543BEA35207397F000A1D112 /* SobotKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 543BEA34207397F000A1D112 /* SobotKit.framework */; };
+		543BEA372073980000A1D112 /* TencentLBS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 543BEA362073980000A1D112 /* TencentLBS.framework */; };
+		543BEA392073995200A1D112 /* libWeChatSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 543BEA382073995200A1D112 /* libWeChatSDK.a */; };
+		543BEA3B20739B6900A1D112 /* libWeiboSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 543BEA3A20739B6900A1D112 /* libWeiboSDK.a */; };
+		543BEA3C20739B9600A1D112 /* libMobClickLibrary.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 543BEA272073943400A1D112 /* libMobClickLibrary.a */; };
+		5444E41C20741D99003CA4B3 /* libBiliSocialSharing_ios_universal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5444E41B20741D99003CA4B3 /* libBiliSocialSharing_ios_universal.a */; };
+		54458748207403E8005632A2 /* SobotKit.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 54458709207403E0005632A2 /* SobotKit.bundle */; };
+		54458749207403E8005632A2 /* ZCEmojiExpression.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 54458747207403E7005632A2 /* ZCEmojiExpression.bundle */; };
+		549D2F322048203600E053C8 /* NotificationService.m in Sources */ = {isa = PBXBuildFile; fileRef = 549D2F312048203600E053C8 /* NotificationService.m */; };
+		549D2F362048203600E053C8 /* BiliNotificationServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 549D2F2E2048203600E053C8 /* BiliNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		549FBC7F207D0CBA004F2090 /* Bugly.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 543BEA2D2073970B00A1D112 /* Bugly.framework */; };
+		549FBC83207D0CCD004F2090 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 549FBC82207D0CCD004F2090 /* libc++.tbd */; };
+		54C9765A20173E80007C1C75 /* BiliUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54C9765720173DC1007C1C75 /* BiliUtils.framework */; };
+		54E74DCE1F20AC45005A7443 /* TencentOpenApi_IOS_Bundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 54E74DCB1F20AC44005A7443 /* TencentOpenApi_IOS_Bundle.bundle */; };
+		54E74DCF1F20AC45005A7443 /* WeiboSDK.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 54E74DCC1F20AC45005A7443 /* WeiboSDK.bundle */; };
+		54F29A382073C1E900E63B22 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 54F29A372073C1E900E63B22 /* libresolv.tbd */; };
+		5584E68D208F839900D75306 /* BiliPhoneAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5584E68C208F839900D75306 /* BiliPhoneAppDelegate.m */; };
+		5584E6A5208F84FC00D75306 /* BiliPadAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5584E6A4208F84FC00D75306 /* BiliPadAppDelegate.m */; };
+		5584E6AC208F870200D75306 /* BiliUniversalBuildConfigModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5584E6AB208F870200D75306 /* BiliUniversalBuildConfigModule.m */; };
+		71D1D0661EEE783400BF6CB1 /* hook.h in Sources */ = {isa = PBXBuildFile; fileRef = 71D1D0651EEE783400BF6CB1 /* hook.h */; };
+		71D1D0921EEE8A8400BF6CB1 /* hook.m in Sources */ = {isa = PBXBuildFile; fileRef = 71D1D0911EEE8A8400BF6CB1 /* hook.m */; };
+		920D68F61D22619300F94B34 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 920D68F81D22619300F94B34 /* InfoPlist.strings */; };
+		9226CC941D212B79001C1519 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9226CC931D212B79001C1519 /* main.m */; };
+		9226CC9F1D212B79001C1519 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9226CC9E1D212B79001C1519 /* Assets.xcassets */; };
+		92B6CA681D214FDA008A4DD6 /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 92B6CA671D214FDA008A4DD6 /* Launch Screen.xib */; };
+		92C923551D24FDFA00B16AC1 /* BiliNoneCpp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 92C923541D24FDFA00B16AC1 /* BiliNoneCpp.mm */; };
+		A846415A1FE8BEEA0011B2FB /* copyright.png in Resources */ = {isa = PBXBuildFile; fileRef = A84641571FE8BEE90011B2FB /* copyright.png */; };
+		A846415B1FE8BEEA0011B2FB /* copyright@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A84641581FE8BEE90011B2FB /* copyright@2x.png */; };
+		A846415C1FE8BEEA0011B2FB /* copyright@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = A84641591FE8BEE90011B2FB /* copyright@3x.png */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		549D2F342048203600E053C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9226CC871D212B79001C1519 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 549D2F2D2048203600E053C8;
+			remoteInfo = BiliNotificationServiceExtension;
+		};
+		54C9765620173DC1007C1C75 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 54C9765220173DC1007C1C75 /* BiliUtils.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 545D78C91E5C28F100A9730D;
+			remoteInfo = BiliUtils;
+		};
+		54C9765820173E0F007C1C75 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 54C9765220173DC1007C1C75 /* BiliUtils.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 541A53641D12CFCA0035FC3B;
+			remoteInfo = BiliUtils;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		043E1DE41DAA3A400094CD08 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				043E1E771DAA4AAC0094CD08 /* BiliIMessageExtension.appex in Embed App Extensions */,
+				549D2F362048203600E053C8 /* BiliNotificationServiceExtension.appex in Embed App Extensions */,
+				5237592D1EC316FC00FD8111 /* BiliWidgetExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		542E1E4E1E5E95EA005DDF33 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0431271F1DAFD1910039E45D /* BiliIMessageBrowserView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiliIMessageBrowserView.h; sourceTree = "<group>"; };
+		043127201DAFD1910039E45D /* BiliIMessageBrowserView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BiliIMessageBrowserView.m; sourceTree = "<group>"; };
+		0437922D1DAC94D800A51E65 /* BiliIMessageReport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiliIMessageReport.h; sourceTree = "<group>"; };
+		0437922E1DAC94D800A51E65 /* BiliIMessageReport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BiliIMessageReport.m; sourceTree = "<group>"; };
+		043792441DAE578F00A51E65 /* BiliIMessageExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BiliIMessageExtension.entitlements; sourceTree = "<group>"; };
+		043E1E691DAA4AAC0094CD08 /* BiliIMessageExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BiliIMessageExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		043E1E6C1DAA4AAC0094CD08 /* MessagesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessagesViewController.h; sourceTree = "<group>"; };
+		043E1E6D1DAA4AAC0094CD08 /* MessagesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MessagesViewController.m; sourceTree = "<group>"; };
+		043E1E701DAA4AAC0094CD08 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		043E1E721DAA4AAC0094CD08 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		043E1E741DAA4AAC0094CD08 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0459085A1E1E2D7E00801415 /* 1@2x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "1@2x.gif"; sourceTree = "<group>"; };
+		0459085B1E1E2D7E00801415 /* 1@3x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "1@3x.gif"; sourceTree = "<group>"; };
+		0459085C1E1E2D7E00801415 /* 2@2x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "2@2x.gif"; sourceTree = "<group>"; };
+		0459085D1E1E2D7E00801415 /* 2@3x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "2@3x.gif"; sourceTree = "<group>"; };
+		0459085E1E1E2D7E00801415 /* 3@2x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "3@2x.gif"; sourceTree = "<group>"; };
+		0459085F1E1E2D7E00801415 /* 3@3x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "3@3x.gif"; sourceTree = "<group>"; };
+		045908601E1E2D7E00801415 /* 4@2x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "4@2x.gif"; sourceTree = "<group>"; };
+		045908611E1E2D7E00801415 /* 4@3x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "4@3x.gif"; sourceTree = "<group>"; };
+		045908621E1E2D7E00801415 /* 5@2x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "5@2x.gif"; sourceTree = "<group>"; };
+		045908631E1E2D7E00801415 /* 5@3x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "5@3x.gif"; sourceTree = "<group>"; };
+		045908641E1E2D7E00801415 /* 6@2x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "6@2x.gif"; sourceTree = "<group>"; };
+		045908651E1E2D7E00801415 /* 6@3x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "6@3x.gif"; sourceTree = "<group>"; };
+		045908661E1E2D7E00801415 /* 7@2x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "7@2x.gif"; sourceTree = "<group>"; };
+		045908671E1E2D7E00801415 /* 7@3x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "7@3x.gif"; sourceTree = "<group>"; };
+		045908681E1E2D7E00801415 /* 8@2x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "8@2x.gif"; sourceTree = "<group>"; };
+		045908691E1E2D7E00801415 /* 8@3x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "8@3x.gif"; sourceTree = "<group>"; };
+		0459086A1E1E2D7E00801415 /* 9@2x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "9@2x.gif"; sourceTree = "<group>"; };
+		0459086B1E1E2D7E00801415 /* 9@3x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "9@3x.gif"; sourceTree = "<group>"; };
+		0459086C1E1E2D7E00801415 /* 10@2x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "10@2x.gif"; sourceTree = "<group>"; };
+		0459086D1E1E2D7E00801415 /* 10@3x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "10@3x.gif"; sourceTree = "<group>"; };
+		0459086E1E1E2D7E00801415 /* 11@2x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "11@2x.gif"; sourceTree = "<group>"; };
+		0459086F1E1E2D7E00801415 /* 11@3x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "11@3x.gif"; sourceTree = "<group>"; };
+		045908701E1E2D7E00801415 /* 12@2x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "12@2x.gif"; sourceTree = "<group>"; };
+		045908711E1E2D7E00801415 /* 12@3x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "12@3x.gif"; sourceTree = "<group>"; };
+		523759201EC316FB00FD8111 /* BiliWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BiliWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5237592A1EC316FC00FD8111 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		523759361EC317BA00FD8111 /* BiliTodayWidgetApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiliTodayWidgetApi.h; sourceTree = "<group>"; };
+		523759371EC317BA00FD8111 /* BiliTodayWidgetApi.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BiliTodayWidgetApi.m; sourceTree = "<group>"; };
+		523759391EC317BA00FD8111 /* BiliTodayVideoModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiliTodayVideoModel.h; sourceTree = "<group>"; };
+		5237593A1EC317BA00FD8111 /* BiliTodayVideoModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BiliTodayVideoModel.m; sourceTree = "<group>"; };
+		5237593C1EC317BA00FD8111 /* NSURL+Today.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Today.h"; sourceTree = "<group>"; };
+		5237593D1EC317BA00FD8111 /* NSURL+Today.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Today.m"; sourceTree = "<group>"; };
+		5237593E1EC317BA00FD8111 /* TodayHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TodayHeader.h; sourceTree = "<group>"; };
+		5237593F1EC317BA00FD8111 /* UIImageView+Today.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+Today.h"; sourceTree = "<group>"; };
+		523759401EC317BA00FD8111 /* UIImageView+Today.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+Today.m"; sourceTree = "<group>"; };
+		523759421EC317BA00FD8111 /* BiliTodayVideoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiliTodayVideoCell.h; sourceTree = "<group>"; };
+		523759431EC317BA00FD8111 /* BiliTodayVideoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BiliTodayVideoCell.m; sourceTree = "<group>"; };
+		523759441EC317BA00FD8111 /* BiliTodayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiliTodayViewController.h; sourceTree = "<group>"; };
+		523759451EC317BA00FD8111 /* BiliTodayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BiliTodayViewController.m; sourceTree = "<group>"; };
+		523759471EC317BA00FD8111 /* BiliTodayViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiliTodayViewModel.h; sourceTree = "<group>"; };
+		523759481EC317BA00FD8111 /* BiliTodayViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BiliTodayViewModel.m; sourceTree = "<group>"; };
+		523759531EC3181000FD8111 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		527842FE1EEE39550063CF83 /* BiliWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BiliWidgetExtension.entitlements; sourceTree = "<group>"; };
+		529E7B302020787000E6B141 /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
+		5412E7101F5678DC00EC6134 /* QLBase.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = QLBase.bundle; path = "../resource-bin/QLBase.bundle"; sourceTree = "<group>"; };
+		5412E7111F5678DD00EC6134 /* QLFacility.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = QLFacility.bundle; path = "../resource-bin/QLFacility.bundle"; sourceTree = "<group>"; };
+		5412E7121F5678DD00EC6134 /* TADAdVideo.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = TADAdVideo.bundle; path = "../resource-bin/TADAdVideo.bundle"; sourceTree = "<group>"; };
+		5412E7131F5678DD00EC6134 /* TADQQVideo.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = TADQQVideo.bundle; path = "../resource-bin/TADQQVideo.bundle"; sourceTree = "<group>"; };
+		543BEA1B207391FA00A1D112 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		543BEA1D2073920600A1D112 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		543BEA1F2073921200A1D112 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		543BEA212073921700A1D112 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		543BEA23207393DD00A1D112 /* WebP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebP.framework; path = ../Carthage/Checkouts/BiliUtils/3rd/webp/WebP.framework; sourceTree = "<group>"; };
+		543BEA252073941600A1D112 /* libmtasdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmtasdk.a; path = ../Carthage/Checkouts/BiliUtils/SDK/MTA/libmtasdk.a; sourceTree = "<group>"; };
+		543BEA272073943400A1D112 /* libMobClickLibrary.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMobClickLibrary.a; path = ../Carthage/Checkouts/BiliUtils/SDK/umeng/libMobClickLibrary.a; sourceTree = "<group>"; };
+		543BEA292073944C00A1D112 /* libPodLinker.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPodLinker.a; path = ../Carthage/Checkouts/BiliUtils/PodLinker/libPodLinker.a; sourceTree = "<group>"; };
+		543BEA2B207396C500A1D112 /* AlipaySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AlipaySDK.framework; path = ../Carthage/Checkouts/BiliUtils/SDK/AlipaySDK_15.1.6/AlipaySDK.framework; sourceTree = "<group>"; };
+		543BEA2D2073970B00A1D112 /* Bugly.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Bugly.framework; path = ../Carthage/Checkouts/BiliUtils/SDK/Bugly/Bugly.framework; sourceTree = "<group>"; };
+		543BEA32207397C400A1D112 /* TencentOpenAPI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TencentOpenAPI.framework; path = ../Carthage/Checkouts/BiliUtils/SDK/QQ_iOS_SDK_V3.2.1/TencentOpenAPI.framework; sourceTree = "<group>"; };
+		543BEA34207397F000A1D112 /* SobotKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SobotKit.framework; path = ../Carthage/Checkouts/BiliUtils/SDK/SobotKit/SobotKit.framework; sourceTree = "<group>"; };
+		543BEA362073980000A1D112 /* TencentLBS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TencentLBS.framework; path = ../Carthage/Checkouts/BiliUtils/SDK/TencentLBS/TencentLBS.framework; sourceTree = "<group>"; };
+		543BEA382073995200A1D112 /* libWeChatSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libWeChatSDK.a; path = ../Carthage/Checkouts/BiliUtils/SDK/WechatSDK_1.7.5/libWeChatSDK.a; sourceTree = "<group>"; };
+		543BEA3A20739B6900A1D112 /* libWeiboSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libWeiboSDK.a; path = "../Carthage/Checkouts/BiliUtils/SDK/WeiboSDK-3.2.0/libWeiboSDK.a"; sourceTree = "<group>"; };
+		5444E41B20741D99003CA4B3 /* libBiliSocialSharing_ios_universal.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBiliSocialSharing_ios_universal.a; path = ../Carthage/Checkouts/BiliUtils/SDK/socialSharing/libBiliSocialSharing_ios_universal.a; sourceTree = "<group>"; };
+		54458709207403E0005632A2 /* SobotKit.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = SobotKit.bundle; path = ../Carthage/Checkouts/BiliUtils/SDK/SobotKit/SobotKit.bundle; sourceTree = "<group>"; };
+		54458747207403E7005632A2 /* ZCEmojiExpression.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = ZCEmojiExpression.bundle; path = ../Carthage/Checkouts/BiliUtils/SDK/SobotKit/ZCEmojiExpression.bundle; sourceTree = "<group>"; };
+		544633862026CDA80043C4C2 /* Dummy1.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Dummy1.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		544633952026D0BF0043C4C2 /* Dummy2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Dummy2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		544633A32026D1F50043C4C2 /* Dummy3.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Dummy3.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		549D2F2E2048203600E053C8 /* BiliNotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BiliNotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		549D2F302048203600E053C8 /* NotificationService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationService.h; sourceTree = "<group>"; };
+		549D2F312048203600E053C8 /* NotificationService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationService.m; sourceTree = "<group>"; };
+		549D2F332048203600E053C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		549FBC80207D0CC6004F2090 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = "../ffmpeg-bin3/lib/libcrypto.a"; sourceTree = "<group>"; };
+		549FBC82207D0CCD004F2090 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		54C9765220173DC1007C1C75 /* BiliUtils.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BiliUtils.xcodeproj; path = ../Carthage/Checkouts/BiliUtils/BiliUtils.xcodeproj; sourceTree = "<group>"; };
+		54DBB07E2048526900B6D218 /* BiliNotificationServiceExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BiliNotificationServiceExtension.entitlements; sourceTree = "<group>"; };
+		54E74DCB1F20AC44005A7443 /* TencentOpenApi_IOS_Bundle.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = TencentOpenApi_IOS_Bundle.bundle; path = ../Carthage/Checkouts/BiliUtils/SDK/QQ_iOS_SDK_V3.2.1/TencentOpenApi_IOS_Bundle.bundle; sourceTree = "<group>"; };
+		54E74DCC1F20AC45005A7443 /* WeiboSDK.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = WeiboSDK.bundle; path = "../Carthage/Checkouts/BiliUtils/SDK/WeiboSDK-3.2.0/WeiboSDK.bundle"; sourceTree = "<group>"; };
+		54F29A372073C1E900E63B22 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
+		5584E68B208F839900D75306 /* BiliPhoneAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiliPhoneAppDelegate.h; sourceTree = "<group>"; };
+		5584E68C208F839900D75306 /* BiliPhoneAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BiliPhoneAppDelegate.m; sourceTree = "<group>"; };
+		5584E6A3208F84FC00D75306 /* BiliPadAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiliPadAppDelegate.h; sourceTree = "<group>"; };
+		5584E6A4208F84FC00D75306 /* BiliPadAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BiliPadAppDelegate.m; sourceTree = "<group>"; };
+		5584E6AA208F870200D75306 /* BiliUniversalBuildConfigModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiliUniversalBuildConfigModule.h; sourceTree = "<group>"; };
+		5584E6AB208F870200D75306 /* BiliUniversalBuildConfigModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BiliUniversalBuildConfigModule.m; sourceTree = "<group>"; };
+		71D1D0651EEE783400BF6CB1 /* hook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hook.h; sourceTree = "<group>"; };
+		71D1D0911EEE8A8400BF6CB1 /* hook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = hook.m; sourceTree = "<group>"; };
+		920D68F71D22619300F94B34 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		920D68FE1D2261BB00F94B34 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		920D68FF1D2261C200F94B34 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		9226CC8F1D212B79001C1519 /* bili-universal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "bili-universal.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9226CC931D212B79001C1519 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		9226CC9E1D212B79001C1519 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9226CCA31D212B79001C1519 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		92B6CA671D214FDA008A4DD6 /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
+		92B6CA6F1D21533B008A4DD6 /* bili-universal.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "bili-universal.entitlements"; sourceTree = "<group>"; };
+		92C923541D24FDFA00B16AC1 /* BiliNoneCpp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BiliNoneCpp.mm; sourceTree = "<group>"; };
+		A84641571FE8BEE90011B2FB /* copyright.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = copyright.png; sourceTree = "<group>"; };
+		A84641581FE8BEE90011B2FB /* copyright@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "copyright@2x.png"; sourceTree = "<group>"; };
+		A84641591FE8BEE90011B2FB /* copyright@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "copyright@3x.png"; sourceTree = "<group>"; };
+		D47F72132075E384002C3167 /* Dummy4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Dummy4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D47F72192075E388002C3167 /* Dummy5.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Dummy5.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D47F721F2075E38A002C3167 /* Dummy6.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Dummy6.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D47F72252075E38D002C3167 /* Dummy7.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Dummy7.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D47F722B2075E38E002C3167 /* Dummy8.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Dummy8.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D47F72312075E38F002C3167 /* Dummy9.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Dummy9.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D47F72372075E3AB002C3167 /* Dummy10.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Dummy10.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		043E1E661DAA4AAC0094CD08 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5237591D1EC316FB00FD8111 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				54C9765A20173E80007C1C75 /* BiliUtils.framework in Frameworks */,
+				549FBC7F207D0CBA004F2090 /* Bugly.framework in Frameworks */,
+				543BEA1C207391FA00A1D112 /* CoreTelephony.framework in Frameworks */,
+				549FBC83207D0CCD004F2090 /* libc++.tbd in Frameworks */,
+				543BEA282073943400A1D112 /* libMobClickLibrary.a in Frameworks */,
+				543BEA262073941600A1D112 /* libmtasdk.a in Frameworks */,
+				543BEA202073921300A1D112 /* libsqlite3.tbd in Frameworks */,
+				543BEA222073921700A1D112 /* libz.tbd in Frameworks */,
+				529E7B312020787000E6B141 /* NotificationCenter.framework in Frameworks */,
+				543BEA1E2073920600A1D112 /* SystemConfiguration.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		549D2F2B2048203600E053C8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9226CC8C1D212B79001C1519 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				543BEA2C207396C500A1D112 /* AlipaySDK.framework in Frameworks */,
+				543BEA2E2073970C00A1D112 /* Bugly.framework in Frameworks */,
+				5444E41C20741D99003CA4B3 /* libBiliSocialSharing_ios_universal.a in Frameworks */,
+				543BEA3C20739B9600A1D112 /* libMobClickLibrary.a in Frameworks */,
+				543BEA312073972900A1D112 /* libmtasdk.a in Frameworks */,
+				54F29A382073C1E900E63B22 /* libresolv.tbd in Frameworks */,
+				543BEA392073995200A1D112 /* libWeChatSDK.a in Frameworks */,
+				543BEA3B20739B6900A1D112 /* libWeiboSDK.a in Frameworks */,
+				543BEA35207397F000A1D112 /* SobotKit.framework in Frameworks */,
+				543BEA372073980000A1D112 /* TencentLBS.framework in Frameworks */,
+				543BEA33207397C400A1D112 /* TencentOpenAPI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		043E1E6B1DAA4AAC0094CD08 /* BiliIMessageExtension */ = {
+			isa = PBXGroup;
+			children = (
+				043E1E721DAA4AAC0094CD08 /* Assets.xcassets */,
+				0431271F1DAFD1910039E45D /* BiliIMessageBrowserView.h */,
+				043127201DAFD1910039E45D /* BiliIMessageBrowserView.m */,
+				043792441DAE578F00A51E65 /* BiliIMessageExtension.entitlements */,
+				0437922D1DAC94D800A51E65 /* BiliIMessageReport.h */,
+				0437922E1DAC94D800A51E65 /* BiliIMessageReport.m */,
+				043E1E741DAA4AAC0094CD08 /* Info.plist */,
+				043E1E6F1DAA4AAC0094CD08 /* MainInterface.storyboard */,
+				043E1E6C1DAA4AAC0094CD08 /* MessagesViewController.h */,
+				043E1E6D1DAA4AAC0094CD08 /* MessagesViewController.m */,
+				043E1E7C1DAA4B900094CD08 /* Small */,
+			);
+			path = BiliIMessageExtension;
+			sourceTree = "<group>";
+		};
+		043E1E7C1DAA4B900094CD08 /* Small */ = {
+			isa = PBXGroup;
+			children = (
+				0459086C1E1E2D7E00801415 /* 10@2x.gif */,
+				0459086D1E1E2D7E00801415 /* 10@3x.gif */,
+				0459086E1E1E2D7E00801415 /* 11@2x.gif */,
+				0459086F1E1E2D7E00801415 /* 11@3x.gif */,
+				045908701E1E2D7E00801415 /* 12@2x.gif */,
+				045908711E1E2D7E00801415 /* 12@3x.gif */,
+				0459085A1E1E2D7E00801415 /* 1@2x.gif */,
+				0459085B1E1E2D7E00801415 /* 1@3x.gif */,
+				0459085C1E1E2D7E00801415 /* 2@2x.gif */,
+				0459085D1E1E2D7E00801415 /* 2@3x.gif */,
+				0459085E1E1E2D7E00801415 /* 3@2x.gif */,
+				0459085F1E1E2D7E00801415 /* 3@3x.gif */,
+				045908601E1E2D7E00801415 /* 4@2x.gif */,
+				045908611E1E2D7E00801415 /* 4@3x.gif */,
+				045908621E1E2D7E00801415 /* 5@2x.gif */,
+				045908631E1E2D7E00801415 /* 5@3x.gif */,
+				045908641E1E2D7E00801415 /* 6@2x.gif */,
+				045908651E1E2D7E00801415 /* 6@3x.gif */,
+				045908661E1E2D7E00801415 /* 7@2x.gif */,
+				045908671E1E2D7E00801415 /* 7@3x.gif */,
+				045908681E1E2D7E00801415 /* 8@2x.gif */,
+				045908691E1E2D7E00801415 /* 8@3x.gif */,
+				0459086A1E1E2D7E00801415 /* 9@2x.gif */,
+				0459086B1E1E2D7E00801415 /* 9@3x.gif */,
+			);
+			path = Small;
+			sourceTree = "<group>";
+		};
+		523759231EC316FB00FD8111 /* BiliWidgetExtension */ = {
+			isa = PBXGroup;
+			children = (
+				523759351EC317BA00FD8111 /* Api */,
+				523759531EC3181000FD8111 /* Assets.xcassets */,
+				527842FE1EEE39550063CF83 /* BiliWidgetExtension.entitlements */,
+				5237592A1EC316FC00FD8111 /* Info.plist */,
+				523759381EC317BA00FD8111 /* Model */,
+				5237593B1EC317BA00FD8111 /* TodayUtils */,
+				523759411EC317BA00FD8111 /* View */,
+				523759461EC317BA00FD8111 /* VM */,
+			);
+			path = BiliWidgetExtension;
+			sourceTree = "<group>";
+		};
+		523759351EC317BA00FD8111 /* Api */ = {
+			isa = PBXGroup;
+			children = (
+				523759361EC317BA00FD8111 /* BiliTodayWidgetApi.h */,
+				523759371EC317BA00FD8111 /* BiliTodayWidgetApi.m */,
+			);
+			path = Api;
+			sourceTree = "<group>";
+		};
+		523759381EC317BA00FD8111 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				523759391EC317BA00FD8111 /* BiliTodayVideoModel.h */,
+				5237593A1EC317BA00FD8111 /* BiliTodayVideoModel.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		5237593B1EC317BA00FD8111 /* TodayUtils */ = {
+			isa = PBXGroup;
+			children = (
+				5237593C1EC317BA00FD8111 /* NSURL+Today.h */,
+				5237593D1EC317BA00FD8111 /* NSURL+Today.m */,
+				5237593E1EC317BA00FD8111 /* TodayHeader.h */,
+				5237593F1EC317BA00FD8111 /* UIImageView+Today.h */,
+				523759401EC317BA00FD8111 /* UIImageView+Today.m */,
+			);
+			path = TodayUtils;
+			sourceTree = "<group>";
+		};
+		523759411EC317BA00FD8111 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				523759421EC317BA00FD8111 /* BiliTodayVideoCell.h */,
+				523759431EC317BA00FD8111 /* BiliTodayVideoCell.m */,
+				523759441EC317BA00FD8111 /* BiliTodayViewController.h */,
+				523759451EC317BA00FD8111 /* BiliTodayViewController.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		523759461EC317BA00FD8111 /* VM */ = {
+			isa = PBXGroup;
+			children = (
+				523759471EC317BA00FD8111 /* BiliTodayViewModel.h */,
+				523759481EC317BA00FD8111 /* BiliTodayViewModel.m */,
+			);
+			path = VM;
+			sourceTree = "<group>";
+		};
+		549D2F2F2048203600E053C8 /* BiliNotificationServiceExtension */ = {
+			isa = PBXGroup;
+			children = (
+				54DBB07E2048526900B6D218 /* BiliNotificationServiceExtension.entitlements */,
+				549D2F332048203600E053C8 /* Info.plist */,
+				549D2F302048203600E053C8 /* NotificationService.h */,
+				549D2F312048203600E053C8 /* NotificationService.m */,
+			);
+			path = BiliNotificationServiceExtension;
+			sourceTree = "<group>";
+		};
+		54C9764F20173BB3007C1C75 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				543BEA2B207396C500A1D112 /* AlipaySDK.framework */,
+				543BEA2D2073970B00A1D112 /* Bugly.framework */,
+				543BEA1B207391FA00A1D112 /* CoreTelephony.framework */,
+				5444E41B20741D99003CA4B3 /* libBiliSocialSharing_ios_universal.a */,
+				549FBC82207D0CCD004F2090 /* libc++.tbd */,
+				549FBC80207D0CC6004F2090 /* libcrypto.a */,
+				543BEA272073943400A1D112 /* libMobClickLibrary.a */,
+				543BEA252073941600A1D112 /* libmtasdk.a */,
+				543BEA292073944C00A1D112 /* libPodLinker.a */,
+				54F29A372073C1E900E63B22 /* libresolv.tbd */,
+				543BEA1F2073921200A1D112 /* libsqlite3.tbd */,
+				543BEA382073995200A1D112 /* libWeChatSDK.a */,
+				543BEA3A20739B6900A1D112 /* libWeiboSDK.a */,
+				543BEA212073921700A1D112 /* libz.tbd */,
+				543BEA34207397F000A1D112 /* SobotKit.framework */,
+				543BEA1D2073920600A1D112 /* SystemConfiguration.framework */,
+				543BEA362073980000A1D112 /* TencentLBS.framework */,
+				543BEA32207397C400A1D112 /* TencentOpenAPI.framework */,
+				543BEA23207393DD00A1D112 /* WebP.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		54C9765320173DC1007C1C75 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				54C9765720173DC1007C1C75 /* BiliUtils.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		54C9780120186FA3007C1C75 /* Projects */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Projects;
+			sourceTree = "<group>";
+		};
+		54E74DD01F20AC52005A7443 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				5412E7101F5678DC00EC6134 /* QLBase.bundle */,
+				5412E7111F5678DD00EC6134 /* QLFacility.bundle */,
+				54458709207403E0005632A2 /* SobotKit.bundle */,
+				5412E7121F5678DD00EC6134 /* TADAdVideo.bundle */,
+				5412E7131F5678DD00EC6134 /* TADQQVideo.bundle */,
+				54E74DCB1F20AC44005A7443 /* TencentOpenApi_IOS_Bundle.bundle */,
+				54E74DCC1F20AC45005A7443 /* WeiboSDK.bundle */,
+				54458747207403E7005632A2 /* ZCEmojiExpression.bundle */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		920D67A31D221EB600F94B34 /* Dependencies */ = {
+			isa = PBXGroup;
+			children = (
+				54C9765220173DC1007C1C75 /* BiliUtils.xcodeproj */,
+				529E7B302020787000E6B141 /* NotificationCenter.framework */,
+			);
+			name = Dependencies;
+			sourceTree = "<group>";
+		};
+		9226CC861D212B79001C1519 = {
+			isa = PBXGroup;
+			children = (
+				9226CC911D212B79001C1519 /* bili-universal */,
+				043E1E6B1DAA4AAC0094CD08 /* BiliIMessageExtension */,
+				549D2F2F2048203600E053C8 /* BiliNotificationServiceExtension */,
+				523759231EC316FB00FD8111 /* BiliWidgetExtension */,
+				920D67A31D221EB600F94B34 /* Dependencies */,
+				54C9764F20173BB3007C1C75 /* Frameworks */,
+				9226CC901D212B79001C1519 /* Products */,
+				54C9780120186FA3007C1C75 /* Projects */,
+				54E74DD01F20AC52005A7443 /* Resources */,
+			);
+			sourceTree = "<group>";
+		};
+		9226CC901D212B79001C1519 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9226CC8F1D212B79001C1519 /* bili-universal.app */,
+				043E1E691DAA4AAC0094CD08 /* BiliIMessageExtension.appex */,
+				549D2F2E2048203600E053C8 /* BiliNotificationServiceExtension.appex */,
+				523759201EC316FB00FD8111 /* BiliWidgetExtension.appex */,
+				544633862026CDA80043C4C2 /* Dummy1.framework */,
+				D47F72372075E3AB002C3167 /* Dummy10.framework */,
+				544633952026D0BF0043C4C2 /* Dummy2.framework */,
+				544633A32026D1F50043C4C2 /* Dummy3.framework */,
+				D47F72132075E384002C3167 /* Dummy4.framework */,
+				D47F72192075E388002C3167 /* Dummy5.framework */,
+				D47F721F2075E38A002C3167 /* Dummy6.framework */,
+				D47F72252075E38D002C3167 /* Dummy7.framework */,
+				D47F722B2075E38E002C3167 /* Dummy8.framework */,
+				D47F72312075E38F002C3167 /* Dummy9.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9226CC911D212B79001C1519 /* bili-universal */ = {
+			isa = PBXGroup;
+			children = (
+				9226CC9E1D212B79001C1519 /* Assets.xcassets */,
+				92B6CA6F1D21533B008A4DD6 /* bili-universal.entitlements */,
+				92C923541D24FDFA00B16AC1 /* BiliNoneCpp.mm */,
+				A84641571FE8BEE90011B2FB /* copyright.png */,
+				A84641581FE8BEE90011B2FB /* copyright@2x.png */,
+				A84641591FE8BEE90011B2FB /* copyright@3x.png */,
+				71D1D0651EEE783400BF6CB1 /* hook.h */,
+				71D1D0911EEE8A8400BF6CB1 /* hook.m */,
+				9226CCA31D212B79001C1519 /* Info.plist */,
+				920D68F81D22619300F94B34 /* InfoPlist.strings */,
+				92B6CA671D214FDA008A4DD6 /* Launch Screen.xib */,
+				9226CC931D212B79001C1519 /* main.m */,
+				5584E68B208F839900D75306 /* BiliPhoneAppDelegate.h */,
+				5584E68C208F839900D75306 /* BiliPhoneAppDelegate.m */,
+				5584E6A3208F84FC00D75306 /* BiliPadAppDelegate.h */,
+				5584E6A4208F84FC00D75306 /* BiliPadAppDelegate.m */,
+				5584E6AA208F870200D75306 /* BiliUniversalBuildConfigModule.h */,
+				5584E6AB208F870200D75306 /* BiliUniversalBuildConfigModule.m */,
+			);
+			path = "bili-universal";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		043E1E681DAA4AAC0094CD08 /* BiliIMessageExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 043E1E781DAA4AAC0094CD08 /* Build configuration list for PBXNativeTarget "BiliIMessageExtension" */;
+			buildPhases = (
+				043E1E651DAA4AAC0094CD08 /* Sources */,
+				043E1E661DAA4AAC0094CD08 /* Frameworks */,
+				043E1E671DAA4AAC0094CD08 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BiliIMessageExtension;
+			productName = BiliIMessageExtension;
+			productReference = 043E1E691DAA4AAC0094CD08 /* BiliIMessageExtension.appex */;
+			productType = "com.apple.product-type.app-extension.messages";
+		};
+		5237591F1EC316FB00FD8111 /* BiliWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 523759341EC316FC00FD8111 /* Build configuration list for PBXNativeTarget "BiliWidgetExtension" */;
+			buildPhases = (
+				5237591C1EC316FB00FD8111 /* Sources */,
+				5237591D1EC316FB00FD8111 /* Frameworks */,
+				5237591E1EC316FB00FD8111 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				54C9765920173E0F007C1C75 /* PBXTargetDependency */,
+			);
+			name = BiliWidgetExtension;
+			productName = BiliWidgetExtension;
+			productReference = 523759201EC316FB00FD8111 /* BiliWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		544633852026CDA80043C4C2 /* Dummy1 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5446338D2026CDA80043C4C2 /* Build configuration list for PBXNativeTarget "Dummy1" */;
+			buildPhases = (
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Dummy1;
+			productName = Dummy1;
+			productReference = 544633862026CDA80043C4C2 /* Dummy1.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		544633942026D0BF0043C4C2 /* Dummy2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5446339A2026D0BF0043C4C2 /* Build configuration list for PBXNativeTarget "Dummy2" */;
+			buildPhases = (
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Dummy2;
+			productName = Dummy2;
+			productReference = 544633952026D0BF0043C4C2 /* Dummy2.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		544633A22026D1F50043C4C2 /* Dummy3 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 544633A82026D1F50043C4C2 /* Build configuration list for PBXNativeTarget "Dummy3" */;
+			buildPhases = (
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Dummy3;
+			productName = Dummy3;
+			productReference = 544633A32026D1F50043C4C2 /* Dummy3.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		549D2F2D2048203600E053C8 /* BiliNotificationServiceExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 549D2F392048203600E053C8 /* Build configuration list for PBXNativeTarget "BiliNotificationServiceExtension" */;
+			buildPhases = (
+				549D2F2A2048203600E053C8 /* Sources */,
+				549D2F2B2048203600E053C8 /* Frameworks */,
+				549D2F2C2048203600E053C8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BiliNotificationServiceExtension;
+			productName = BiliNotificationServiceExtension;
+			productReference = 549D2F2E2048203600E053C8 /* BiliNotificationServiceExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		9226CC8E1D212B79001C1519 /* bili-universal */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9226CCA61D212B79001C1519 /* Build configuration list for PBXNativeTarget "bili-universal" */;
+			buildPhases = (
+				9226CC8B1D212B79001C1519 /* Sources */,
+				9226CC8C1D212B79001C1519 /* Frameworks */,
+				9226CC8D1D212B79001C1519 /* Resources */,
+				7B49BE1A1D5099070071E8BB /* Buggly */,
+				043E1DE41DAA3A400094CD08 /* Embed App Extensions */,
+				542E1E4E1E5E95EA005DDF33 /* Embed Frameworks */,
+				543BE86520737B4300A1D112 /* Strip */,
+				542F1D1F1F3029BA00E31FF5 /* Carthage */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				549D2F352048203600E053C8 /* PBXTargetDependency */,
+			);
+			name = "bili-universal";
+			productName = "bili-universal";
+			productReference = 9226CC8F1D212B79001C1519 /* bili-universal.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D47F720F2075E384002C3167 /* Dummy4 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D47F72102075E384002C3167 /* Build configuration list for PBXNativeTarget "Dummy4" */;
+			buildPhases = (
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Dummy4;
+			productName = Dummy4;
+			productReference = D47F72132075E384002C3167 /* Dummy4.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		D47F72152075E388002C3167 /* Dummy5 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D47F72162075E388002C3167 /* Build configuration list for PBXNativeTarget "Dummy5" */;
+			buildPhases = (
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Dummy5;
+			productName = Dummy5;
+			productReference = D47F72192075E388002C3167 /* Dummy5.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		D47F721B2075E38A002C3167 /* Dummy6 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D47F721C2075E38A002C3167 /* Build configuration list for PBXNativeTarget "Dummy6" */;
+			buildPhases = (
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Dummy6;
+			productName = Dummy6;
+			productReference = D47F721F2075E38A002C3167 /* Dummy6.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		D47F72212075E38D002C3167 /* Dummy7 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D47F72222075E38D002C3167 /* Build configuration list for PBXNativeTarget "Dummy7" */;
+			buildPhases = (
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Dummy7;
+			productName = Dummy7;
+			productReference = D47F72252075E38D002C3167 /* Dummy7.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		D47F72272075E38E002C3167 /* Dummy8 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D47F72282075E38E002C3167 /* Build configuration list for PBXNativeTarget "Dummy8" */;
+			buildPhases = (
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Dummy8;
+			productName = Dummy8;
+			productReference = D47F722B2075E38E002C3167 /* Dummy8.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		D47F722D2075E38F002C3167 /* Dummy9 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D47F722E2075E38F002C3167 /* Build configuration list for PBXNativeTarget "Dummy9" */;
+			buildPhases = (
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Dummy9;
+			productName = Dummy9;
+			productReference = D47F72312075E38F002C3167 /* Dummy9.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		D47F72332075E3AB002C3167 /* Dummy10 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D47F72342075E3AB002C3167 /* Build configuration list for PBXNativeTarget "Dummy10" */;
+			buildPhases = (
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Dummy10;
+			productName = Dummy10;
+			productReference = D47F72372075E3AB002C3167 /* Dummy10.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9226CC871D212B79001C1519 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0820;
+				ORGANIZATIONNAME = Bilibili;
+				TargetAttributes = {
+					043E1E681DAA4AAC0094CD08 = {
+						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = 746845GC96;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
+					};
+					5237591F1EC316FB00FD8111 = {
+						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = 746845GC96;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
+					};
+					549D2F2D2048203600E053C8 = {
+						CreatedOnToolsVersion = 9.2;
+						DevelopmentTeam = 746845GC96;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
+					};
+					9226CC8E1D212B79001C1519 = {
+						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = 746845GC96;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.InAppPurchase = {
+								enabled = 1;
+							};
+							com.apple.Keychain = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+							com.apple.SafariKeychain = {
+								enabled = 1;
+							};
+						};
+					};
+				};
+			};
+			buildConfigurationList = 9226CC8A1D212B79001C1519 /* Build configuration list for PBXProject "bili-universal" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				"zh-Hans",
+				ja,
+			);
+			mainGroup = 9226CC861D212B79001C1519;
+			productRefGroup = 9226CC901D212B79001C1519 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 54C9765320173DC1007C1C75 /* Products */;
+					ProjectRef = 54C9765220173DC1007C1C75 /* BiliUtils.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				9226CC8E1D212B79001C1519 /* bili-universal */,
+				043E1E681DAA4AAC0094CD08 /* BiliIMessageExtension */,
+				549D2F2D2048203600E053C8 /* BiliNotificationServiceExtension */,
+				5237591F1EC316FB00FD8111 /* BiliWidgetExtension */,
+				544633852026CDA80043C4C2 /* Dummy1 */,
+				D47F72332075E3AB002C3167 /* Dummy10 */,
+				544633942026D0BF0043C4C2 /* Dummy2 */,
+				544633A22026D1F50043C4C2 /* Dummy3 */,
+				D47F720F2075E384002C3167 /* Dummy4 */,
+				D47F72152075E388002C3167 /* Dummy5 */,
+				D47F721B2075E38A002C3167 /* Dummy6 */,
+				D47F72212075E38D002C3167 /* Dummy7 */,
+				D47F72272075E38E002C3167 /* Dummy8 */,
+				D47F722D2075E38F002C3167 /* Dummy9 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		54C9765720173DC1007C1C75 /* BiliUtils.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = BiliUtils.framework;
+			remoteRef = 54C9765620173DC1007C1C75 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		043E1E671DAA4AAC0094CD08 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				045908841E1E2D7E00801415 /* 10@2x.gif in Resources */,
+				045908851E1E2D7E00801415 /* 10@3x.gif in Resources */,
+				045908861E1E2D7E00801415 /* 11@2x.gif in Resources */,
+				045908871E1E2D7E00801415 /* 11@3x.gif in Resources */,
+				045908881E1E2D7E00801415 /* 12@2x.gif in Resources */,
+				045908891E1E2D7E00801415 /* 12@3x.gif in Resources */,
+				045908721E1E2D7E00801415 /* 1@2x.gif in Resources */,
+				045908731E1E2D7E00801415 /* 1@3x.gif in Resources */,
+				045908741E1E2D7E00801415 /* 2@2x.gif in Resources */,
+				045908751E1E2D7E00801415 /* 2@3x.gif in Resources */,
+				045908761E1E2D7E00801415 /* 3@2x.gif in Resources */,
+				045908771E1E2D7E00801415 /* 3@3x.gif in Resources */,
+				045908781E1E2D7E00801415 /* 4@2x.gif in Resources */,
+				045908791E1E2D7E00801415 /* 4@3x.gif in Resources */,
+				0459087A1E1E2D7E00801415 /* 5@2x.gif in Resources */,
+				0459087B1E1E2D7E00801415 /* 5@3x.gif in Resources */,
+				0459087C1E1E2D7E00801415 /* 6@2x.gif in Resources */,
+				0459087D1E1E2D7E00801415 /* 6@3x.gif in Resources */,
+				0459087E1E1E2D7E00801415 /* 7@2x.gif in Resources */,
+				0459087F1E1E2D7E00801415 /* 7@3x.gif in Resources */,
+				045908801E1E2D7E00801415 /* 8@2x.gif in Resources */,
+				045908811E1E2D7E00801415 /* 8@3x.gif in Resources */,
+				045908821E1E2D7E00801415 /* 9@2x.gif in Resources */,
+				045908831E1E2D7E00801415 /* 9@3x.gif in Resources */,
+				043E1E731DAA4AAC0094CD08 /* Assets.xcassets in Resources */,
+				043E1E711DAA4AAC0094CD08 /* MainInterface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5237591E1EC316FB00FD8111 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				523759541EC3181000FD8111 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		549D2F2C2048203600E053C8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9226CC8D1D212B79001C1519 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9226CC9F1D212B79001C1519 /* Assets.xcassets in Resources */,
+				A846415A1FE8BEEA0011B2FB /* copyright.png in Resources */,
+				A846415B1FE8BEEA0011B2FB /* copyright@2x.png in Resources */,
+				A846415C1FE8BEEA0011B2FB /* copyright@3x.png in Resources */,
+				920D68F61D22619300F94B34 /* InfoPlist.strings in Resources */,
+				92B6CA681D214FDA008A4DD6 /* Launch Screen.xib in Resources */,
+				5412E7141F5678DD00EC6134 /* QLBase.bundle in Resources */,
+				5412E7151F5678DD00EC6134 /* QLFacility.bundle in Resources */,
+				54458748207403E8005632A2 /* SobotKit.bundle in Resources */,
+				5412E7161F5678DD00EC6134 /* TADAdVideo.bundle in Resources */,
+				5412E7171F5678DD00EC6134 /* TADQQVideo.bundle in Resources */,
+				54E74DCE1F20AC45005A7443 /* TencentOpenApi_IOS_Bundle.bundle in Resources */,
+				54E74DCF1F20AC45005A7443 /* WeiboSDK.bundle in Resources */,
+				54458749207403E8005632A2 /* ZCEmojiExpression.bundle in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		542F1D1F1F3029BA00E31FF5 /* Carthage */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = Carthage;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "echo $CONFIGURATION\nif [[ $CONFIGURATION == \"Release\" ]] ; then\n    time carthage copy-frameworks\nfi";
+		};
+		543BE86520737B4300A1D112 /* Strip */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = Strip;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "// exclude debug mode in simulator\necho \"===User:$USER Configuration:$CONFIGURATION===\"\nif [[ $CONFIGURATION == \"Release\" || $USER == \"ios-builder2\" ]] ; then\n    for idx in $( eval echo {0..`expr $SCRIPT_OUTPUT_FILE_COUNT - 1`})\n    do\n        eval f=$(echo \\$SCRIPT_OUTPUT_FILE_${idx})\n        ruby ${SRCROOT}/../tools/strip_static.rb $f $EXPANDED_CODE_SIGN_IDENTITY ${SRCROOT}/../tools/dy.dymmy\n    done\nfi";
+		};
+		7B49BE1A1D5099070071E8BB /* Buggly */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = Buggly;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		043E1E651DAA4AAC0094CD08 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				043127211DAFD1910039E45D /* BiliIMessageBrowserView.m in Sources */,
+				0437922F1DAC94D800A51E65 /* BiliIMessageReport.m in Sources */,
+				043E1E6E1DAA4AAC0094CD08 /* MessagesViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5237591C1EC316FB00FD8111 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5237594D1EC317BA00FD8111 /* BiliTodayVideoCell.m in Sources */,
+				5237594A1EC317BA00FD8111 /* BiliTodayVideoModel.m in Sources */,
+				5237594E1EC317BA00FD8111 /* BiliTodayViewController.m in Sources */,
+				5237594F1EC317BA00FD8111 /* BiliTodayViewModel.m in Sources */,
+				523759491EC317BA00FD8111 /* BiliTodayWidgetApi.m in Sources */,
+				5237594B1EC317BA00FD8111 /* NSURL+Today.m in Sources */,
+				5237594C1EC317BA00FD8111 /* UIImageView+Today.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		549D2F2A2048203600E053C8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				549D2F322048203600E053C8 /* NotificationService.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9226CC8B1D212B79001C1519 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5584E6A5208F84FC00D75306 /* BiliPadAppDelegate.m in Sources */,
+				92C923551D24FDFA00B16AC1 /* BiliNoneCpp.mm in Sources */,
+				71D1D0661EEE783400BF6CB1 /* hook.h in Sources */,
+				71D1D0921EEE8A8400BF6CB1 /* hook.m in Sources */,
+				5584E6AC208F870200D75306 /* BiliUniversalBuildConfigModule.m in Sources */,
+				9226CC941D212B79001C1519 /* main.m in Sources */,
+				5584E68D208F839900D75306 /* BiliPhoneAppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		549D2F352048203600E053C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 549D2F2D2048203600E053C8 /* BiliNotificationServiceExtension */;
+			targetProxy = 549D2F342048203600E053C8 /* PBXContainerItemProxy */;
+		};
+		54C9765920173E0F007C1C75 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = BiliUtils;
+			targetProxy = 54C9765820173E0F007C1C75 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		043E1E6F1DAA4AAC0094CD08 /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				043E1E701DAA4AAC0094CD08 /* Base */,
+			);
+			name = MainInterface.storyboard;
+			sourceTree = "<group>";
+		};
+		920D68F81D22619300F94B34 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				920D68F71D22619300F94B34 /* en */,
+				920D68FF1D2261C200F94B34 /* ja */,
+				920D68FE1D2261BB00F94B34 /* zh-Hans */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		043E1E791DAA4AAC0094CD08 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "iMessage App Icon";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CODE_SIGN_ENTITLEMENTS = BiliIMessageExtension/BiliIMessageExtension.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 746845GC96;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = BiliIMessageExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = tv.danmaku.bilianime.BiliIMessageExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		043E1E7A1DAA4AAC0094CD08 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "iMessage App Icon";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CODE_SIGN_ENTITLEMENTS = BiliIMessageExtension/BiliIMessageExtension.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 746845GC96;
+				INFOPLIST_FILE = BiliIMessageExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = tv.danmaku.bilianime.BiliIMessageExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		5237592E1EC316FC00FD8111 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_ENTITLEMENTS = BiliWidgetExtension/BiliWidgetExtension.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 746845GC96;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../Carthage/Build/iOS",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/3rd/webp",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/Bugly",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = BiliWidgetExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/MTA",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/umeng",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/PodLinker",
+					"$(PROJECT_DIR)/../ffmpeg-bin3/lib",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					BFCApiClient,
+					"-framework",
+					BFCTracker,
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = tv.danmaku.bilianime.BilibiliWidgetExt;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		5237592F1EC316FC00FD8111 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_ENTITLEMENTS = BiliWidgetExtension/BiliWidgetExtension.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 746845GC96;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../Carthage/Build/iOS",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/3rd/webp",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/Bugly",
+				);
+				INFOPLIST_FILE = BiliWidgetExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/MTA",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/umeng",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/PodLinker",
+					"$(PROJECT_DIR)/../ffmpeg-bin3/lib",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					BFCApiClient,
+					"-framework",
+					BFCTracker,
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = tv.danmaku.bilianime.BilibiliWidgetExt;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		5446338B2026CDA80043C4C2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ../tools/template/DummyInfo.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bilibili.Dummy1;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		5446338C2026CDA80043C4C2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ../tools/template/DummyInfo.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bilibili.Dummy1;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		5446339B2026D0BF0043C4C2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ../tools/template/DummyInfo.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bilibili.Dummy2;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		5446339C2026D0BF0043C4C2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ../tools/template/DummyInfo.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bilibili.Dummy2;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		544633A92026D1F50043C4C2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ../tools/template/DummyInfo.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bilibili.Dummy3;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		544633AA2026D1F50043C4C2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ../tools/template/DummyInfo.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bilibili.Dummy3;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		549D2F372048203600E053C8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = BiliNotificationServiceExtension/BiliNotificationServiceExtension.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 746845GC96;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/iOS";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = BiliNotificationServiceExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = tv.danmaku.bilianime.BiliNotificationServiceExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		549D2F382048203600E053C8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = BiliNotificationServiceExtension/BiliNotificationServiceExtension.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 746845GC96;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/iOS";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = BiliNotificationServiceExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = tv.danmaku.bilianime.BiliNotificationServiceExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		9226CCA41D212B79001C1519 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		9226CCA51D212B79001C1519 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = "";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		9226CCA71D212B79001C1519 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "bili-universal/bili-universal.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 746845GC96;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/AlipaySDK_15.1.6",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/Bugly",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/QQ_iOS_SDK_V3.2.1",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/SobotKit",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/TencentLBS",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/3rd/webp",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS=1",
+					"BUILDCFG=1",
+				);
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				INFOPLIST_FILE = "bili-universal/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliCore/BiliCore/3rd/TVKPlayer",
+					"$(PROJECT_DIR)/../ffmpeg-bin3/lib",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/MTA",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/WechatSDK_1.7.5",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/WeiboSDK-3.2.0",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/umeng",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/PodLinker",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/socialSharing",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = tv.danmaku.bilianime;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		9226CCA81D212B79001C1519 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "bili-universal/bili-universal.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 746845GC96;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/AlipaySDK_15.1.6",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/Bugly",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/QQ_iOS_SDK_V3.2.1",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/SobotKit",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/TencentLBS",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/3rd/webp",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = "GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS=1";
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				INFOPLIST_FILE = "bili-universal/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliCore/BiliCore/3rd/TVKPlayer",
+					"$(PROJECT_DIR)/../ffmpeg-bin3/lib",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/MTA",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/WechatSDK_1.7.5",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/WeiboSDK-3.2.0",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/umeng",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/PodLinker",
+					"$(PROJECT_DIR)/../Carthage/Checkouts/BiliUtils/SDK/socialSharing",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = tv.danmaku.bilianime;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		D47F728520760926002C3167 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ../tools/template/DummyInfo.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bilibili.Dummy4;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		D47F728620760926002C3167 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ../tools/template/DummyInfo.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bilibili.Dummy4;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		D47F728720760926002C3167 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ../tools/template/DummyInfo.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bilibili.Dummy5;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		D47F728820760926002C3167 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ../tools/template/DummyInfo.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bilibili.Dummy5;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		D47F728920760926002C3167 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ../tools/template/DummyInfo.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bilibili.Dummy6;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		D47F728A20760926002C3167 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ../tools/template/DummyInfo.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bilibili.Dummy6;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		D47F728B20760926002C3167 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ../tools/template/DummyInfo.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bilibili.Dummy7;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		D47F728C20760926002C3167 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ../tools/template/DummyInfo.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bilibili.Dummy7;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		D47F728D20760926002C3167 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ../tools/template/DummyInfo.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bilibili.Dummy8;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		D47F728E20760926002C3167 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ../tools/template/DummyInfo.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bilibili.Dummy8;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		D47F728F20760926002C3167 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ../tools/template/DummyInfo.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bilibili.Dummy9;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		D47F729020760926002C3167 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ../tools/template/DummyInfo.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bilibili.Dummy9;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		D47F729120760926002C3167 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ../tools/template/DummyInfo.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bilibili.Dummy10;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		D47F729220760926002C3167 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ../tools/template/DummyInfo.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bilibili.Dummy10;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		043E1E781DAA4AAC0094CD08 /* Build configuration list for PBXNativeTarget "BiliIMessageExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				043E1E791DAA4AAC0094CD08 /* Debug */,
+				043E1E7A1DAA4AAC0094CD08 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		523759341EC316FC00FD8111 /* Build configuration list for PBXNativeTarget "BiliWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5237592E1EC316FC00FD8111 /* Debug */,
+				5237592F1EC316FC00FD8111 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5446338D2026CDA80043C4C2 /* Build configuration list for PBXNativeTarget "Dummy1" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5446338B2026CDA80043C4C2 /* Debug */,
+				5446338C2026CDA80043C4C2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5446339A2026D0BF0043C4C2 /* Build configuration list for PBXNativeTarget "Dummy2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5446339B2026D0BF0043C4C2 /* Debug */,
+				5446339C2026D0BF0043C4C2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		544633A82026D1F50043C4C2 /* Build configuration list for PBXNativeTarget "Dummy3" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				544633A92026D1F50043C4C2 /* Debug */,
+				544633AA2026D1F50043C4C2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		549D2F392048203600E053C8 /* Build configuration list for PBXNativeTarget "BiliNotificationServiceExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				549D2F372048203600E053C8 /* Debug */,
+				549D2F382048203600E053C8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9226CC8A1D212B79001C1519 /* Build configuration list for PBXProject "bili-universal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9226CCA41D212B79001C1519 /* Debug */,
+				9226CCA51D212B79001C1519 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9226CCA61D212B79001C1519 /* Build configuration list for PBXNativeTarget "bili-universal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9226CCA71D212B79001C1519 /* Debug */,
+				9226CCA81D212B79001C1519 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D47F72102075E384002C3167 /* Build configuration list for PBXNativeTarget "Dummy4" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D47F728520760926002C3167 /* Debug */,
+				D47F728620760926002C3167 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D47F72162075E388002C3167 /* Build configuration list for PBXNativeTarget "Dummy5" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D47F728720760926002C3167 /* Debug */,
+				D47F728820760926002C3167 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D47F721C2075E38A002C3167 /* Build configuration list for PBXNativeTarget "Dummy6" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D47F728920760926002C3167 /* Debug */,
+				D47F728A20760926002C3167 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D47F72222075E38D002C3167 /* Build configuration list for PBXNativeTarget "Dummy7" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D47F728B20760926002C3167 /* Debug */,
+				D47F728C20760926002C3167 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D47F72282075E38E002C3167 /* Build configuration list for PBXNativeTarget "Dummy8" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D47F728D20760926002C3167 /* Debug */,
+				D47F728E20760926002C3167 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D47F722E2075E38F002C3167 /* Build configuration list for PBXNativeTarget "Dummy9" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D47F728F20760926002C3167 /* Debug */,
+				D47F729020760926002C3167 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D47F72342075E3AB002C3167 /* Build configuration list for PBXNativeTarget "Dummy10" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D47F729120760926002C3167 /* Debug */,
+				D47F729220760926002C3167 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9226CC871D212B79001C1519 /* Project object */;
+}

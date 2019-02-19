@@ -8,19 +8,7 @@ require 'json'
 
 require_relative 'string_colorize'
 require_relative 'panthage_dependency'
-require_relative 'panthage_file'
-
-#
-# Parameters list
-# 0: workspace directory
-# 1: project name
-#
-
-# $panda_dep_table[:Panda].each do |value|
-#   puts "#{value}"
-# end
-
-# exit
+require_relative 'panthage_utils'
 
 raise 'wrong args usage' unless ARGV.length >= 3
 
@@ -79,18 +67,21 @@ repo_base = "#{current_dir}/Carthage/Repo"
 checkout_base = "#{current_dir}/Carthage/Checkouts"
 build_base = "#{current_dir}/Carthage/Build"
 
+# all cartfile info are here, tree
+cartfile_main = {}
+
 setup_carthage_env(current_dir.to_s)
 
 # analysis the Cartfile to grab workspace's basic information
-cartfile.merge!(read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile"))
-cartfile.merge!(read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile.private"))
+cartfile = merge_cart_file(cartfile, read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile"))
+cartfile = merge_cart_file(cartfile, read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile.private"))
 
-# after merged cartfile data, before next parse cartfile detail, pls check the `conflict` property of the `Cartfile` instance. 
+# after merged cartfile data, before next parse cartfile detail, pls check the `conflict` property of the `Cartfile` instance.
 
 # setup and sync git repo
-cartfile.select { |_, v| GitRepo.type(v) == GitRepoType::TAG }
+cartfile.select { |_, v| v.lib_type == LibType::GIT }
         .each do |name, value|
-  clone_bare_repo(repo_base, name, value, command_install?(job_command))
+  clone_bare_repo(repo_base, name, value, Command.command_install?(job_command))
 end
 
 # generate Cartfile.resolved file.
@@ -98,6 +89,21 @@ solve_cart_file(current_dir.to_s, cartfile, using_carthage)
 
 # read the latest version of Cartfile.resolved file.
 cartfile_resolved = read_cart_solved_file(current_dir.to_s)
+
+# save the cartfile and cartfile_resolved into cartfile_main
+cartfile.select { |_, v| v.is_new == true && v.lib_type == LibType::GIT }
+        .each do |name, value|
+  unless cartfile_resolved.key?(name.to_s)
+    raise "could find resolved cartfile information for #{name}"
+  end
+
+  resolved_data = cartfile_resolved[name]
+  value.hash = resolved_data.hash
+
+  cartfile_main[name] = value
+end
+
+puts cartfile_main if PanConstants.debuging
 
 # fetch binary framework first
 cartfile_resolved.select { |_, value| value.type == 'binary' }
@@ -109,18 +115,20 @@ end
 # deal with git repo first
 cartfile_resolved.select { |_, value| value.type == 'git' }
                  .each do |name, _|
-  command = "git init --separate-git-dir=#{current_dir}/Carthage/Repo/#{name}.git;"
+  command = ''
+
+  command +=  "mkdir #{current_dir}/Carthage/Checkouts/#{name}; cd $_;"
+  command +=  "git init --separate-git-dir=#{current_dir}/Carthage/Repo/#{name}.git;"
   command += if using_sync
                'git reset --hard -q; git pull;'
              else
                'git reset -q;'
              end
 
-  system("cd #{current_dir}; carthage bootstrap --platform iOS --verbose --no-build #{name};" \
-      + "mkdir -p #{current_dir}/Carthage/Checkouts/#{name}/Carthage/ ; cd $_ ;" \
-      + "ln -s #{current_dir}/Carthage/Build . ; cd #{current_dir}/Carthage/Checkouts/#{name}/;" \
-      + command)
-  next if using_sync
+  command +=  "mkdir -p #{current_dir}/Carthage/Checkouts/#{name}/Carthage/; cd $_;"
+  command +=  "ln -s #{current_dir}/Carthage/Build/ . ; cd #{current_dir}/Carthage/Checkouts/#{name}/;"
+
+  system(command)
 end
 
 # project_path = current_dir + '/' + scheme_target + '.xcodeproj'

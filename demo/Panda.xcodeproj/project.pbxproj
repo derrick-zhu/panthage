@@ -7754,6 +7754,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				90CCD145207BB49600DAA7DA /* agreements_cn.json in Resources */,
+				1835EA072228DF590056E10C /* Images.xcassets in Resources */,
 				C66BC1BB1C846216001F75C8 /* agreements_es.json in Resources */,
 				C66BC1BC1C846216001F75C8 /* agreements_kr.json in Resources */,
 				C66BC1BD1C846216001F75C8 /* agreements_mx.json in Resources */,

@@ -96,4 +96,4 @@ fi
 # fi
 
 # echo $params
-ruby tools/xcode_project.rb $params
+ruby tools/panthage_core.rb $params

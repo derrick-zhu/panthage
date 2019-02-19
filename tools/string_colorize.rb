@@ -1,3 +1,6 @@
+#!/usr/bin/ruby
+# frozen_string_literal: true
+
 # String extension constants or methods
 class String
   def black
