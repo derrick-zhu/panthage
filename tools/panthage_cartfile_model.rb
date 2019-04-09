@@ -7,7 +7,8 @@ require_relative 'panthage_ver_helper'
 
 class ConflictType
   OK = 0
-  WARNING = OK + 1
+  SKIP = OK + 1
+  WARNING = SKIP + 1
   ERROR = WARNING + 1
 end
 
@@ -38,15 +39,15 @@ class CartfileBase
     @dependency = []
   end
 
-  def appendDependency(new_lib)
+  def append_dependency(new_lib)
     dependency.push(new_lib)
   end
 
-  def numberOfDependency
+  def number_of_dependency
     dependency.length
   end
 
-  def dependencyLibWithIndex(idx)
+  def dependency_with_index(idx)
     dependency[idx] if idx.negative? || idx >= dependency.length
   end
 

@@ -194,6 +194,9 @@ def solve_cart_file(current_dir, cartfile)
     if value.lib_type == LibType::BINARY
       uri = URI(value.url)
       raw = Net::HTTP.get(uri)
+
+      puts raw.to_s
+
       data = JSON.parse(raw)
       finded = false
       data.sort_by { |k, _v| Gem::Version.new(k) }.reverse_each do |ver|
@@ -259,7 +262,6 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
   if value.repo_type == GitRepoType::TAG
     puts 'its tag' if PanConstants.debuging
     git_target_head = VersionHelper.identify(value.tag)
-
   elsif value.repo_type == GitRepoType::BRANCH
     puts 'its branch' if PanConstants.debuging
     git_target_head = value.branch
@@ -345,23 +347,18 @@ def solve_project_carthage(workspace_base_dir, scheme_target, belong_to_proj_nam
   cartfile = merge_cart_file(cartfile, read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile"))
   cartfile = merge_cart_file(cartfile, read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile.private"))
 
+  result = CartfileBase.new(scheme_target, belong_to_proj_name)
   # setup and sync git repo
   git_repo_for_checkout = {}
 
-  cartfile.select { |_, v| v.lib_type == LibType::GIT }.each do |name, value|
+  cartfile.each do |name, value|
+    git_repo_for_checkout[name] = value if ProjectCartManager.instance.append_framework(value)
+    # add each cartfile data into result's dependency
+    result.append_dependency(value)
+  end
+
+  git_repo_for_checkout.select { |_, v| v.lib_type == LibType::GIT }.each do |name, value|
     clone_bare_repo("#{workspace_base_dir}/Carthage/Repo", name, value, is_install)
-    git_repo_for_checkout[name] = value if value.is_new
-  end
-
-  result = CartfileBase.new(scheme_target, belong_to_proj_name)
-
-  # add each cartfile data into result's dependency
-  cartfile.each do |_, value|
-    result.appendDependency(value)
-  end
-
-  cartfile.each do |_, value|
-    ProjectCartManager.instance.append_framework(value)
   end
 
   # generate Cartfile.resolved file.
@@ -383,7 +380,7 @@ end
 # solve_project_dependency
 def solve_project_dependency(proj_cart_data, workspace_base_dir, is_install, is_sync)
   return if proj_cart_data.nil?
-  return unless proj_cart_data.numberOfDependency.positive?
+  return unless proj_cart_data.number_of_dependency.positive?
 
   proj_cart_data.dependency.select { |block| block.is_new == true }.each do |value|
     puts "#{value.proj_name} -> #{value}" if PanConstants.debuging
@@ -396,7 +393,7 @@ def solve_project_dependency(proj_cart_data, workspace_base_dir, is_install, is_
       is_sync
     )
 
-    value.appendDependency(new_sub_dir)
+    value.append_dependency(new_sub_dir)
     value.is_new = false
   end
 

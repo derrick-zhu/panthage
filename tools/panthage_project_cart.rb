@@ -60,11 +60,24 @@ class ProjectCartManager
 
     old_lib = framework_with_name(new_lib.proj_name)
 
-    verify_library_compatible(old_lib, new_lib) unless old_lib.nil?
+    unless old_lib.nil?
+      verify_library_compatible(old_lib, new_lib)
+      puts "#{new_lib.proj_name} had been there.\nNewLib: #{new_lib.description}\nOldLib: #{old_lib.description}"
+    end
 
     puts new_lib.description.bg_gray.red.to_s
 
-    frameworks[new_lib.proj_name] = FrameworkBuildInfo.new(new_lib.proj_name, new_lib) unless new_lib.conflict_type == ConflictType::ERROR
+    case new_lib.conflict_type
+    when ConflictType::ERROR
+      raise new_lib.error_msg.to_s
+
+    when ConflictType::WARNING
+      puts new_lib.error_msg.to_s
+      frameworks[new_lib.proj_name] = FrameworkBuildInfo.new(new_lib.proj_name, new_lib)
+
+    end
+
+    new_lib.conflict_type == ConflictType::WARNING || new_lib.conflict_type == ConflictType::ERROR
   end
 
   def framework_with_name(name)
