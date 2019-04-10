@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 # frozen_string_literal: true
 
+require_relative 'common_ext'
 require_relative 'panthage_dependency'
 require_relative 'panthage_cartfile_model'
 require_relative 'panthage_project_cart'
@@ -34,81 +35,18 @@ def merge_cart_file(old_cart, new_cart)
     if old_cart.key?(new_name)
       old_data = old_cart[new_name]
 
-      case old_data.lib_type
-      when LibType::GIT
-        if !new_data.tag.nil? && !old_data.tag.nil?
-          new_major = VersionHelper.major_no(new_data.tag)
-          new_minor = VersionHelper.minor_no(new_data.tag)
-          old_major = VersionHelper.major_no(old_data.tag)
-          old_minor = VersionHelper.minor_no(old_data.tag)
+      new_data = CartfileChecker.check_library_by(new_data, old_data)
 
-          if new_major != old_major
-            old_data.conflict_type = ConflictType::ERROR
-            old_data.error_msg = show_conflict_git(new_data, old_data)
-            raise "halt !!! #{old_data.error_msg}"
-
-          elsif new_minor != old_minor
-            new_data.conflict_type = ConflictType::WARNING
-            new_data.error_msg = "warning: #{new_name} version update #{old_data.tag} -> #{new_data.tag}"
-            need_added_data[new_name] = new_data
-
-          else
-            new_data.conflict_type = ConflictType::OK
-            need_added_data[new_name] = new_data
-          end
-
-        elsif !new_data.branch.nil? && !old_data.branch.nil?
-          unless (new_data.url == old_data.url) && (new_data.branch == old_data.branch)
-            old_data.conflict_type = ConflictType::ERROR
-            old_data.error_msg = show_conflict_branch(new_data, old_data)
-            raise "halt !!! #{old_data.error_msg}"
-          end
-
-        elsif !new_data.branch.nil? && !old_data.tag.nil?
-          new_data.conflict_type = ConflictType::WARNING
-          new_data.error_msg = "warning: #{new_name} framework update: #{old_data.tag} -> #{new_data.url}:#{new_data.branch}"
-          need_added_data[new_name] = new_data
-
-        end
-
-      when LibType::BINARY
-        new_url = new_data.url
-        new_version = new_data.version
-
-        old_url = old_data.url
-        old_version = old_data.version
-
-        unless new_url == old_url
-          old_data.conflict_type = ConflictType::ERROR
-          old_data.error_msg = "conflict framework library #{old_name} had the conflict url: \n #{old_data.url} \nand\n #{new_dat.url} "
-          raise "halt !!! #{old_data.error_msg}"
-        end
-
-        new_major = VersionHelper.major_no(new_version)
-        new_minor = VersionHelper.minor_no(new_version)
-        new_build = VersionHelper.build_no(new_version)
-
-        old_major = VersionHelper.major_no(old_version)
-        old_minor = VersionHelper.minor_no(old_version)
-        old_build = VersionHelper.build_no(old_version)
-
-        if new_major != old_major
-          old_data.conflict_type = ConflictType::ERROR
-          old_data.error_msg = "conflict framework version:\n#{new_data.version} by #{new_data.proj_name}\n#{old_data.version} by #{old_data.proj_name}"
-          raise "halt !!! #{old_data.error_msg}"
-        elsif new_minor != old_minor
-          new_data.conflict_type = ConflictType::WARNING
-          new_data.error_msg = "warning: #{new_name} version update #{old_data.version} -> #{new_data.version}"
-          need_added_data[new_name] = new_data
-        elsif new_build > old_build
-          need_added_data[new_name] = new_data
-        end
+      case new_data.conflict_type
+      when ConflictType::ACCEPT
+        need_added_data[new_name] = new_data
+      when ConflictType::ERROR
+        raise "Halt !!! #{new_data.error_msg}"
       end
 
     else # not has key 'new_name'
-      new_data.conflict_type = ConflictType::OK
+      new_data.conflict_type = ConflictType::ACCEPT
       need_added_data[new_name] = new_data
-
     end
   end
 
@@ -121,11 +59,11 @@ def merge_cart_file(old_cart, new_cart)
 end
 
 def show_conflict_tag(new_data, old_data)
-  "conflict framework version:\n#{new_data.tag} by #{new_data.proj_name}\n#{old_data.tag} by #{old_data.proj_name}"
+  "conflict framework version:\n\t#{new_data.tag} by #{new_data.proj_name}\tand\n\t#{old_data.tag} by #{old_data.proj_name}"
 end
 
 def show_conflict_branch(new_data, old_data)
-  "conflict framework version:\n#{new_data.branch} by #{new_data.proj_name}\n#{old_data.branch} by #{old_data.proj_name}"
+  "conflict framework version:\n\t#{new_data.branch} by #{new_data.proj_name}\tand\n\t#{old_data.branch} by #{old_data.proj_name}"
 end
 
 # read_cart_file Reading data from cartfile
@@ -192,49 +130,45 @@ def solve_cart_file(current_dir, cartfile)
   array_cartfile_resolve = []
   cartfile.each do |_, value|
     if value.lib_type == LibType::BINARY
-      uri = URI(value.url)
-      raw = Net::HTTP.get(uri)
+      begin
+        uri = URI(value.url)
+        raw = Net::HTTP.get(uri)
 
-      puts raw.to_s
+        data = JSON.parse(raw)
+        finded = false
+        data.sort_by { |k, _v| Gem::Version.new(k) }.reverse_each do |ver|
+          case value.operator
+          when '~>'
+            ovn = to_i(ver[0])
+            tvn = to_i(value.version)
 
-      data = JSON.parse(raw)
-      finded = false
-      data.sort_by { |k, _v| Gem::Version.new(k) }.reverse_each do |ver|
-        case value.operator
-        when '~>'
-          ovn = to_i(ver[0])
-          tvn = to_i(value.version)
+            break if ovn < tvn
 
-          break if ovn < tvn
+            finded = true if (ovn - tvn < (1000**3 / 10)) && (tvn >= 1000**3)
+            finded = true if (ovn - tvn < (1000**2 / 10)) && (tvn < 1000**3)
+          when '=='
+            finded = true if ver[0] == value.version
+          when '>='
+            finded = true
+          else
+            raise "unknow operator #{value}"
+          end
 
-          finded = true if (ovn - tvn < (1000**3 / 10)) && (tvn >= 1000**3)
-          finded = true if (ovn - tvn < (1000**2 / 10)) && (tvn < 1000**3)
+          raise "unstatisfied version for #{value}" unless finded
 
-        when '=='
-          finded = true if ver[0] == value.version
-
-        when '>='
-          finded = true
-
-        else
-          raise "unknow operator #{value}"
-
+          if finded
+            array_cartfile_resolve.push("binary \"#{value.url}\" \"#{ver[0]}\"")
+            break
+          end
         end
-
-        if finded
-          array_cartfile_resolve.push("binary \"#{value.url}\" \"#{ver[0]}\"")
-          break
-        end
+      rescue StandardError => _
+        puts "fetch Url: #{value.url}, Data: #{raw}"
       end
 
-      raise "unstatisfied version for #{value}" unless finded
-
-    elsif value.lib_type == LibType::GIT
+    elsif value.lib_type == LibType::GIT || value.lib_type == LibType::GITHUB
       array_cartfile_resolve.push("git \"#{value.url}\" \"#{value.hash}\"")
-
     else
       raise "unknown type of cartfile #{value}"
-
     end
   end
 
@@ -307,6 +241,7 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
   raise "unknow branch or tag or commit #{value} and commit hash:#{commit_hash}." unless commit_hash.length == 40
 
   # save the commit's SHA1 hash.
+  value.hash = commit_hash.strip.freeze
   # value.is_new = (value.hash == commit_hash.strip)
 
   print "#{'***'.cyan} Fetch #{name.green.bold} Done.\n\n"

@@ -7,7 +7,7 @@ require 'net/http'
 require 'json'
 
 require_relative 'models/pconfig'
-require_relative 'string_colorize'
+require_relative 'string_ext'
 require_relative 'panthage_dependency'
 require_relative 'panthage_utils'
 

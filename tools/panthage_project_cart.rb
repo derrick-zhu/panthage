@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 require 'singleton'
-require_relative 'string_colorize'
+require_relative 'string_ext'
 require_relative 'panthage_ver_helper'
 require_relative 'panthage_cartfile_model'
 
@@ -61,7 +61,7 @@ class ProjectCartManager
     old_lib = framework_with_name(new_lib.proj_name)
 
     unless old_lib.nil?
-      verify_library_compatible(old_lib, new_lib)
+      verify_library_compatible(new_lib, old_lib)
       puts "#{new_lib.proj_name} had been there.\nNewLib: #{new_lib.description}\nOldLib: #{old_lib.description}"
     end
 
@@ -69,15 +69,13 @@ class ProjectCartManager
 
     case new_lib.conflict_type
     when ConflictType::ERROR
-      raise new_lib.error_msg.to_s
-
-    when ConflictType::WARNING
+      raise "Halt !!! #{new_lib.error_msg}"
+    when ConflictType::ACCEPT
       puts new_lib.error_msg.to_s
       frameworks[new_lib.proj_name] = FrameworkBuildInfo.new(new_lib.proj_name, new_lib)
-
     end
 
-    new_lib.conflict_type == ConflictType::WARNING || new_lib.conflict_type == ConflictType::ERROR
+    new_lib.conflict_type == ConflictType::ACCEPT
   end
 
   def framework_with_name(name)
@@ -108,79 +106,12 @@ class ProjectCartManager
 
   private
 
-  def verify_library_compatible(liba, libb)
-    raise "could not verfiy library compatible between \'#{liba.proj_name}\' and \'#{libb.proj_name}\'" if liba.proj_name != libb.proj_name
-    raise "incompatible library type: \n\t\'#{liba.proj_name}\'(#{liba.belong_proj_name}) -> #{liba.lib_type}\n and \n\t\'#{libb.proj_name}\'(#{libb.belong_proj_name}) -> #{liba.lib_type}" if liba.lib_type != libb.lib_type
-    raise "incompatible library repo type: \n\t\'#{liba.proj_name}\'(#{liba.belong_proj_name}) -> #{liba.repo_type}\n and \n\t\'#{libb.proj_name}\'(#{libb.belong_proj_name}) -> #{liba.repo_type}" if liba.repo_type != libb.repo_type
+  def verify_library_compatible(new_lib, old_lib)
+    raise "could not verfiy library compatible between \'#{new_lib.proj_name}\' and \'#{old_lib.proj_name}\'" if new_lib.proj_name != old_lib.proj_name
+    raise "incompatible library type: \n\t\'#{new_lib.proj_name}\'(#{new_lib.belong_proj_name}) -> #{new_lib.lib_type}\n and \n\t\'#{old_lib.proj_name}\'(#{old_lib.belong_proj_name}) -> #{new_lib.lib_type}" if new_lib.lib_type != old_lib.lib_type
+    raise "incompatible library repo type: \n\t\'#{new_lib.proj_name}\'(#{new_lib.belong_proj_name}) -> #{new_lib.repo_type}\n and \n\t\'#{old_lib.proj_name}\'(#{old_lib.belong_proj_name}) -> #{new_lib.repo_type}" if new_lib.repo_type != old_lib.repo_type
 
-    case liba.lib_type
-    when LibType::GIT, LibType::GITHUB
-      if !libb.tag.nil? && !liba.tag.nil?
-        new_major = VersionHelper.major_no(libb.tag)
-        new_minor = VersionHelper.minor_no(libb.tag)
-        old_major = VersionHelper.major_no(liba.tag)
-        old_minor = VersionHelper.minor_no(liba.tag)
-
-        if new_major != old_major
-          liba.conflict_type = ConflictType::ERROR
-          liba.error_msg = show_conflict_git(libb, liba)
-          raise "halt !!! #{liba.error_msg}"
-        elsif new_minor != old_minor
-          libb.conflict_type = ConflictType::WARNING
-          libb.error_msg = "warning: #{new_name} version update #{liba.tag} -> #{libb.tag}"
-          return libb
-        else
-          libb.conflict_type = ConflictType::OK
-          return libb
-        end
-      elsif !libb.branch.nil? && !liba.branch.nil?
-        unless (libb.url == liba.url) && (libb.branch == liba.branch)
-          liba.conflict_type = ConflictType::ERROR
-          liba.error_msg = show_conflict_branch(libb, liba)
-          raise "halt !!! #{liba.error_msg}"
-        end
-      elsif !libb.branch.nil? && !liba.tag.nil?
-        libb.conflict_type = ConflictType::WARNING
-        libb.error_msg = "warning: #{new_name} framework update: #{liba.tag} -> #{libb.url}:#{libb.branch}"
-        return libb
-      end
-
-    when LibType::BINARY
-      new_url = libb.url
-      new_version = libb.version
-
-      old_url = liba.url
-      old_version = liba.version
-
-      unless new_url == old_url
-        liba.conflict_type = ConflictType::ERROR
-        liba.error_msg = "conflict framework library #{old_name} had the conflict url: \n #{liba.url} \nand\n #{new_dat.url} "
-        raise "halt !!! #{liba.error_msg}"
-      end
-
-      new_major = VersionHelper.major_no(new_version)
-      new_minor = VersionHelper.minor_no(new_version)
-      new_build = VersionHelper.build_no(new_version)
-
-      old_major = VersionHelper.major_no(old_version)
-      old_minor = VersionHelper.minor_no(old_version)
-      old_build = VersionHelper.build_no(old_version)
-
-      if new_major != old_major
-        liba.conflict_type = ConflictType::ERROR
-        liba.error_msg = "conflict framework version:\n#{libb.version} by #{libb.proj_name}\n#{liba.version} by #{liba.proj_name}"
-        raise "halt !!! #{liba.error_msg}"
-
-      elsif new_minor != old_minor
-        libb.conflict_type = ConflictType::WARNING
-        libb.error_msg = "warning: #{new_name} version update #{liba.version} -> #{libb.version}"
-        return libb
-
-      elsif new_build > old_build
-        libb.conflict_type = ConflictType::OK
-        return libb
-      end
-
-    end # end case of liba.lib_type
+    new_lib = CartfileChecker.check_library_by(new_lib, old_lib)
+    new_lib
   end
 end
