@@ -1,6 +1,8 @@
 #!/usr/bin/ruby
 # frozen_string_literal: true
 
+require 'down'
+
 require_relative 'common_ext'
 require_relative 'panthage_dependency'
 require_relative 'panthage_cartfile_model'
@@ -71,21 +73,19 @@ def read_cart_file(proj_name, cart_file)
       block = block.strip
       next if (block == '') || (block[0] == "\#")
 
-      meta = /(binary|git|github)\s+"([^"]+)"\s+(((~>|==|>=)\s?(\d+(\.\d+)+))|("([^"]+)"))/.match(block)
+      meta = /((?i)binary|git|github)\s+"([^"]+)"\s+(((~>|==|>=)\s?(\d+(\.\d+)+))|("([^"]+)"))/.match(block)
 
       puts meta.to_s if PanConstants.debuging
 
-      if meta && (meta[1] == 'git')
-        f_name = %r{/([^./]+)(.git)?$}.match(meta[2])[1]
-        cartFileData[f_name] = CartfileGit.new(f_name, proj_name, meta[2], meta[6], meta[9])
-
-      elsif meta && (meta[1] == 'binary')
-        f_name = %r{/([^./]+)(.json)?$}.match(meta[2])[1]
+      if meta && meta[1].casecmp?('git')
+        f_name = %r{/([^./]+)((?i).git)?$}.match(meta[2])[1]
+        cartFileData[f_name] = CartfileGit.new(f_name, proj_name, meta[2], meta[6], meta[9], meta[5])\
+      elsif meta && meta[1].casecmp?('binary')
+        f_name = %r{/([^./]+)((?i).json)?$}.match(meta[2])[1]
         cartFileData[f_name] = CartfileBinary.new(f_name, proj_name, meta[2], meta[6], meta[5])
-
-      elsif meta && (meta[1] == 'github')
-        puts meta[1]
-
+      elsif meta && meta[1].casecmp?('github')
+        f_name = %r{([^./]+)\/([^./]+)?$}.match(meta[2])[2]
+        cartFileData[f_name] = CartfileGithub.new(f_name, proj_name, "git@github.com:#{meta[2]}.git", meta[6], meta[9], meta[5])
       end
     end
   end
@@ -98,13 +98,14 @@ def read_cart_solved_file(current_dir)
   cartfile_resolved = {}
 
   IO.foreach("#{current_dir}/Cartfile.resolved") do |block|
+    block = block.strip
     next if (block == '') || (block == "\n")
 
-    meta = /(binary|git|github)\s+"([^"]+)"\s+"([^"]+)"/.match(block)
+    meta = /((?i)binary|git|github)\s+"([^"]+)"\s+"([^"]+)"/.match(block)
 
     if meta
       type = meta[1]
-      f_name = %r{/([^./]+)(.git|.json)?$}.match(meta[2])[1]
+      f_name = %r{/([^./]+)((?i).git|.json)?$}.match(meta[2])[1]
       url = meta[2]
       hash = meta[3]
     else
@@ -126,40 +127,40 @@ def solve_cart_file(current_dir, cartfile)
   array_cartfile_resolve = []
   cartfile.each do |_, value|
     if value.lib_type == LibType::BINARY
-      begin
-        uri = URI(value.url)
-        raw = Net::HTTP.get(uri)
+      # begin
+      #   uri = URI(value.url)
+      #   raw = Net::HTTP.get(uri)
 
-        data = JSON.parse(raw)
-        finded = false
-        data.sort_by { |k, _v| Gem::Version.new(k) }.reverse_each do |ver|
-          case value.operator
-          when '~>'
-            ovn = to_i(ver[0])
-            tvn = to_i(value.version)
+      #   data = JSON.parse(raw)
+      #   finded = false
+      #   data.sort_by { |k, _v| Gem::Version.new(k) }.reverse_each do |ver|
+      #     case value.operator
+      #     when '~>'
+      #       ovn = to_i(ver[0])
+      #       tvn = to_i(value.version)
 
-            break if ovn < tvn
+      #       break if ovn < tvn
 
-            finded = true if (ovn - tvn < (1000**3 / 10)) && (tvn >= 1000**3)
-            finded = true if (ovn - tvn < (1000**2 / 10)) && (tvn < 1000**3)
-          when '=='
-            finded = true if ver[0] == value.version
-          when '>='
-            finded = true
-          else
-            raise "unknow operator #{value}"
-          end
+      #       finded = true if (ovn - tvn < (1000**3 / 10)) && (tvn >= 1000**3)
+      #       finded = true if (ovn - tvn < (1000**2 / 10)) && (tvn < 1000**3)
+      #     when '=='
+      #       finded = true if ver[0] == value.version
+      #     when '>='
+      #       finded = true
+      #     else
+      #       raise "unknow operator #{value}"
+      #     end
 
-          raise "unstatisfied version for #{value}" unless finded
+      #     raise "unstatisfied version for #{value}" unless finded
 
-          if finded
-            array_cartfile_resolve.push("binary \"#{value.url}\" \"#{ver[0]}\"")
-            break
-          end
-        end
-      rescue StandardError => _
-        puts "fetch Url: #{value.url}, Data: #{raw}"
-      end
+      #     if finded
+      #       array_cartfile_resolve.push("binary \"#{value.url}\" \"#{ver[0]}\"")
+      #       break
+      #     end
+      #   end
+      # rescue StandardError => _
+      #   puts "fetch Url: #{value.url}, Data: #{raw}"
+      # end
 
     elsif value.lib_type == LibType::GIT || value.lib_type == LibType::GITHUB
       array_cartfile_resolve.push("git \"#{value.url}\" \"#{value.hash}\"")
@@ -217,7 +218,7 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
       name,
       git_target_head,
       repo_dir_base,
-      using_install,
+      value.compare_method,
       PanConstants.disable_verbose
     )
 
@@ -234,7 +235,8 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
 
   end
 
-  raise "unknow branch or tag or commit #{value} and commit hash:#{commit_hash}." unless commit_hash.length == 40
+  raise "unknow branch or tag or commit #{value} and commit hash:#{commit_hash}." if value.repo_type == GitRepoType::BRANCH && commit_hash.length != 40
+  raise "unknow branch or tag or commit #{value} and commit hash:#{commit_hash}." if value.repo_type == GitRepoType::TAG && commit_hash.empty?
 
   # save the commit's SHA1 hash.
   value.hash = commit_hash.strip.freeze
@@ -242,27 +244,47 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
   print "#{'***'.cyan} Fetch #{name.green.bold} Done.\n\n"
 end
 
-def download_binary_file(url, version, dst_file_path)
-  uri = URI(url)
-  json_raw = Net::HTTP.get(uri)
-  json_data = JSON.parse(json_raw)
-  binary_uri = json_data[version]
-  puts "binary url: #{binary_uri}"
+def check_prepare_binary(value)
+  info_file = Down.download(value.url)
+  info_raw = info_file.read
+  info_data = JSON.parse(info_raw)
 
+  binary_list = VersionHelper.find_fit_version(info_data.keys, value.version, value.operator)
+  raise "could not find #{value.version} in '#{binary_list}.'" if binary_list.empty? || binary_list.size != 1
+
+  value.hash = binary_list.first
+rescue StandardError => _
+  raise "fails in download binary: #{url} with version: #{version}"
+ensure
+  info_file.close
+end
+
+def download_binary_file(url, version, dst_file_path)
   output_binary = File.open(dst_file_path, 'wb+')
 
+  puts "download binary: #{url} with version: #{version}" if PanConstants.debuging
+
   begin
+    uri = URI(url)
+    json_raw = Net::HTTP.get(uri)
+    json_data = JSON.parse(json_raw)
+    binary_uri = json_data[version]
+
+    puts "binary url: #{binary_uri}"
+
     resp = nil
     max_limited = 10
     cur_limited = 0
 
-    begin
+    loop do
       resp = Net::HTTP.get_response(URI.parse(binary_uri))
       binary_uri = resp['location']
 
       cur_limited += 1
       break if cur_limited >= max_limited
-    end while resp.is_a?(Net::HTTPRedirection)
+
+      break unless resp.is_a?(Net::HTTPRedirection)
+    end
 
     output_binary.write(resp.body)
   ensure
@@ -287,8 +309,16 @@ def solve_project_carthage(workspace_base_dir, scheme_target, belong_to_proj_nam
     result.append_dependency(value)
   end
 
-  git_repo_for_checkout.select { |_, v| v.lib_type == LibType::GIT }.each do |name, value|
+  puts "#{scheme_target}: #{result.description}"
+  puts git_repo_for_checkout.to_s
+
+  git_repo_for_checkout.select { |_, v| v.lib_type == LibType::GIT || v.lib_type == LibType::GITHUB }.each do |name, value|
     clone_bare_repo("#{workspace_base_dir}/Carthage/Repo", name, value, is_install)
+  end
+
+  git_repo_for_checkout.select { |_, v| v.lib_type == LibType::BINARY }.each do |name, value|
+    check_prepare_binary(value)
+    download_binary_file(value.url, value.hash, "#{workspace_base_dir}/Carthage/.tmp/#{name}.zip")
   end
 
   # generate Cartfile.resolved file.
@@ -296,9 +326,13 @@ def solve_project_carthage(workspace_base_dir, scheme_target, belong_to_proj_nam
 
   git_repo_for_checkout.each do |name, value|
     if value.lib_type == LibType::BINARY
-      download_binary_file(value.url, value.hash, "#{workspace_base_dir}/Carthage/.tmp/#{name}.zip")
-    elsif value.lib_type == LibType::GIT
-      RepoHelper.checkout_source("#{workspace_base_dir}/Carthage", name.to_s, is_sync, PanConstants.disable_verbose)
+      # binary library had been checked and download previous step.
+    elsif (value.lib_type == LibType::GIT) || (value.lib_type == LibType::GITHUB)
+      RepoHelper.checkout_source("#{workspace_base_dir}/Carthage",
+                                 name.to_s,
+                                 value.repo_type == GitRepoType::TAG,
+                                 is_sync,
+                                 PanConstants.disable_verbose)
     else
       puts "???#{value.url} -> #{value.lib_type}"
     end
@@ -312,10 +346,15 @@ def solve_project_dependency(proj_cart_data, workspace_base_dir, is_install, is_
   return if proj_cart_data.nil?
   return unless proj_cart_data.number_of_dependency.positive?
 
-  proj_cart_data.dependency.each do |value|
-    puts "#{value.proj_name} -> #{value}" if PanConstants.debuging
+  puts ">>>>>>>>>>>>>>#{proj_cart_data.proj_name}<<<<<<<<<<<<<<<<"
+  puts "Solving project: #{proj_cart_data.proj_name}, which belongs #{proj_cart_data.belong_proj_name}"
 
-    solve_project_carthage(
+  all_proj_sub_libs = []
+
+  proj_cart_data.dependency.each do |value|
+    puts value.description.to_s
+
+    next_proj_cart_info = solve_project_carthage(
       workspace_base_dir.to_s,
       value.proj_name.to_s,
       proj_cart_data.proj_name.to_s,
@@ -323,9 +362,11 @@ def solve_project_dependency(proj_cart_data, workspace_base_dir, is_install, is_
       is_install,
       is_sync
     )
+    all_proj_sub_libs.push(new_proj_cart_info) if next_proj_cart_info.conflict_type == ConflictType::ACCEPT
   end
 
-  proj_cart_data.dependency.each do |value|
+  all_proj_sub_libs.each do |value|
+    puts "solving dependencies #{value.proj_name}"
     solve_project_dependency(value, workspace_base_dir, is_install, is_sync)
   end
 end

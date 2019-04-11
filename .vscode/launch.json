@@ -1,13 +1,26 @@
 {
   "version": "0.2.0",
-  "configurations": [{
+  "configurations": [
+    {
+      "name": "Test PandaService",
+      "type": "Ruby",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "program": "${file}",
+      "args": [
+        "--workspace=../PandaService/",
+        "--target=PandaService",
+        "--command=1",
+      ]
+    },
+    {
       "name": "Debug Local File",
       "type": "Ruby",
       "request": "launch",
       "program": "${workspaceRoot}/test/panthage_repo_helper_test.rb"
     },
     {
-      "name": "Test All",
+      "name": "Test panthage foo",
       "type": "Ruby",
       "request": "launch",
       "cwd": "${workspaceRoot}",
@@ -15,6 +28,18 @@
       "args": [
         "--workspace=../panthage_foo",
         "--target=panthage_foo",
+        "--command=1",
+      ]
+    },
+    {
+      "name": "Test login slice",
+      "type": "Ruby",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "program": "${file}",
+      "args": [
+        "--workspace=../login/",
+        "--target=LoginSlice",
         "--command=1",
       ]
     }

@@ -32,28 +32,30 @@ class RepoHelper
     command += "git branch --set-upstream-to=origin/#{branch} #{branch}; "
     system(command)
 
-    command_hash = `cd #{repo_dir}/#{repo_name}.git; git rev-parse HEAD 2> /dev/null;`.strip.freeze
-    system("cd #{repo_dir}/#{repo_name}.git; git update-ref refs/heads/#{branch} #{command_hash}; ")
+    commit_hash = `cd #{repo_dir}/#{repo_name}.git; git rev-parse HEAD 2> /dev/null;`.strip.freeze
+    system("cd #{repo_dir}/#{repo_name}.git; git update-ref refs/heads/#{branch} #{commit_hash}; ")
 
-    command_hash
+    commit_hash
   end
 
-  def self.clone_with_tag(repo_url, repo_name, tag, repo_dir, _using_install, disable_verbose)
+  def self.clone_with_tag(repo_url, repo_name, tag, repo_dir, compare_method, disable_verbose)
     `cd #{repo_dir}/#{repo_name}.git; git fetch --all #{disable_verbose}; `
 
     tags = `cd #{repo_dir}/#{repo_name}.git; git tag --list;`
     tags_list = tags.split("\n") if tags.empty? == false
-    finded = tags_list.select { |block| block.delete('*').strip == tag }.empty? == false
+    tags_list = tags_list.each { |block| block.delete('*').strip }
+    fitted_tags_list = VersionHelper.find_fit_version(tags_list, tag, compare_method)
 
-    raise "could not find `#{tag}` in '#{repo_url}'." unless finded
+    raise "could not find `#{tag}` in '#{repo_url}'." if fitted_tags_list.empty?
 
-    system("cd #{repo_dir}/#{repo_name}.git; git symbolic-ref HEAD refs/tags/#{tag}; ")
-    command_hash = `cd #{repo_dir}/#{repo_name}.git; git rev-parse HEAD 2> /dev/null;`.strip.freeze
+    commit_hash = fitted_tags_list.first
+    puts "#{repo_name} tags: #{tags_list}\nusing Tag: #{commit_hash}" if PanConstants.debuging
+    system("cd #{repo_dir}/#{repo_name}.git; git symbolic-ref HEAD refs/tags/#{commit_hash}; ")
 
-    command_hash
+    commit_hash
   end
 
-  def self.checkout_source(base_dir, repo_name, using_sync, disable_verbose)
+  def self.checkout_source(base_dir, repo_name, is_tag, using_sync, disable_verbose)
     dest_repo_dir = "#{base_dir}/Checkouts/#{repo_name}"
     src_binary_dir = "#{base_dir}/Build"
     src_bare_dir = "#{base_dir}/Repo/#{repo_name}.git"
@@ -64,10 +66,11 @@ class RepoHelper
 
     command = "cd #{dest_repo_dir}; git init --separate-git-dir=#{src_bare_dir} #{disable_verbose}; "
     command += if using_sync
-                 "git reset --hard #{disable_verbose}; git pull; "
+                 "git reset --hard #{disable_verbose}; "
                else
                  "git reset #{disable_verbose}; "
                end
+    command += 'git pull; ' if using_sync && !is_tag
     command += "mkdir -p #{dest_repo_dir}/Carthage/Checkouts/; "
     command += "mkdir -p #{dest_repo_dir}/Carthage/; cd $_; \n"
     command += "if [ ! -d ./Build/ ] \n" \

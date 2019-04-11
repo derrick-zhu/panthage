@@ -62,7 +62,7 @@ class ProjectCartManager
 
     unless old_lib.nil?
       verify_library_compatible(new_lib, old_lib)
-      puts "#{new_lib.proj_name} had been there.\nNewLib: #{new_lib.description}\nOldLib: #{old_lib.description}"
+      puts "#{new_lib.proj_name} had been there.\n\tNewLib: #{new_lib.description}\n\tOldLib: #{old_lib.description}"
     end
 
     puts new_lib.description.bg_gray.red.to_s
@@ -71,7 +71,6 @@ class ProjectCartManager
     when ConflictType::ERROR
       raise "Halt !!! #{new_lib.error_msg}"
     when ConflictType::ACCEPT
-      puts new_lib.error_msg.to_s
       frameworks[new_lib.proj_name] = FrameworkBuildInfo.new(new_lib.proj_name, new_lib)
     end
 

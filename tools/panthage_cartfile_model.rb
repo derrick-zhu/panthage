@@ -29,6 +29,7 @@ class CartfileBase
                 :belong_proj_name,
                 :conflict_type,
                 :version,
+                :hash,
                 :error_msg,
                 :dependency
   attr_reader :lib_type
@@ -41,6 +42,7 @@ class CartfileBase
     @version = !version.nil? ? version : ''
     @error_msg = ''
     @dependency = []
+    @hash = ''
   end
 
   def append_dependency(new_lib)
@@ -64,10 +66,10 @@ end
 class CartfileGit < CartfileBase
   attr_accessor :url,
                 :branch,
-                :hash
+                :compare_method
   attr_reader :repo_type
 
-  def initialize(proj_name, belong_proj_name, url, tag, branch)
+  def initialize(proj_name, belong_proj_name, url, tag, branch, compare_method = '~>')
     super(proj_name, belong_proj_name, tag)
 
     puts "#{proj_name}, #{url}, #{version}, #{branch}" if PanConstants.debuging
@@ -78,7 +80,7 @@ class CartfileGit < CartfileBase
 
     @url = !url.nil? ? url : ''
     @branch = !branch.nil? ? branch : ''
-    @hash = ''
+    @compare_method = compare_method
 
     @repo_type = if !version.empty?
                    GitRepoType::TAG
@@ -91,10 +93,21 @@ class CartfileGit < CartfileBase
 
   def description
     if repo_type == GitRepoType::TAG
-      super + ", Repo:#{repo_type}, Tag:#{version}"
+      super + ", Repo:#{repo_type}, Tag:#{version}, Hash: #{hash}"
     elsif repo_type == GitRepoType::BRANCH
-      super + ", Repo:#{repo_type}, Branch:#{branch}"
+      super + ", Repo:#{repo_type}, Branch:#{branch}, Hash: #{hash}"
     end
+  end
+end
+
+# CartfileGithub
+class CartfileGithub < CartfileGit
+  def initialize(proj_name, belong_proj_name, url, tag, branch, compare_method = '~>')
+    super(proj_name, belong_proj_name, url, tag, branch, compare_method)
+  end
+
+  def description
+    super
   end
 end
 
@@ -116,13 +129,8 @@ class CartfileBinary < CartfileBase
   end
 
   def description
-    super + ", Version: #{version}"
+    super + ", Version: #{version}, Final Version: #{hash}"
   end
-end
-
-# CartfileGithub
-class CartfileGithub < CartfileBase
-  # TODO: need to be done about github library dependency
 end
 
 # CartfileResolved
@@ -144,6 +152,9 @@ end
 # CartfileChecker for checking library's version acceptable logic
 class CartfileChecker
   def self.check_library_by(new_data, old_data)
+    new_hash = new_data.hash
+    old_hash = old_data.hash
+
     case old_data.lib_type
     when LibType::GIT, LibType::GITHUB
       if !new_data.version.empty? && !old_data.version.empty?
@@ -152,12 +163,14 @@ class CartfileChecker
         new_build = VersionHelper.build_no(new_data.version)
         old_major = VersionHelper.major_no(old_data.version)
         old_minor = VersionHelper.minor_no(old_data.version)
-        old_build = VersionHelper.build_no(new_data.version)
+        old_build = VersionHelper.build_no(old_data.version)
 
         if new_major != old_major
           new_data.conflict_type = ConflictType::ERROR
           new_data.error_msg = show_conflict_git(new_data, old_data)
-        elsif (new_minor > old_minor) || ((new_minor == old_minor) && (new_build > old_build))
+        elsif (new_minor > old_minor) ||
+              ((new_minor == old_minor) && (new_build > old_build) ||
+              (new_minor == old_minor) && new_build == old_build && new_hash != old_hash)
           new_data.conflict_type = ConflictType::ACCEPT
         else
           new_data.conflict_type = ConflictType::IGNORE

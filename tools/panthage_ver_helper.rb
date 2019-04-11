@@ -3,13 +3,25 @@
 
 # VersionHelper helper about version
 class VersionHelper
+  FIX_METHOD = [
+    EQUAL = '==',
+    HIGHER = '>',
+    HIGHER_EQUAL = '>=',
+    HIGHER_COMPATIBLE = '~>'
+  ].freeze
+
   # to_i convert version to integer
   def self.to_i(ver)
     result = 0
 
-    Gem::Version.new(ver).segments.each_with_index do |n, idx|
-      result += (1000**(2 - idx) * n)
-      raise 'unsupport version format' unless (idx < 4) && (n < 100)
+    begin
+      Gem::Version.new(ver).segments.each_with_index do |n, idx|
+        result += (1000**(2 - idx) * n)
+        raise 'unsupport version format' unless (idx < 4) && (n < 100)
+      end
+    rescue StandardError => exception
+      result = -1
+      puts exception.to_s if PanConstants.debuging
     end
 
     result
@@ -50,13 +62,25 @@ class VersionHelper
     VersionHelper.to_s(nver)
   end
 
-  def self.find_fit_version(versions, base_ver)
-    ivers = versions.collect! { |ver| VersionHelper.to_i(ver) }
+  def self.find_fit_version(versions, base_ver, compare_method)
+    ivers = versions.collect! { |ver| VersionHelper.to_i(ver) }.select { |ver| ver >= 0 }
     bver = VersionHelper.to_i(base_ver)
+    bver = bver >= 0 ? bver : 0
 
-    tmps = ivers.select { |ver| (ver - bver).positive? && (ver - bver) < 1000 }
+    tmps = []
+
+    case compare_method
+    when EQUAL
+      tmps = ivers.select { |ver| ver == bver }
+    when HIGHER
+      tmps = ivers.select { |ver| ver > bver }
+    when HIGHER_EQUAL
+      tmps = ivers.select { |ver| ver >= bver }
+    when HIGHER_COMPATIBLE
+      tmps = ivers.select { |ver| !(ver - bver).negative? && (ver - bver) < (10**6) }
+    end
+
     tmps = tmps.sort! { |a, b| b <=> a }
-
     tmps.length.positive? ? [VersionHelper.to_s(tmps.first)] : []
   end
 end
