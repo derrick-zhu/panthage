@@ -7,14 +7,14 @@
       "program": "${workspaceRoot}/test/panthage_repo_helper_test.rb"
     },
     {
-      "name": "xcode-project",
+      "name": "Test All",
       "type": "Ruby",
       "request": "launch",
       "cwd": "${workspaceRoot}",
       "program": "${file}",
       "args": [
-        "--workspace=../login",
-        "--target=LoginSlice",
+        "--workspace=../panthage_foo",
+        "--target=panthage_foo",
         "--command=1",
       ]
     }

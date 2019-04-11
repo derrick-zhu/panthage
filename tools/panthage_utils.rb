@@ -50,16 +50,12 @@ def merge_cart_file(old_cart, new_cart)
     end
   end
 
-  need_added_data.each do |_, data|
-    data.is_new = true
-  end
-
   old_cart.merge!(need_added_data)
   old_cart
 end
 
 def show_conflict_tag(new_data, old_data)
-  "conflict framework version:\n\t#{new_data.tag} by #{new_data.proj_name}\tand\n\t#{old_data.tag} by #{old_data.proj_name}"
+  "conflict framework version:\n\t#{new_data.version} by #{new_data.proj_name}\tand\n\t#{old_data.version} by #{old_data.proj_name}"
 end
 
 def show_conflict_branch(new_data, old_data)
@@ -195,7 +191,7 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
   # using tag or branch ?
   if value.repo_type == GitRepoType::TAG
     puts 'its tag' if PanConstants.debuging
-    git_target_head = VersionHelper.identify(value.tag)
+    git_target_head = VersionHelper.identify(value.version)
   elsif value.repo_type == GitRepoType::BRANCH
     puts 'its branch' if PanConstants.debuging
     git_target_head = value.branch
@@ -242,7 +238,6 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
 
   # save the commit's SHA1 hash.
   value.hash = commit_hash.strip.freeze
-  # value.is_new = (value.hash == commit_hash.strip)
 
   print "#{'***'.cyan} Fetch #{name.green.bold} Done.\n\n"
 end
@@ -299,7 +294,7 @@ def solve_project_carthage(workspace_base_dir, scheme_target, belong_to_proj_nam
   # generate Cartfile.resolved file.
   solve_cart_file(current_dir.to_s, cartfile)
 
-  git_repo_for_checkout.select { |_, value| value.is_new == true }.each do |name, value|
+  git_repo_for_checkout.each do |name, value|
     if value.lib_type == LibType::BINARY
       download_binary_file(value.url, value.hash, "#{workspace_base_dir}/Carthage/.tmp/#{name}.zip")
     elsif value.lib_type == LibType::GIT
@@ -317,9 +312,10 @@ def solve_project_dependency(proj_cart_data, workspace_base_dir, is_install, is_
   return if proj_cart_data.nil?
   return unless proj_cart_data.number_of_dependency.positive?
 
-  proj_cart_data.dependency.select { |block| block.is_new == true }.each do |value|
+  proj_cart_data.dependency.each do |value|
     puts "#{value.proj_name} -> #{value}" if PanConstants.debuging
-    new_sub_dir = solve_project_carthage(
+
+    solve_project_carthage(
       workspace_base_dir.to_s,
       value.proj_name.to_s,
       proj_cart_data.proj_name.to_s,
@@ -327,9 +323,6 @@ def solve_project_dependency(proj_cart_data, workspace_base_dir, is_install, is_
       is_install,
       is_sync
     )
-
-    value.append_dependency(new_sub_dir)
-    value.is_new = false
   end
 
   proj_cart_data.dependency.each do |value|

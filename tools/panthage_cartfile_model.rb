@@ -25,15 +25,20 @@ class GitRepoType
 end
 
 class CartfileBase
-  attr_accessor :conflict_type, :proj_name, :belong_proj_name, :is_new, :error_msg, :dependency
+  attr_accessor :proj_name,
+                :belong_proj_name,
+                :conflict_type,
+                :version,
+                :error_msg,
+                :dependency
   attr_reader :lib_type
 
-  def initialize(proj_name, belong_proj_name, is_new = true)
+  def initialize(proj_name, belong_proj_name, version = '')
     @lib_type = LibType::MAIN
     @conflict_type = ConflictType::IGNORE
     @proj_name = proj_name
     @belong_proj_name = belong_proj_name
-    @is_new = is_new
+    @version = !version.nil? ? version : ''
     @error_msg = ''
     @dependency = []
   end
@@ -51,30 +56,31 @@ class CartfileBase
   end
 
   def description
-    "Library: \'#{proj_name}\' from \'#{belong_proj_name}\' Type:#{lib_type} is_new:#{is_new} "
+    "Library: \'#{proj_name}\' from \'#{belong_proj_name}\' Type:#{lib_type} "
   end
 end
 
 # CartfileGit
 class CartfileGit < CartfileBase
-  attr_accessor :url, :tag, :branch, :hash
+  attr_accessor :url,
+                :branch,
+                :hash
   attr_reader :repo_type
 
   def initialize(proj_name, belong_proj_name, url, tag, branch)
-    super(proj_name, belong_proj_name)
+    super(proj_name, belong_proj_name, tag)
 
-    puts "#{proj_name}, #{url}, #{tag}, #{branch}" if PanConstants.debuging
+    puts "#{proj_name}, #{url}, #{version}, #{branch}" if PanConstants.debuging
 
     @lib_type = LibType::GIT
     @conflict_type = ConflictType::IGNORE
     @error_msg = ''
 
     @url = !url.nil? ? url : ''
-    @tag = !tag.nil? ? tag : ''
     @branch = !branch.nil? ? branch : ''
     @hash = ''
 
-    @repo_type = if !@tag.empty?
+    @repo_type = if !version.empty?
                    GitRepoType::TAG
                  elsif !@branch.empty?
                    GitRepoType::BRANCH
@@ -85,7 +91,7 @@ class CartfileGit < CartfileBase
 
   def description
     if repo_type == GitRepoType::TAG
-      super + ", Repo:#{repo_type}, Tag:#{tag}"
+      super + ", Repo:#{repo_type}, Tag:#{version}"
     elsif repo_type == GitRepoType::BRANCH
       super + ", Repo:#{repo_type}, Branch:#{branch}"
     end
@@ -94,21 +100,19 @@ end
 
 # CartfileBinary
 class CartfileBinary < CartfileBase
-  attr_accessor :url, :version, :operator
+  attr_accessor :url, :operator
 
   def initialize(proj_name, belong_proj_name, url, version, operator)
-    super(proj_name, belong_proj_name)
-
-    puts "#{proj_name}, #{url}, #{version}, #{operator}" if PanConstants.debuging
+    super(proj_name, belong_proj_name, version)
 
     @lib_type = LibType::BINARY
     @conflict_type = ConflictType::IGNORE
     @proj_name = !proj_name.nil? ? proj_name : ''
     @error_msg = ''
-
     @url = url
-    @version = !version.nil? ? version : ''
     @operator = !operator.nil? ? operator : ''
+
+    puts "#{proj_name}, #{url}, #{version}, #{operator}" if PanConstants.debuging
   end
 
   def description
@@ -142,13 +146,13 @@ class CartfileChecker
   def self.check_library_by(new_data, old_data)
     case old_data.lib_type
     when LibType::GIT, LibType::GITHUB
-      if !new_data.tag.empty? && !old_data.tag.empty?
-        new_major = VersionHelper.major_no(new_data.tag)
-        new_minor = VersionHelper.minor_no(new_data.tag)
-        new_build = VersionHelper.build_no(new_data.tag)
-        old_major = VersionHelper.major_no(old_data.tag)
-        old_minor = VersionHelper.minor_no(old_data.tag)
-        old_build = VersionHelper.build_no(new_data.tag)
+      if !new_data.version.empty? && !old_data.version.empty?
+        new_major = VersionHelper.major_no(new_data.version)
+        new_minor = VersionHelper.minor_no(new_data.version)
+        new_build = VersionHelper.build_no(new_data.version)
+        old_major = VersionHelper.major_no(old_data.version)
+        old_minor = VersionHelper.minor_no(old_data.version)
+        old_build = VersionHelper.build_no(new_data.version)
 
         if new_major != old_major
           new_data.conflict_type = ConflictType::ERROR
@@ -167,12 +171,12 @@ class CartfileChecker
           new_data.error_msg = show_conflict_branch(new_data, old_data)
         end
 
-      elsif !new_data.tag.empty? && !old_data.branch.empty?
+      elsif !new_data.version.empty? && !old_data.branch.empty?
         new_data.conflict_type == ConflictType::IGNORE
 
-      elsif !new_data.branch.empty? && !old_data.tag.empty?
+      elsif !new_data.branch.empty? && !old_data.version.empty?
         new_data.conflict_type = ConflictType::ACCEPT
-        new_data.error_msg = "warning: #{new_name} framework update: #{old_data.tag} -> #{new_data.url}:#{new_data.branch}"
+        new_data.error_msg = "warning: #{new_name} framework update: #{old_data.version} -> #{new_data.url}:#{new_data.branch}"
 
       else
         raise "unknown condition: \n\t#{old_data.description}\nand\n\t#{new_data.description}"
