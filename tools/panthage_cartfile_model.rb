@@ -24,9 +24,10 @@ class GitRepoType
   BRANCH = TAG + 1
 end
 
-class CartfileBase
-  attr_accessor :proj_name,
-                :belong_proj_name,
+# CartFileBase base git repo class
+class CartFileBase
+  attr_accessor :name,
+                :parent_project_name,
                 :conflict_type,
                 :version,
                 :hash,
@@ -34,11 +35,11 @@ class CartfileBase
                 :dependency
   attr_reader :lib_type
 
-  def initialize(proj_name, belong_proj_name, version = '')
+  def initialize(name, parent_name, version = '')
     @lib_type = LibType::MAIN
     @conflict_type = ConflictType::IGNORE
-    @proj_name = proj_name
-    @belong_proj_name = belong_proj_name
+    @name = name
+    @parent_project_name = parent_name
     @version = !version.nil? ? version : ''
     @error_msg = ''
     @dependency = []
@@ -58,21 +59,21 @@ class CartfileBase
   end
 
   def description
-    "Library: \'#{proj_name}\' from \'#{belong_proj_name}\' Type:#{lib_type} "
+    "Library: #{name} from #{parent_project_name} Type:#{lib_type} "
   end
 end
 
-# CartfileGit
-class CartfileGit < CartfileBase
+# CartFileGit
+class CartFileGit < CartFileBase
   attr_accessor :url,
                 :branch,
                 :compare_method
   attr_reader :repo_type
 
-  def initialize(proj_name, belong_proj_name, url, tag, branch, compare_method = '~>')
-    super(proj_name, belong_proj_name, tag)
+  def initialize(project_name, parent_name, url, tag, branch, compare_method = '~>')
+    super(project_name, parent_name, tag)
 
-    puts "#{proj_name}, #{url}, #{version}, #{branch}" if PanConstants.debuging
+    puts "#{project_name}, #{url}, #{version}, #{branch}" if PanConstants.debugging
 
     @lib_type = LibType::GIT
     @conflict_type = ConflictType::IGNORE
@@ -100,10 +101,10 @@ class CartfileGit < CartfileBase
   end
 end
 
-# CartfileGithub
-class CartfileGithub < CartfileGit
-  def initialize(proj_name, belong_proj_name, url, tag, branch, compare_method = '~>')
-    super(proj_name, belong_proj_name, url, tag, branch, compare_method)
+# CartFileGithub
+class CartFileGithub < CartFileGit
+  def initialize(name, parent_name, url, tag, branch, compare_method = '~>')
+    super(name, parent_name, url, tag, branch, compare_method)
   end
 
   def description
@@ -111,21 +112,20 @@ class CartfileGithub < CartfileGit
   end
 end
 
-# CartfileBinary
-class CartfileBinary < CartfileBase
+# CartFileBinary
+class CartFileBinary < CartFileBase
   attr_accessor :url, :operator
 
-  def initialize(proj_name, belong_proj_name, url, version, operator)
-    super(proj_name, belong_proj_name, version)
+  def initialize(name, project_name, url, version, operator)
+    super(name, project_name, version)
 
     @lib_type = LibType::BINARY
     @conflict_type = ConflictType::IGNORE
-    @proj_name = !proj_name.nil? ? proj_name : ''
     @error_msg = ''
     @url = url
     @operator = !operator.nil? ? operator : ''
 
-    puts "#{proj_name}, #{url}, #{version}, #{operator}" if PanConstants.debuging
+    puts "#{name}, #{url}, #{version}, #{operator}" if PanConstants.debugging
   end
 
   def description
@@ -134,7 +134,7 @@ class CartfileBinary < CartfileBase
 end
 
 # CartfileResolved
-class CartfileResolved
+class CartFileResolved
   attr_reader :name, :type, :url, :hash
 
   def initialize(name, type, url, hash)
@@ -145,16 +145,13 @@ class CartfileResolved
   end
 
   def self.new_cart_solved(name, type, url, hash)
-    CartfileResolved.new(name, type, url, hash)
+    CartFileResolved.new(name, type, url, hash)
   end
 end
 
-# CartfileChecker for checking library's version acceptable logic
-class CartfileChecker
+# CartFileChecker for checking library's version acceptable logic
+class CartFileChecker
   def self.check_library_by(new_data, old_data)
-    new_hash = new_data.hash
-    old_hash = old_data.hash
-
     case old_data.lib_type
     when LibType::GIT, LibType::GITHUB
       if !new_data.version.empty? && !old_data.version.empty?
@@ -167,10 +164,9 @@ class CartfileChecker
 
         if new_major != old_major
           new_data.conflict_type = ConflictType::ERROR
-          new_data.error_msg = show_conflict_git(new_data, old_data)
+          new_data.error_msg = msg_conflict_tag(new_data, old_data)
         elsif (new_minor > old_minor) ||
-              ((new_minor == old_minor) && (new_build > old_build) ||
-              (new_minor == old_minor) && new_build == old_build && new_hash != old_hash)
+              ((new_minor == old_minor) && (new_build > old_build))
           new_data.conflict_type = ConflictType::ACCEPT
         else
           new_data.conflict_type = ConflictType::IGNORE
@@ -181,7 +177,7 @@ class CartfileChecker
           new_data.conflict_type == ConflictType::IGNORE
         else
           new_data.conflict_type = ConflictType::ERROR
-          new_data.error_msg = show_conflict_branch(new_data, old_data)
+          new_data.error_msg = msg_conflict_branch(new_data, old_data)
         end
 
       elsif !new_data.version.empty? && !old_data.branch.empty?
@@ -217,7 +213,7 @@ class CartfileChecker
 
       if new_major != old_major
         old_data.conflict_type = ConflictType::ERROR
-        old_data.error_msg = "conflict framework version:\n#{new_data.version} by #{new_data.proj_name}\n#{old_data.version} by #{old_data.proj_name}"
+        old_data.error_msg = "conflict framework version:\n#{new_data.version} by #{new_data.name}\n#{old_data.version} by #{old_data.name}"
         raise "halt !!! #{old_data.error_msg}"
       elsif (new_minor > old_minor) || ((new_minor == old_minor) && (new_build > old_build))
         new_data.conflict_type = ConflictType::ACCEPT
@@ -226,4 +222,14 @@ class CartfileChecker
       end
     end # end of case
   end # end of method `check_library_by`
+
+  private
+
+  def msg_conflict_tag(new_data, old_data)
+    "conflict framework version:\n\t#{new_data.version} by #{new_data.name}\tand\n\t#{old_data.version} by #{old_data.name}"
+  end
+
+  def msg_conflict_branch(new_data, old_data)
+    "conflict framework version:\n\t#{new_data.branch} by #{new_data.name}\tand\n\t#{old_data.branch} by #{old_data.name}"
+  end
 end

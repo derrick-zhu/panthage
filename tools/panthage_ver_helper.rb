@@ -21,7 +21,7 @@ class VersionHelper
       end
     rescue StandardError => exception
       result = -1
-      puts exception.to_s if PanConstants.debuging
+      puts exception.to_s if PanConstants.debugging
     end
 
     result

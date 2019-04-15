@@ -51,7 +51,7 @@ class RepoHelper
     raise "could not find `#{tag}` in '#{repo_url}'." if fitted_tags_list.empty?
 
     commit_hash = fitted_tags_list.first
-    puts "#{repo_name} tags: #{tags_list}\nusing Tag: #{commit_hash}" if PanConstants.debuging
+    puts "#{repo_name} tags: #{tags_list}\nusing Tag: #{commit_hash}" if PanConstants.debugging
     system("cd #{repo_dir}/#{repo_name}.git; git symbolic-ref HEAD refs/tags/#{commit_hash}; ")
 
     commit_hash
@@ -88,5 +88,10 @@ class RepoHelper
     + "fi\n"
 
     system(command)
+  end
+
+  def self.submodule_init(base_dir, repo_name)
+    dest_repo_dir = "#{base_dir}/Checkouts/#{repo_name}"
+    system("cd #{dest_repo_dir}; git submodule update --init #{PanConstants.disable_verbose};") if File.exist?(dest_repo_dir)
   end
 end

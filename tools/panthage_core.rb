@@ -6,7 +6,7 @@ require 'xcodeproj'
 require 'net/http'
 require 'json'
 
-require_relative 'models/pconfig'
+require_relative 'models/panthage_config'
 require_relative 'string_ext'
 require_relative 'panthage_dependency'
 require_relative 'panthage_utils'
@@ -31,24 +31,24 @@ cartfile_main = {}
 setup_carthage_env(current_dir.to_s)
 
 main_project_info = solve_project_carthage(
-  current_dir.to_s,
-  scheme_target.to_s,
-  'main',
-  current_dir.to_s,
-  Command.command_install?(job_command),
-  using_sync
+    current_dir.to_s,
+    scheme_target.to_s,
+    'main',
+    current_dir.to_s,
+    Command.command_install?(job_command),
+    using_sync
 )
 
-puts main_project_info.to_s if PanConstants.debuging
+puts main_project_info.to_s if PanConstants.debugging
 
 solve_project_dependency(
-  main_project_info,
-  current_dir.to_s,
-  Command.command_install?(job_command),
-  using_sync
+    main_project_info,
+    current_dir.to_s,
+    Command.command_install?(job_command),
+    using_sync
 )
 
-puts ProjectCartManager.instance.description.red.bg_gray.to_s
+puts ProjectCartManager.instance.description.reverse_color.to_s
 
 # build the source dependency framework
 repo_framework = ProjectCartManager.instance.any_repo_framework

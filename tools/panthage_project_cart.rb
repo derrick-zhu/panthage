@@ -31,7 +31,7 @@ class FrameworkBuildInfo
   end
 
   def description
-    "FrameBuildInfo:#{name}, is_ready:#{is_ready}, framework info:#{framework.description}"
+    "Framework :#{name}, is_ready:#{is_ready}, info:#{framework.description}"
   end
 end
 
@@ -56,22 +56,22 @@ class ProjectCartManager
   end
 
   def append_framework(new_lib)
-    raise "invalid library \'#{new_lib}\'" if new_lib.nil?
+    raise "invalid library '#{new_lib}'" if new_lib.nil?
 
-    old_lib = framework_with_name(new_lib.proj_name)
+    old_lib = framework_with_name(new_lib.name)
 
     unless old_lib.nil?
       verify_library_compatible(new_lib, old_lib)
-      puts "#{new_lib.proj_name} had been there.\n\tNewLib: #{new_lib.description}\n\tOldLib: #{old_lib.description}"
+      puts "#{new_lib.name} had been there.\n\tNew library: #{new_lib.description}\n\tOld library: #{old_lib.description}"
     end
 
-    puts new_lib.description.bg_gray.red.to_s
+    puts new_lib.description.reverse_color.to_s
 
     case new_lib.conflict_type
     when ConflictType::ERROR
       raise "Halt !!! #{new_lib.error_msg}"
     when ConflictType::ACCEPT
-      frameworks[new_lib.proj_name] = FrameworkBuildInfo.new(new_lib.proj_name, new_lib)
+      frameworks[new_lib.name] = FrameworkBuildInfo.new(new_lib.name, new_lib)
     end
 
     new_lib.conflict_type == ConflictType::ACCEPT
@@ -106,11 +106,10 @@ class ProjectCartManager
   private
 
   def verify_library_compatible(new_lib, old_lib)
-    raise "could not verfiy library compatible between \'#{new_lib.proj_name}\' and \'#{old_lib.proj_name}\'" if new_lib.proj_name != old_lib.proj_name
-    raise "incompatible library type: \n\t\'#{new_lib.proj_name}\'(#{new_lib.belong_proj_name}) -> #{new_lib.lib_type}\n and \n\t\'#{old_lib.proj_name}\'(#{old_lib.belong_proj_name}) -> #{new_lib.lib_type}" if new_lib.lib_type != old_lib.lib_type
-    raise "incompatible library repo type: \n\t\'#{new_lib.proj_name}\'(#{new_lib.belong_proj_name}) -> #{new_lib.repo_type}\n and \n\t\'#{old_lib.proj_name}\'(#{old_lib.belong_proj_name}) -> #{new_lib.repo_type}" if new_lib.repo_type != old_lib.repo_type
+    raise "could not verify library compatible between #{new_lib.name} and #{old_lib.name}" if new_lib.name != old_lib.name
+    raise "incompatible library type: \n\t#{new_lib.name}(#{new_lib.parent_project_name}) -> #{new_lib.lib_type}\n and \n\t#{old_lib.name}(#{old_lib.parent_project_name}) -> #{new_lib.lib_type}" if new_lib.lib_type != old_lib.lib_type
+    raise "incompatible library repo type: \n\t#{new_lib.name}(#{new_lib.parent_project_name}) -> #{new_lib.repo_type}\n and \n\t#{old_lib.name}(#{old_lib.parent_project_name}) -> #{new_lib.repo_type}" if new_lib.repo_type != old_lib.repo_type
 
-    new_lib = CartfileChecker.check_library_by(new_lib, old_lib)
-    new_lib
+    CartFileChecker.check_library_by(new_lib, old_lib)
   end
 end
