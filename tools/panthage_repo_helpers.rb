@@ -43,6 +43,7 @@ class RepoHelper
     `cd #{repo_dir}/#{repo_name}.git; git fetch --all #{disable_verbose}; `
 
     tags = `cd #{repo_dir}/#{repo_name}.git; git tag --list;`
+    tags_list = []
     tags_list = tags.split("\n") unless tags.empty?
     tags_list = tags_list.each { |block| block.delete('*').strip }
     fitted_tags_list = VersionHelper.find_fit_version(tags_list, tag, compare_method)
