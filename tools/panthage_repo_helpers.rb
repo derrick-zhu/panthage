@@ -21,8 +21,9 @@ class RepoHelper
     `cd #{repo_dir}/#{repo_name}.git; git fetch --all #{disable_verbose}; `
 
     branches = `cd #{repo_dir}/#{repo_name}.git; git branch --list;`
-    branches_list = branches.split("\n") if branches.empty? == false
-    finded = branches_list.select { |block| block.delete('*').strip == branch }.empty? == false
+    branches_list = []
+    branches_list = branches.split("\n") unless branches.empty?
+    finded = !branches_list.select { |block| block.delete('*').strip == branch }.empty?
 
     raise "could not find '#{branch}' in '#{repo_url}'. " unless finded
 
@@ -42,7 +43,7 @@ class RepoHelper
     `cd #{repo_dir}/#{repo_name}.git; git fetch --all #{disable_verbose}; `
 
     tags = `cd #{repo_dir}/#{repo_name}.git; git tag --list;`
-    tags_list = tags.split("\n") if tags.empty? == false
+    tags_list = tags.split("\n") unless tags.empty?
     tags_list = tags_list.each { |block| block.delete('*').strip }
     fitted_tags_list = VersionHelper.find_fit_version(tags_list, tag, compare_method)
 
@@ -55,6 +56,13 @@ class RepoHelper
     commit_hash
   end
 
+  # checkout_source checkout the source code into directory "{base_dir}/Checkouts/{repo_name}"
+  # @param [String] base_dir
+  # @param [String] repo_name
+  # @param [Bool] is_tag
+  # @param [Bool] using_sync
+  # @param [Bool] disable_verbose
+  # @return [String] Commit hash value.
   def self.checkout_source(base_dir, repo_name, is_tag, using_sync, disable_verbose)
     dest_repo_dir = "#{base_dir}/Checkouts/#{repo_name}"
     src_binary_dir = "#{base_dir}/Build"
