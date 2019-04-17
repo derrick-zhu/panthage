@@ -8,7 +8,8 @@ require_relative 'panthage_cartfile_model'
 
 # FrameworkBuildTable
 class FrameworkBuildInfo
-  attr_reader :name, :framework
+  attr_reader :name,
+              :framework
   attr_accessor :is_ready
 
   def initialize(name, framework)
@@ -23,7 +24,7 @@ class FrameworkBuildInfo
 
     result = true
     framework.dependency.each do |scheme, _|
-      result &&= ProjectCartManager.instance.is_framework_ready?(scheme)
+      result &&= ProjectCartManager.instance.framework_ready?(scheme)
       break unless result
     end
 
@@ -85,7 +86,7 @@ class ProjectCartManager
     frameworks[name] if frameworks.key?(name)
   end
 
-  def is_framework_ready?(name)
+  def framework_ready?(name)
     false if frameworks.nil? || frameworks.empty?
     false unless frameworks.key?(name)
 

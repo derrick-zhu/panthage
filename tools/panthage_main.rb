@@ -10,6 +10,8 @@ require_relative 'string_ext'
 require_relative 'models/panthage_config'
 require_relative 'panthage_dependency'
 require_relative 'panthage_utils'
+require_relative 'panthage_xcode_config'
+require_relative 'panthage_xcode_build'
 
 raise 'wrong args usage' unless ARGV.length >= 3
 
@@ -24,9 +26,6 @@ current_dir = rt_config.current_dir
 repo_base = rt_config.repo_base
 checkout_base = rt_config.checkout_base
 build_base = rt_config.build_base
-
-# all cartfile info are here, tree
-cartfile_main = {}
 
 setup_carthage_env(current_dir.to_s)
 
@@ -52,12 +51,31 @@ puts ProjectCartManager.instance.description.reverse_color.to_s
 
 # build the source dependency framework
 repo_framework = ProjectCartManager.instance.any_repo_framework
+
 until repo_framework.nil? || repo_framework.is_ready || repo_framework.framework.nil?
 
-  puts repo_framework.description.to_s
+  repo_name = repo_framework.name.to_s
+  xc_config = XcodeProjectConfigure.new("#{checkout_base}/#{repo_name}/",
+                                        "#{repo_name}.xcodeproj",
+                                        "#{repo_name}",
+                                        'Debug',
+                                        'iphoneos',
+                                        "#{current_dir}/Carthage/.tmp/#{repo_name}/",
+                                        "#{current_dir}/Carthage/Build/iOS/",
+                                        'dwarf-with-dsym',
+                                        "#{current_dir}/Carthage/Build/iOS/")
+  puts '-------------------------------------------------'
+  # puts repo_framework.description.to_s
+  # puts "#{xc_config.to_xc} #{xc_config.to_xc_param}"
 
-  repo_framework.is_ready = true
+  repo_framework.is_ready = XcodeBuilder.build(xc_config)
+  puts repo_framework.is_ready.to_s
+
+  raise "fatal: error in build '#{repo_name}'.xcodeproj." unless repo_framework.is_ready
+
+  # next one
   repo_framework = ProjectCartManager.instance.any_repo_framework
 end
 
+puts '-------------------------------------------------'
 puts 'DONE!!!DONE!!!DONE!!!DONE!!!DONE!!!DONE!!!DONE!!!'

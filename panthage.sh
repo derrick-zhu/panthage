@@ -96,4 +96,4 @@ fi
 # fi
 
 # echo $params
-ruby tools/panthage_core.rb $params
+ruby tools/panthage_main.rb $params
