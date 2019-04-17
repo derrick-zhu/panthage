@@ -12,6 +12,7 @@ require_relative 'panthage_dependency'
 require_relative 'panthage_utils'
 require_relative 'panthage_xcode_config'
 require_relative 'panthage_xcode_build'
+require_relative 'panthage_cache_version'
 
 raise 'wrong args usage' unless ARGV.length >= 3
 
@@ -55,21 +56,22 @@ repo_framework = ProjectCartManager.instance.any_repo_framework
 until repo_framework.nil? || repo_framework.is_ready || repo_framework.framework.nil?
 
   repo_name = repo_framework.name.to_s
-  xc_config = XcodeProjectConfigure.new("#{checkout_base}/#{repo_name}/",
+  xc_config = XcodeProjectConfigure.new("#{checkout_base}/#{repo_name}",
                                         "#{repo_name}.xcodeproj",
                                         "#{repo_name}",
-                                        'Debug',
-                                        'iphoneos',
-                                        "#{current_dir}/Carthage/.tmp/#{repo_name}/",
-                                        "#{current_dir}/Carthage/Build/iOS/",
+                                        "#{XcodeProjectConfigure::CONFIG_DEBUG}",
+                                        "#{current_dir}/Carthage/.tmp/#{repo_name}",
+                                        "#{current_dir}/Carthage/Build/iOS",
                                         'dwarf-with-dsym',
-                                        "#{current_dir}/Carthage/Build/iOS/")
+                                        "#{current_dir}/Carthage/Build/iOS")
+  xc_config.quiet_mode = true
+  # xc_config.sdk = XcodeProjectConfigure::IPHONEOS
   puts '-------------------------------------------------'
-  # puts repo_framework.description.to_s
-  # puts "#{xc_config.to_xc} #{xc_config.to_xc_param}"
 
-  repo_framework.is_ready = XcodeBuilder.build(xc_config)
-  puts repo_framework.is_ready.to_s
+  repo_framework.is_ready = XcodeBuilder.build_universal(xc_config)
+
+  framework_cache_version = CacheVersion.new(repo_framework.framework.hash, repo_name, xc_config.framework_version_hash)
+  File.write("#{current_dir}/Carthage/Build/.#{xc_config.scheme}.version", JSON.pretty_generate(framework_cache_version.to_json))
 
   raise "fatal: error in build '#{repo_name}'.xcodeproj." unless repo_framework.is_ready
 

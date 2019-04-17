@@ -20,13 +20,13 @@ JOB_TARGET=""
 for i in "$@"; do
     case $i in
     --install | -i) # install and fetch all dep sources
-        OP_COMMAND=$CMD_INSTALL
+        OP_COMMAND=${CMD_INSTALL}
         ;;
     --update | -u) # update resolve
-        OP_COMMAND=$CMD_UPDATE
+        OP_COMMAND=${CMD_UPDATE}
         ;;
     --bootstrap | -b) # build all dep project
-        OP_COMMAND=$CMD_BOOTSTRAP
+        OP_COMMAND=${CMD_BOOTSTRAP}
         ;;
     --target=* | -t=*)
         JOB_TARGET="${i#*=}"
@@ -35,13 +35,13 @@ for i in "$@"; do
     #     USING_REINSTALL=$TRUE
     #   ;;
     --using-carthage | -c)
-        USING_CARTHAGE=$TRUE
+        USING_CARTHAGE=${TRUE}
         ;;
     --sync | -s)
-        USING_SYNC=$TRUE
+        USING_SYNC=${TRUE}
         ;;
     *) # unknown, now maybe a fold
-        JOB_WORKSPACE=$i
+        JOB_WORKSPACE=${i}
         ;;
     esac
 done
@@ -67,7 +67,7 @@ JOB_WORKSPACE=$(to_abs_path $JOB_WORKSPACE)
 
 CONTRIB_ROOT=contrib
 
-if [ $OP_COMMAND == $CMD_INSTALL ]; then
+if [ ${OP_COMMAND} == ${CMD_INSTALL} ]; then
     cp $JOB_WORKSPACE/templates/panda-ios-project.pbxproj $JOB_WORKSPACE/$JOB_TARGET.xcodeproj/project.pbxproj
 
     rm -rf $JOB_WORKSPACE/Carthage/Checkouts

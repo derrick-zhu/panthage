@@ -180,8 +180,6 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
   puts "#{'***'.cyan} Start fetching #{name.green.bold}"
   repo_dir = "#{repo_dir_base}/#{name}.git"
 
-  puts value.to_s if PanConstants.debugging
-
   # using tag or branch ?
   if value.repo_type == GitRepoType::TAG
     git_target_head = VersionHelper.identify(value.version)
