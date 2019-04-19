@@ -74,8 +74,8 @@ class CartFileChecker
       else
         new_data.conflict_type = ConflictType::IGNORE
       end
-    end # end of case
-  end # end of method `check_library_by`
+    end
+  end
 
   private
 

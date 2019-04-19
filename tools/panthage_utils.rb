@@ -282,34 +282,51 @@ def download_binary_file(url, version, dst_file_path)
   end
 end
 
-def solve_project_carthage(workspace_base_dir, scheme_target, parent_name, current_dir, is_install, is_sync)
+def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target, _parent_name, current_dir, is_install, is_sync)
+  raise 'fatal: invalid cartfile data, which is null' if current_cart_data.nil?
+
   cart_file_data = {}
 
   # analysis the Cartfile to grab workspace's basic information
   cart_file_data = merge_cart_file(cart_file_data, read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile"))
   cart_file_data = merge_cart_file(cart_file_data, read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile.private"))
 
-  result = CartFileBase.new(scheme_target, parent_name)
+  # current_cart_data = CartFileBase.new(scheme_target, parent_name)
   # setup and sync git repo
   git_repo_for_checkout = {}
 
-  cart_file_data.each do |name, value|
-    # 在append从cartfile中读取出来的lib信息之前，似乎需要先检验一下，当前carthage目录中，是否存在lib文件，如果有需要得到当前的version
+  cart_file_data.each do |new_name, new_lib|
+    old_lib = ProjectCartManager.instance.framework_with_name(new_lib.name)
 
-    if ProjectCartManager.instance.append_framework(value)
-      git_repo_for_checkout[name] = value
-      result.conflict_type = ConflictType::ACCEPT
+    unless old_lib.nil?
+      ProjectCartManager.instance.verify_library_compatible(new_lib, old_lib)
+      new_lib.hash = old_lib.hash
+      puts "#{new_lib.name} had been there.\n\tNew library: #{new_lib.description}\n\tOld library: #{old_lib.description}"
     end
-    # add each cartfile data into result's dependency
-    result.append_dependency(value)
+
+    puts new_lib.description.to_s.reverse_color
+
+    case new_lib.conflict_type
+    when ConflictType::ERROR
+      raise "Halt !!! #{new_lib.error_msg}"
+    when ConflictType::ACCEPT
+      ProjectCartManager.instance.update_framework(new_lib)
+      git_repo_for_checkout[new_name] = new_lib
+    else
+      # replace the old cart data, although these two data is the same
+      ProjectCartManager.instance.update_framework(new_lib)
+    end
+
+    # add each cartfile data into current_cart_data's dependency
+    current_cart_data.append_raw_dependency(new_lib)
   end
 
-  git_repo_for_checkout.select { |_, v| v.lib_type == LibType::GIT || v.lib_type == LibType::GITHUB }
+  git_repo_for_checkout.select { |_, value| value.lib_type == LibType::GIT || value.lib_type == LibType::GITHUB }
                        .each do |name, value|
     clone_bare_repo("#{workspace_base_dir}/Carthage/Repo", name, value, is_install)
   end
 
-  git_repo_for_checkout.select { |_, v| v.lib_type == LibType::BINARY }
+  git_repo_for_checkout.select { |_, value| value.lib_type == LibType::BINARY }
                        .each do |name, value|
     check_prepare_binary(value)
     download_binary_file(value.url, value.hash, "#{workspace_base_dir}/Carthage/.tmp/#{name}.zip")
@@ -333,38 +350,34 @@ def solve_project_carthage(workspace_base_dir, scheme_target, parent_name, curre
       puts "???#{value.url} -> #{value.lib_type}"
     end
   end
-
-  result
 end
 
 # solve_project_dependency
 def solve_project_dependency(project_cart_data, workspace_base_dir, is_install, is_sync)
   return if project_cart_data.nil?
-  return unless project_cart_data.number_of_dependency.positive?
+  return unless project_cart_data.dependency.empty?
 
-  puts ">>>>>>>>>>>>>>#{project_cart_data.name}<<<<<<<<<<<<<<<<"
+  puts ">>>>>>>>>>>>>> #{project_cart_data.name} <<<<<<<<<<<<<<<<"
   puts "Solving project: #{project_cart_data.name}, which belongs #{project_cart_data.parent_project_name}"
 
-  all_project_sub_libs = []
+  # all_project_sub_libs = []
 
-  project_cart_data.dependency.each do |value|
-    next_project_cart_info = solve_project_carthage(
-      workspace_base_dir.to_s,
-      value.name.to_s,
-      project_cart_data.name.to_s,
-      "#{workspace_base_dir}/Carthage/Checkouts/#{value.name}",
-      is_install,
-      is_sync
-    )
+  project_cart_data.raw_dependency.each do |each_cart_data|
+    solve_project_carthage(each_cart_data,
+                           workspace_base_dir.to_s,
+                           each_cart_data.name.to_s,
+                           project_cart_data.name.to_s,
+                           "#{workspace_base_dir}/Carthage/Checkouts/#{each_cart_data.name}",
+                           is_install,
+                           is_sync)
 
-    if next_project_cart_info.conflict_type == ConflictType::ACCEPT
-      next_project_cart_info.conflict_type = ConflictType::IGNORE
-      all_project_sub_libs.push(next_project_cart_info)
-    end
+    project_cart_data.dependency.push(each_cart_data)
   end
 
-  all_project_sub_libs.each do |value|
-    puts "solving dependencies #{value.name}"
-    solve_project_dependency(value, workspace_base_dir, is_install, is_sync)
+  project_cart_data.dependency.select { |each_cart| each_cart.conflict_type == ConflictType::ACCEPT }
+                   .each do |each_cart_data|
+    puts "solving dependencies #{each_cart_data.name}"
+    each_cart_data.conflict_type = ConflictType::IGNORE
+    solve_project_dependency(each_cart_data, workspace_base_dir, is_install, is_sync)
   end
 end

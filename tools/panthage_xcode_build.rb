@@ -11,7 +11,7 @@ class XcodeBuilder
 
   def initialize; end
 
-  # @param [XcodeProjectConfigure] xcode_config
+  # @param [XcodeBuildConfigure] xcode_config
   # @return [Bool] YES if every thing is fine.
   def self.build_universal(xcode_config)
     raise 'fatal: could not find Xcode installed in current system' unless check_xcrun? && check_lipo?
@@ -24,8 +24,8 @@ class XcodeBuilder
 
     # build the iphone and the iphone simulator arch library
     [
-      XcodeProjectConfigure::IPHONEOS,
-      XcodeProjectConfigure::IPHONE_SIMULATOR
+        XcodeBuildConfigure::IPHONEOS,
+        XcodeBuildConfigure::IPHONE_SIMULATOR
     ].each do |sdk|
       xcode_config.sdk = sdk
       result &&= build(xcode_config)
@@ -39,12 +39,12 @@ class XcodeBuilder
                              force: true
     end
     # 1, let iphoneos library as base one.
-    FileUtils.copy_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeProjectConfigure::IPHONEOS}/#{xcode_config.scheme}.framework",
+    FileUtils.copy_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeBuildConfigure::IPHONEOS}/#{xcode_config.scheme}.framework",
                          "#{universal_path}/#{xcode_config.scheme}.framework",
                          remove_destination: true
 
     # 2, let iphone simulator library as ext one
-    FileUtils.copy_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeProjectConfigure::IPHONE_SIMULATOR}/#{xcode_config.scheme}.framework/Modules/#{xcode_config.scheme}.swiftmodule",
+    FileUtils.copy_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeBuildConfigure::IPHONE_SIMULATOR}/#{xcode_config.scheme}.framework/Modules/#{xcode_config.scheme}.swiftmodule",
                          "#{universal_path}/#{xcode_config.scheme}.framework/Modules/#{xcode_config.scheme}.swiftmodule",
                          remove_destination: true
 
@@ -53,8 +53,8 @@ class XcodeBuilder
       "#{xcrun_bin} #{lipo_bin}",
       '-create',
       "-output #{universal_path}/#{xcode_config.scheme}.framework/#{xcode_config.scheme}",
-      "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeProjectConfigure::IPHONE_SIMULATOR}/#{xcode_config.scheme}.framework/#{xcode_config.scheme}",
-      "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeProjectConfigure::IPHONEOS}/#{xcode_config.scheme}.framework/#{xcode_config.scheme}"
+      "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeBuildConfigure::IPHONE_SIMULATOR}/#{xcode_config.scheme}.framework/#{xcode_config.scheme}",
+      "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeBuildConfigure::IPHONEOS}/#{xcode_config.scheme}.framework/#{xcode_config.scheme}"
     ].join(' '))
 
     raise 'fatal: fails in create universal library' unless result
@@ -65,8 +65,8 @@ class XcodeBuilder
                          remove_destination: true
 
     # clear the env
-    FileUtils.remove_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeProjectConfigure::IPHONE_SIMULATOR}", force: true
-    FileUtils.remove_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeProjectConfigure::IPHONEOS}", force: true
+    FileUtils.remove_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeBuildConfigure::IPHONE_SIMULATOR}", force: true
+    FileUtils.remove_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeBuildConfigure::IPHONEOS}", force: true
 
     # save the SHA256 hash value.
     xcode_config.framework_version_hash = generate_digest(xcode_config)

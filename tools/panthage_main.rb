@@ -30,7 +30,11 @@ build_base = rt_config.build_base
 
 setup_carthage_env(current_dir.to_s)
 
-main_project_info = solve_project_carthage(
+main_project_info = CartFileBase.new("#{scheme_target}",
+                                     'main')
+
+solve_project_carthage(
+  main_project_info,
   current_dir.to_s,
   scheme_target.to_s,
   'main',
@@ -56,14 +60,14 @@ repo_framework = ProjectCartManager.instance.any_repo_framework
 until repo_framework.nil? || repo_framework.is_ready || repo_framework.framework.nil?
 
   repo_name = repo_framework.name.to_s
-  xc_config = XcodeProjectConfigure.new("#{checkout_base}/#{repo_name}",
-                                        "#{repo_name}.xcodeproj",
-                                        "#{repo_name}",
-                                        "#{XcodeProjectConfigure::CONFIG_DEBUG}",
-                                        "#{current_dir}/Carthage/.tmp/#{repo_name}",
-                                        "#{current_dir}/Carthage/Build/iOS",
-                                        'dwarf-with-dsym',
-                                        "#{current_dir}/Carthage/Build/iOS")
+  xc_config = XcodeBuildConfigure.new("#{checkout_base}/#{repo_name}",
+                                      "#{repo_name}.xcodeproj",
+                                      repo_name.to_s,
+                                      XcodeBuildConfigure::CONFIG_DEBUG.to_s,
+                                      "#{current_dir}/Carthage/.tmp/#{repo_name}",
+                                      "#{current_dir}/Carthage/Build/iOS",
+                                      'dwarf-with-dsym',
+                                      "#{current_dir}/Carthage/Build/iOS")
   xc_config.quiet_mode = true
   # xc_config.sdk = XcodeProjectConfigure::IPHONEOS
   puts '-------------------------------------------------'

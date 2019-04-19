@@ -32,7 +32,8 @@ class CartFileBase
                 :version,
                 :hash,
                 :error_msg,
-                :dependency
+                :dependency,
+                :raw_dependency
   attr_reader :lib_type
 
   def initialize(name, parent_name, version = '')
@@ -43,19 +44,12 @@ class CartFileBase
     @version = !version.nil? ? version : ''
     @error_msg = ''
     @dependency = []
+    @raw_dependency = []
     @hash = ''
   end
 
-  def append_dependency(new_lib)
-    dependency.push(new_lib)
-  end
-
-  def number_of_dependency
-    dependency.length
-  end
-
-  def dependency_with_index(idx)
-    dependency[idx] if idx.negative? || idx >= dependency.length
+  def append_raw_dependency(new_lib)
+    raw_dependency.push(new_lib)
   end
 
   def description

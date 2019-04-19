@@ -5,7 +5,7 @@ require 'json'
 require_relative 'panthage_xcode_config.rb'
 
 # XcodeBuilder
-class XcodeProjectConfigure
+class XcodeBuildConfigure
   IPHONEOS = 'iphoneos'
   IPHONE_SIMULATOR = 'iphonesimulator'
 

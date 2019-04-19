@@ -24,8 +24,8 @@ class FrameworkBuildInfo
     true if framework.dependency.empty?
 
     result = true
-    framework.dependency.each do |scheme, _|
-      result &&= ProjectCartManager.instance.framework_ready?(scheme)
+    framework.dependency.each do |each_lib|
+      result &&= ProjectCartManager.instance.framework_ready?(each_lib.name)
       break unless result
     end
 
@@ -57,26 +57,10 @@ class ProjectCartManager
     result
   end
 
-  def append_framework(new_lib)
+  def update_framework(new_lib)
     raise "invalid library '#{new_lib}'" if new_lib.nil?
 
-    old_lib = framework_with_name(new_lib.name)
-
-    unless old_lib.nil?
-      verify_library_compatible(new_lib, old_lib)
-      puts "#{new_lib.name} had been there.\n\tNew library: #{new_lib.description}\n\tOld library: #{old_lib.description}"
-    end
-
-    puts new_lib.description.reverse_color.to_s
-
-    case new_lib.conflict_type
-    when ConflictType::ERROR
-      raise "Halt !!! #{new_lib.error_msg}"
-    when ConflictType::ACCEPT
-      frameworks[new_lib.name] = FrameworkBuildInfo.new(new_lib.name, new_lib)
-    end
-
-    new_lib.conflict_type == ConflictType::ACCEPT
+    frameworks[new_lib.name] = FrameworkBuildInfo.new(new_lib.name, new_lib)
   end
 
   def framework_with_name(name)
@@ -104,8 +88,6 @@ class ProjectCartManager
     tmp = frameworks.select { |_, value| value.is_ready == false && value.need_build }
     tmp.values[0] unless tmp.empty?
   end
-
-  private
 
   def verify_library_compatible(new_lib, old_lib)
     raise "could not verify library compatible between #{new_lib.name} and #{old_lib.name}" if new_lib.name != old_lib.name
