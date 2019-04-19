@@ -6,7 +6,7 @@ require 'xcodeproj'
 require 'net/http'
 require 'json'
 
-require_relative 'string_ext'
+require_relative 'extensions/string_ext'
 require_relative 'models/panthage_config'
 require_relative 'panthage_dependency'
 require_relative 'panthage_utils'

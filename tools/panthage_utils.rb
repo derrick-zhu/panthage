@@ -3,7 +3,8 @@
 
 require 'down'
 
-require_relative 'common_ext'
+require_relative 'extensions/nil_ext'
+require_relative 'extensions/hash_ext'
 require_relative 'panthage_dependency'
 require_relative 'panthage_cartfile_model'
 require_relative 'panthage_project_cart'
@@ -44,6 +45,8 @@ def merge_cart_file(old_cart, new_cart)
         need_added_data[new_name] = new_data
       when ConflictType::ERROR
         raise "Halt !!! #{new_data.error_msg}"
+      else
+        # ignore state, do nothing.
       end
 
     else # not has key 'new_name'

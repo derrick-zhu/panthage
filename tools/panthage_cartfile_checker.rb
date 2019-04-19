@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 # frozen_string_literal: true
 
-require 'panthage_ver_helper'
+require_relative 'panthage_ver_helper'
 
 # CartFileChecker for checking library's version acceptable logic
 class CartFileChecker
