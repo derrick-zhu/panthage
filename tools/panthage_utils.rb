@@ -10,6 +10,7 @@ require_relative 'panthage_cartfile_model'
 require_relative 'panthage_project_cart'
 require_relative 'panthage_ver_helper'
 require_relative 'panthage_repo_helpers'
+require_relative 'panthage_downloader'
 
 # setup_carthage_env check and setup the environments
 def setup_carthage_env(current_dir)
@@ -60,7 +61,7 @@ def merge_cart_file(old_cart, new_cart)
 end
 
 # read_cart_file Reading data from cartfile
-def read_cart_file(project_name, cart_file)
+def read_cart_file(project_name, cart_file, is_private = false)
   cart_file_data = {}
 
   if File.exist? cart_file
@@ -74,15 +75,22 @@ def read_cart_file(project_name, cart_file)
 
       if meta && meta[1].casecmp?('git')
         f_name = %r{/([^./]+)((?i).git)?$}.match(meta[2])[1]
-        cart_file_data[f_name] = CartFileGit.new(f_name, project_name, meta[2], meta[6], meta[9], meta[5])\
+        cart_file_data[f_name] = CartFileGit.new(f_name, project_name,
+                                                 meta[2], meta[6], meta[9], meta[5],
+                                                 is_private)
 
       elsif meta && meta[1].casecmp?('binary')
         f_name = %r{/([^./]+)((?i).json)?$}.match(meta[2])[1]
-        cart_file_data[f_name] = CartFileBinary.new(f_name, project_name, meta[2], meta[6], meta[5])
+        cart_file_data[f_name] = CartFileBinary.new(f_name, project_name,
+                                                    meta[2], meta[6], meta[5],
+                                                    is_private)
 
       elsif meta && meta[1].casecmp?('github')
         f_name = %r{([^./]+)\/([^./]+)?$}.match(meta[2])[2]
-        cart_file_data[f_name] = CartFileGithub.new(f_name, project_name, "git@github.com:#{meta[2]}.git", meta[6], meta[9], meta[5])
+        cart_file_data[f_name] = CartFileGithub.new(f_name, project_name,
+                                                    "git@github.com:#{meta[2]}.git",
+                                                    meta[6], meta[9], meta[5],
+                                                    is_private)
 
       end
     end
@@ -222,7 +230,8 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
       using_install,
       PanConstants.disable_verbose
     )
-
+  else
+    raise "unknown repo type #{value.repo_type}"
   end
 
   raise "unknown branch or tag or commit #{value} and commit hash:#{commit_hash}." if value.repo_type == GitRepoType::BRANCH && commit_hash.length != 40
@@ -234,62 +243,17 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
   print "#{'***'.cyan} Fetch #{name.green.bold} Done.\n\n"
 end
 
-def check_prepare_binary(value)
-  info_file = Down.download(value.url)
-  info_raw = info_file.read
-  info_data = JSON.parse(info_raw)
-
-  binary_list = VersionHelper.find_fit_version(info_data.keys, value.version, value.operator)
-  raise "could not find #{value.version} in '#{binary_list}.'" if binary_list.empty? || binary_list.size != 1
-
-  value.hash = binary_list.first
-rescue StandardError => _
-  raise "fails in download binary: #{url} with version: #{version}"
-ensure
-  info_file.close
-end
-
-def download_binary_file(url, version, dst_file_path)
-  output_binary = File.open(dst_file_path, 'wb+')
-
-  puts "download binary: #{url} with version: #{version}" if PanConstants.debugging
-
-  begin
-    uri = URI(url)
-    json_raw = Net::HTTP.get(uri)
-    json_data = JSON.parse(json_raw)
-    binary_uri = json_data[version]
-
-    puts "binary url: #{binary_uri}"
-
-    resp = nil
-    max_limited = 10
-    cur_limited = 0
-
-    loop do
-      resp = Net::HTTP.get_response(URI.parse(binary_uri))
-      binary_uri = resp['location']
-
-      cur_limited += 1
-      break if cur_limited >= max_limited
-
-      break unless resp.is_a?(Net::HTTPRedirection)
-    end
-
-    output_binary.write(resp.body)
-  ensure
-    output_binary.close
-  end
-end
-
 def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target, _parent_name, current_dir, is_install, is_sync)
   raise 'fatal: invalid cartfile data, which is null' if current_cart_data.nil?
+
+  puts ">>>>>>>>>>>>>> #{current_cart_data.name} <<<<<<<<<<<<<<<<"
+  puts "Solving project: #{current_cart_data.name}, which belongs #{current_cart_data.parent_project_name}"
 
   cart_file_data = {}
 
   # analysis the Cartfile to grab workspace's basic information
   cart_file_data = merge_cart_file(cart_file_data, read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile"))
-  cart_file_data = merge_cart_file(cart_file_data, read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile.private"))
+  cart_file_data = merge_cart_file(cart_file_data, read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile.private", true))
 
   # current_cart_data = CartFileBase.new(scheme_target, parent_name)
   # setup and sync git repo
@@ -298,10 +262,14 @@ def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target,
   cart_file_data.each do |new_name, new_lib|
     old_lib = ProjectCartManager.instance.framework_with_name(new_lib.name)
 
-    unless old_lib.nil?
+    if !old_lib.nil?
       ProjectCartManager.instance.verify_library_compatible(new_lib, old_lib)
       new_lib.hash = old_lib.hash
-      puts "#{new_lib.name} had been there.\n\tNew library: #{new_lib.description}\n\tOld library: #{old_lib.description}"
+      new_lib.dependency = old_lib.dependency
+
+      puts "#{new_lib.name} had been there.\n\tNew library: #{new_lib.description}\n\tOld library: #{old_lib.description}".bg_blue
+    else
+      new_lib.conflict_type == ConflictType::ACCEPT
     end
 
     puts new_lib.description.to_s.reverse_color
@@ -314,7 +282,7 @@ def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target,
       git_repo_for_checkout[new_name] = new_lib
     else
       # replace the old cart data, although these two data is the same
-      ProjectCartManager.instance.update_framework(new_lib)
+      # ProjectCartManager.instance.update_framework(new_lib)
     end
 
     # add each cartfile data into current_cart_data's dependency
@@ -328,8 +296,10 @@ def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target,
 
   git_repo_for_checkout.select { |_, value| value.lib_type == LibType::BINARY }
                        .each do |name, value|
-    check_prepare_binary(value)
-    download_binary_file(value.url, value.hash, "#{workspace_base_dir}/Carthage/.tmp/#{name}.zip")
+    print "#{"***".cyan} Download #{value.name.green.bold}: "
+    BinaryDownloader.check_prepare_binary(value)
+    print "#{value.url}\n"
+    BinaryDownloader.download_binary_file(value.url, value.hash, "#{workspace_base_dir}/Carthage/.tmp/#{name}.zip")
   end
 
   # generate Cartfile.resolved file.
@@ -340,8 +310,7 @@ def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target,
       # binary library had been checked and download previous step.
     elsif (value.lib_type == LibType::GIT) || (value.lib_type == LibType::GITHUB)
       RepoHelper.checkout_source("#{workspace_base_dir}/Carthage",
-                                 name.to_s,
-                                 value.repo_type == GitRepoType::TAG,
+                                 value,
                                  is_sync,
                                  PanConstants.disable_verbose)
       RepoHelper.submodule_init("#{workspace_base_dir}/Carthage",
@@ -356,11 +325,6 @@ end
 def solve_project_dependency(project_cart_data, workspace_base_dir, is_install, is_sync)
   return if project_cart_data.nil?
   return unless project_cart_data.dependency.empty?
-
-  puts ">>>>>>>>>>>>>> #{project_cart_data.name} <<<<<<<<<<<<<<<<"
-  puts "Solving project: #{project_cart_data.name}, which belongs #{project_cart_data.parent_project_name}"
-
-  # all_project_sub_libs = []
 
   project_cart_data.raw_dependency.each do |each_cart_data|
     solve_project_carthage(each_cart_data,

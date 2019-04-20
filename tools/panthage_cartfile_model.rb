@@ -34,14 +34,17 @@ class CartFileBase
                 :error_msg,
                 :dependency,
                 :raw_dependency
-  attr_reader :lib_type
 
-  def initialize(name, parent_name, version = '')
+  attr_reader :lib_type,
+              :is_private
+
+  def initialize(name, parent_name, version = '', is_private = false)
     @lib_type = LibType::MAIN
     @conflict_type = ConflictType::IGNORE
     @name = name
     @parent_project_name = parent_name
     @version = !version.nil? ? version : ''
+    @is_private = is_private
     @error_msg = ''
     @dependency = []
     @raw_dependency = []
@@ -53,7 +56,9 @@ class CartFileBase
   end
 
   def description
-    "Library: #{name} from #{parent_project_name} Type:#{lib_type} "
+    dependency_descs = []
+    dependency.each { |lib| dependency_descs.push(lib.name) }
+    "Library: #{name} from #{parent_project_name} Type:#{lib_type} Dependency: [#{dependency_descs.join( ',')}]"
   end
 end
 
@@ -64,8 +69,8 @@ class CartFileGit < CartFileBase
                 :compare_method
   attr_reader :repo_type
 
-  def initialize(project_name, parent_name, url, tag, branch, compare_method = '~>')
-    super(project_name, parent_name, tag)
+  def initialize(project_name, parent_name, url, tag, branch, compare_method = '~>', is_private)
+    super(project_name, parent_name, tag, is_private)
 
     puts "#{project_name}, #{url}, #{version}, #{branch}" if PanConstants.debugging
 
@@ -97,8 +102,8 @@ end
 
 # CartFileGithub
 class CartFileGithub < CartFileGit
-  def initialize(name, parent_name, url, tag, branch, compare_method = '~>')
-    super(name, parent_name, url, tag, branch, compare_method)
+  def initialize(name, parent_name, url, tag, branch, compare_method = '~>', is_private)
+    super(name, parent_name, url, tag, branch, compare_method, is_private)
   end
 
   def description
@@ -110,8 +115,8 @@ end
 class CartFileBinary < CartFileBase
   attr_accessor :url, :operator
 
-  def initialize(name, project_name, url, version, operator)
-    super(name, project_name, version)
+  def initialize(name, project_name, url, version, operator, is_private)
+    super(name, project_name, version, is_private)
 
     @lib_type = LibType::BINARY
     @conflict_type = ConflictType::IGNORE

@@ -120,7 +120,8 @@ class XcodeBuilder
       "#{xcrun_bin} #{xcode_build_bin}",
       "#{xcode_config.to_xc}",
       "#{xcode_config.to_xc_param}",
-      "#{xcode_config.to_xc_ext_param};"
+      "#{xcode_config.to_xc_ext_param}",
+      "2> /dev/null ;"
     ].join(' ')
     puts "Build command: #{command}"
     system(command)

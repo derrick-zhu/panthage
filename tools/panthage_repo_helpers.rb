@@ -27,10 +27,12 @@ class RepoHelper
 
     raise "could not find '#{branch}' in '#{repo_url}'. " unless finded
 
-    command = "cd #{repo_dir}/#{repo_name}.git; "
-    command += "git branch #{branch} 2> /dev/null; "
-    command += "git symbolic-ref HEAD refs/heads/#{branch}; "
-    command += "git branch --set-upstream-to=origin/#{branch} #{branch}; "
+    command = [
+        "cd #{repo_dir}/#{repo_name}.git; ",
+        "git branch #{branch} 2> /dev/null; ",
+        "git symbolic-ref HEAD refs/heads/#{branch}; ",
+        "git branch --set-upstream-to=origin/#{branch} #{branch}; "
+    ].join(' ').strip.freeze
     system(command)
 
     commit_hash = `cd #{repo_dir}/#{repo_name}.git; git rev-parse HEAD 2> /dev/null;`.strip.freeze
@@ -57,17 +59,10 @@ class RepoHelper
     commit_hash
   end
 
-  # checkout_source checkout the source code into directory "{base_dir}/Checkouts/{repo_name}"
-  # @param [String] base_dir
-  # @param [String] repo_name
-  # @param [Bool] is_tag
-  # @param [Bool] using_sync
-  # @param [Bool] disable_verbose
-  # @return [String] Commit hash value.
-  def self.checkout_source(base_dir, repo_name, is_tag, using_sync, disable_verbose)
-    dest_repo_dir = "#{base_dir}/Checkouts/#{repo_name}"
+  def self.checkout_source(base_dir, repo_data, using_sync, disable_verbose)
+    dest_repo_dir = "#{base_dir}/Checkouts/#{repo_data.name}"
     src_binary_dir = "#{base_dir}/Build"
-    src_bare_dir = "#{base_dir}/Repo/#{repo_name}.git"
+    src_bare_dir = "#{base_dir}/Repo/#{repo_data.name}.git"
 
     FileUtils.mkdir_p dest_repo_dir unless File.exist? dest_repo_dir
     FileUtils.mkdir_p src_binary_dir unless File.exist? src_binary_dir
@@ -79,7 +74,7 @@ class RepoHelper
                else
                  "git reset #{disable_verbose}; "
                end
-    command += 'git pull; ' if using_sync && !is_tag
+    command += 'git pull; ' if using_sync && !repo_data.repo_type == GitRepoType::TAG
     command += "mkdir -p #{dest_repo_dir}/Carthage/Checkouts/; "
     command += "mkdir -p #{dest_repo_dir}/Carthage/; cd $_; \n"
     command += "if [ ! -d ./Build/ ] \n" \
@@ -87,11 +82,19 @@ class RepoHelper
     + "ln -s #{src_binary_dir} .  \n" \
     + "fi\n"
 
+    repo_data.dependency.each do |lib|
+      command += "ln -s #{base_dir}/Checkouts/#{lib.name} . ;"
+    end
+
     system(command)
   end
 
   def self.submodule_init(base_dir, repo_name)
     dest_repo_dir = "#{base_dir}/Checkouts/#{repo_name}"
+    return unless File.exist? "#{dest_repo_dir}/.gitmodules"
+
     system("cd #{dest_repo_dir}; git submodule update --init #{PanConstants.disable_verbose};") if File.exist?(dest_repo_dir)
   end
+
+  def self.setup_dependency(base_dir, dependency_libs); end
 end

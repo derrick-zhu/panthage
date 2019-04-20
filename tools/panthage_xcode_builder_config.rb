@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 require 'json'
-require_relative 'panthage_xcode_config.rb'
+require_relative 'panthage_xcode_builder_config.rb'
 
 # XcodeBuilder
 class XcodeBuildConfigure

@@ -10,8 +10,8 @@ require_relative 'extensions/string_ext'
 require_relative 'models/panthage_config'
 require_relative 'panthage_dependency'
 require_relative 'panthage_utils'
-require_relative 'panthage_xcode_config'
-require_relative 'panthage_xcode_build'
+require_relative 'panthage_xcode_builder_config'
+require_relative 'panthage_xcode_builder'
 require_relative 'panthage_cache_version'
 
 raise 'wrong args usage' unless ARGV.length >= 3

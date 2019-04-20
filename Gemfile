@@ -7,7 +7,9 @@ gem 'rubocop'
 gem 'solargraph'
 gem 'git'
 gem 'down', '~> 4.4'
+gem 'rubyzip'
 # debug
 gem 'ruby-debug-ide'
 gem 'debase'
 gem 'byebug'
+gem "test-unit"
