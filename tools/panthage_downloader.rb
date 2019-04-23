@@ -49,15 +49,13 @@ class BinaryDownloader
   def self.unzip(zip_file, file_to_unzip, dir)
     raise "fatal: invalid zip file :#{zip_file}" unless File.exist?(zip_file.to_s)
 
-    regex = %r{.\/(([._\-\w\d*]+\/)*)(#{file_to_unzip})(([._\-\w\d*\/]+)*)}
-
     Zip::File.open(zip_file.to_s) do |each_file|
       # Handle entries one by one
       each_file.each do |entry|
-        meta = regex.match(entry.name)
+        meta = %r{(.\/)?(([._\-\w\d*]+\/)*)(#{file_to_unzip})([._\-\w\d*\/]*)}.match(entry.name)
 
-        if meta && meta[3] == file_to_unzip
-          f_path = File.join(dir, entry.name)
+        if meta && meta[4] == file_to_unzip
+          f_path = File.join(dir, "#{meta[4]}#{meta[5]}")
           FileUtils.mkdir_p(File.dirname(f_path))
           each_file.extract(entry, f_path) unless File.exist? f_path
         end

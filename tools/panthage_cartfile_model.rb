@@ -102,7 +102,7 @@ end
 
 # CartFileGithub
 class CartFileGithub < CartFileGit
-  def initialize(name, parent_name, url, tag, branch, compare_method = '~>', is_private)
+  def initialize(name, parent_name, url, tag, branch, compare_method = '~>', is_private = false)
     super(name, parent_name, url, tag, branch, compare_method, is_private)
   end
 
@@ -115,7 +115,7 @@ end
 class CartFileBinary < CartFileBase
   attr_accessor :url, :operator
 
-  def initialize(name, project_name, url, version, operator, is_private)
+  def initialize(name, project_name, url, version, operator, is_private = false)
     super(name, project_name, version, is_private)
 
     @lib_type = LibType::BINARY

@@ -26,7 +26,7 @@ class MyTest < Test::Unit::TestCase
     cart_bin = CartFileBinary.new('main', 'minor', json_url, @target_version, '==')
     BinaryDownloader.check_prepare_binary(cart_bin)
     BinaryDownloader.download_binary_file(cart_bin.url, cart_bin.hash, '')
-    BinaryDownloader.unzip(@target_file, './')
+    BinaryDownloader.unzip(@target_file, 'AppsFlyerTracker.framework', './')
     assert(File.exist?(@target_file))
   end
 end
