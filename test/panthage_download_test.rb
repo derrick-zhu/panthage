@@ -3,10 +3,10 @@
 
 require 'test/unit'
 require_relative '../tools/panthage_dependency'
-require_relative '../tools/panthage_cartfile_model'
+require_relative '../tools/models/panthage_cartfile_model'
 require_relative '../tools/panthage_downloader'
 
-class MyTest < Test::Unit::TestCase
+class DownloaderTest < Test::Unit::TestCase
   attr_reader :json_url
 
   def setup

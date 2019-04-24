@@ -6,11 +6,12 @@ require 'down'
 require_relative 'extensions/nil_ext'
 require_relative 'extensions/hash_ext'
 require_relative 'panthage_dependency'
-require_relative 'panthage_cartfile_model'
+require_relative 'models/panthage_cartfile_model'
 require_relative 'panthage_project_cart'
 require_relative 'panthage_ver_helper'
 require_relative 'panthage_repo_helpers'
 require_relative 'panthage_downloader'
+require_relative 'panthage_xcode_project'
 
 # setup_carthage_env check and setup the environments
 def setup_carthage_env(current_dir)
@@ -127,9 +128,6 @@ end
 
 # solve_cart_file solve and analysis the cartfile
 def solve_cart_file(current_dir, cartfile)
-  # if using_carthage
-  #   system "cd #{current_dir}; carthage update --no-build --no-checkout --verbose --new-resolver;"
-  # else
   array_cartfile_resolve = []
   cartfile.each do |_, value|
     if value.lib_type == LibType::BINARY
@@ -175,7 +173,7 @@ def solve_cart_file(current_dir, cartfile)
     end
   end
 
-  carfile_resolve_content = array_cartfile_resolve.sort_by { |a, _b| a }.join("\n")
+  carfile_resolve_content = array_cartfile_resolve.sort_by {|a, _b| a}.join("\n")
 
   puts carfile_resolve_content.to_s if PanConstants.debugging
 
@@ -212,23 +210,23 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
   # fetch the commit hash value by using branch name or tags
   if value.repo_type == GitRepoType::TAG
     commit_hash = RepoHelper.clone_with_tag(
-      value.url.to_s,
-      name,
-      git_target_head,
-      repo_dir_base,
-      value.compare_method,
-      PanConstants.disable_verbose
+        value.url.to_s,
+        name,
+        git_target_head,
+        repo_dir_base,
+        value.compare_method,
+        PanConstants.disable_verbose
     )
 
   elsif value.repo_type == GitRepoType::BRANCH
     print "#{'***'.cyan} "
     commit_hash = RepoHelper.clone_with_branch(
-      value.url,
-      name,
-      git_target_head,
-      repo_dir_base,
-      using_install,
-      PanConstants.disable_verbose
+        value.url,
+        name,
+        git_target_head,
+        repo_dir_base,
+        using_install,
+        PanConstants.disable_verbose
     )
   else
     raise "unknown repo type #{value.repo_type}"
@@ -252,7 +250,7 @@ def load_cart_file(current_dir, scheme_target)
   cart_file_data
 end
 
-def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target, _parent_name, current_dir, is_install, is_sync)
+def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target, parent_name, current_dir, is_install, is_sync)
   raise 'fatal: invalid cartfile data, which is null' if current_cart_data.nil?
 
   puts ">>>>>>>>>>>>>> #{current_cart_data.name} <<<<<<<<<<<<<<<<"
@@ -295,17 +293,22 @@ def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target,
     current_cart_data.append_raw_dependency(new_lib)
   end
 
-  git_repo_for_checkout.select { |_, value| value.lib_type == LibType::GIT || value.lib_type == LibType::GITHUB }
-                       .each do |name, value|
+  git_repo_for_checkout.select {|_, value| value.lib_type == LibType::GIT || value.lib_type == LibType::GITHUB}
+      .each do |name, value|
     clone_bare_repo("#{workspace_base_dir}/Carthage/Repo", name, value, is_install)
   end
 
-  git_repo_for_checkout.select { |_, value| value.lib_type == LibType::BINARY }
-                       .each do |name, value|
+  git_repo_for_checkout.select {|_, value| value.lib_type == LibType::BINARY}
+      .each do |name, value|
     print "#{"***".cyan} Download #{value.name.green.bold}: "
     BinaryDownloader.check_prepare_binary(value)
     print "#{value.url}\n"
-    BinaryDownloader.download_binary_file(value.url, value.hash, "#{workspace_base_dir}/Carthage/.tmp/#{name}.zip")
+
+    target_zip_file = "#{workspace_base_dir}/Carthage/.tmp/#{name}.zip"
+    BinaryDownloader.download_binary_file(value.url, value.hash, target_zip_file)
+
+    BinaryDownloader.unzip(target_zip_file, "*.framework", "#{workspace_base_dir}/Carthage/Build/iOS/") ||
+    BinaryDownloader.unzip(target_zip_file, "*.a", "#{workspace_base_dir}/Carthage/Build/iOS/")
   end
 
   # generate Cartfile.resolved file.
@@ -344,8 +347,8 @@ def solve_project_dependency(project_cart_data, workspace_base_dir, is_install, 
     project_cart_data.dependency.push(each_cart_data)
   end
 
-  project_cart_data.dependency.select { |each_cart| each_cart.conflict_type == ConflictType::ACCEPT }
-                   .each do |each_cart_data|
+  project_cart_data.dependency.select {|each_cart| each_cart.conflict_type == ConflictType::ACCEPT}
+      .each do |each_cart_data|
     puts "solving dependencies #{each_cart_data.name}"
     each_cart_data.conflict_type = ConflictType::IGNORE
     solve_project_dependency(each_cart_data, workspace_base_dir, is_install, is_sync)

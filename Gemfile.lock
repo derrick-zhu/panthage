@@ -10,6 +10,8 @@ GEM
     byebug (11.0.1)
     claide (1.0.2)
     colored2 (3.1.2)
+    crack (0.4.3)
+      safe_yaml (~> 1.0.0)
     debase (0.2.2)
       debase-ruby_core_source (>= 0.10.2)
     debase-ruby_core_source (0.10.4)
@@ -48,6 +50,7 @@ GEM
       slop (~> 3.4, >= 3.4.7)
     ruby-progressbar (1.10.0)
     rubyzip (1.2.2)
+    safe_yaml (1.0.5)
     slop (3.6.0)
     solargraph (0.32.1)
       backport (~> 1.0)
@@ -79,6 +82,7 @@ PLATFORMS
 
 DEPENDENCIES
   byebug
+  crack
   debase
   down (~> 4.4)
   git

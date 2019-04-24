@@ -2,8 +2,8 @@
 # frozen_string_literal: true
 
 require 'singleton'
-require_relative 'extensions/string_ext'
-require_relative 'panthage_ver_helper'
+require_relative '../extensions/string_ext'
+require_relative '../panthage_ver_helper'
 
 class ConflictType
   IGNORE = 0

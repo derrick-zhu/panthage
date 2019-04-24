@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 require_relative 'panthage_dependency'
-require_relative 'panthage_cartfile_model'
+require_relative 'models/panthage_cartfile_model'
 require_relative 'panthage_ver_helper'
 
 # RepoHelper

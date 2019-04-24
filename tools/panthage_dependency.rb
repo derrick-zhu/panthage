@@ -26,10 +26,10 @@ end
 
 # main command
 class Command
-  CMD_UNKNOWN = -1
-  CMD_INSTALL = CMD_UNKNOWN + 1
-  CMD_UPDATE = CMD_INSTALL + 1
-  CMD_BOOTSTRAP = CMD_UPDATE + 1
+  CMD_UNKNOWN = ''
+  CMD_INSTALL = 'install'
+  CMD_UPDATE = 'update'
+  CMD_BOOTSTRAP = 'bootstrap'
 
   def self.command_install?(cmd)
     cmd == CMD_INSTALL

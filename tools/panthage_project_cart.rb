@@ -3,7 +3,7 @@
 
 require 'singleton'
 require_relative 'extensions/string_ext'
-require_relative 'panthage_cartfile_model'
+require_relative 'models/panthage_cartfile_model'
 require_relative 'panthage_ver_helper'
 require_relative 'panthage_cartfile_checker'
 

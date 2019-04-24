@@ -53,18 +53,23 @@ class BinaryDownloader
     reg_unzip = reg_unzip.gsub(/[*]/, '(.*)')
     reg_unzip = reg_unzip.gsub(/[?]/, '.')
 
+    found = false
+
     Zip::File.open(zip_file.to_s) do |each_file|
       # Handle entries one by one
       each_file.each do |entry|
         meta = %r{(.\/)?(([._\-\w\d*]+\/)*)(#{reg_unzip})([._\-\w\d*\/]*)}.match(entry.name)
 
         if meta && !meta[4].empty?
+          found = true
           f_path = File.join(dir, "#{meta[4]}#{meta[6]}")
           FileUtils.mkdir_p(File.dirname(f_path))
           each_file.extract(entry, f_path) unless File.exist? f_path
         end
       end
     end
+
+    found
   end
 
   private_class_method def self.check_wget

@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem 'crack'
 gem 'xcodeproj'
 gem 'ruby-lint'
 gem 'jaro_winkler', '>= 1.5.2'

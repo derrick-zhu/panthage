@@ -9,8 +9,8 @@ class XcodeBuildConfigure
   IPHONEOS = 'iphoneos'
   IPHONE_SIMULATOR = 'iphonesimulator'
 
-  CONFIG_DEBUG = 'Debug'
-  CONFIG_RELEASE = 'Release'
+  DEBUG = 'Debug'
+  RELEASE = 'Release'
 
   attr_reader :work_dir,
               :project,
@@ -76,7 +76,7 @@ class XcodeBuildConfigure
     if is_simulator
       %w[-arch x86_64 -arch i386].join(' ')
     else
-      %w[-arch arm64 -arch arm64e -arch armv7 -arch armv7s].join(' ')
+      %w[-arch arm64 -arch armv7 -arch armv7s].join(' ')
     end
   end
 
