@@ -243,17 +243,23 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
   print "#{'***'.cyan} Fetch #{name.green.bold} Done.\n\n"
 end
 
+def load_cart_file(current_dir, scheme_target)
+  cart_file_data = {}
+
+  cart_file_data = merge_cart_file(cart_file_data, read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile"))
+  cart_file_data = merge_cart_file(cart_file_data, read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile.private", true))
+
+  cart_file_data
+end
+
 def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target, _parent_name, current_dir, is_install, is_sync)
   raise 'fatal: invalid cartfile data, which is null' if current_cart_data.nil?
 
   puts ">>>>>>>>>>>>>> #{current_cart_data.name} <<<<<<<<<<<<<<<<"
   puts "Solving project: #{current_cart_data.name}, which belongs #{current_cart_data.parent_project_name}"
 
-  cart_file_data = {}
-
   # analysis the Cartfile to grab workspace's basic information
-  cart_file_data = merge_cart_file(cart_file_data, read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile"))
-  cart_file_data = merge_cart_file(cart_file_data, read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile.private", true))
+  cart_file_data = load_cart_file(current_dir, scheme_target)
 
   # current_cart_data = CartFileBase.new(scheme_target, parent_name)
   # setup and sync git repo
