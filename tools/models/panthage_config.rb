@@ -29,6 +29,8 @@ class ExecuteConfig
     @build_base = "#{@current_dir}/Carthage/Build"
   end
 
+  private
+
   def parse(argv)
     argv.each do |each_arg|
       if REG_FLAG.match?(each_arg)
@@ -52,7 +54,18 @@ class ExecuteConfig
         when EXEC_SCHEME
           @scheme_target = match[:value]
         when EXEC_PLATFORM
-          @platform = match[:value]
+          case match[:value]
+          when 'iOS'
+            @platform = XCodeTarget::FOR_IOS
+          when 'macOS'
+            @platform = XCodeTarget::FOR_MACOS
+          when 'tvOS'
+            @platform = XCodeTarget::FOR_TVOS
+          when 'watchOS'
+            @platform = XCodeTarget::FOR_WATCHOS
+          else
+            raise "Fatal: invalid platform #{match[:value]}"
+          end
         else
           raise "invalid parameter #{match[:key]}=#{match[:value]}"
         end
@@ -61,5 +74,7 @@ class ExecuteConfig
         puts "#{each_arg} ??"
       end
     end
+
+    @platform = XCodeTarget::FOR_IOS if @platform.empty? || @platform.nil?
   end
 end

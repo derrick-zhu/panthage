@@ -79,6 +79,8 @@ until repo_framework.nil? || repo_framework.is_ready || repo_framework.framework
 
   xc_build_result = true
   p_xcode_project.targets.each do |xc_target|
+    next if xc_target.platform_type != rt_config.platform
+
     build_dir_path = "#{current_dir}/Carthage/Build/iOS"
     version_hash_filepath = ''
     build_scheme_name = ''
@@ -102,8 +104,9 @@ until repo_framework.nil? || repo_framework.is_ready || repo_framework.framework
                                         "#{current_dir}/Carthage/.tmp/#{repo_name}",
                                         "#{current_dir}/Carthage/Build/iOS",
                                         'dwarf-with-dsym',
-                                        "#{build_dir_path}")
-    xc_config.quiet_mode = false
+                                        "#{build_dir_path}",
+                                        rt_config.platform)
+    xc_config.quiet_mode = true
     # xc_config.sdk = XcodeProjectConfigure::IPHONEOS
     puts '-------------------------------------------------'
 

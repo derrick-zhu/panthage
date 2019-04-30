@@ -72,21 +72,24 @@ class XcodeProject
     result = []
     project.targets.select do |each_target|
       if static?(each_target.name)
-        result.append(XCodeTarget.new(each_target.name,
+        result.append(XCodeTarget.new(each_target.sdk,
+                                      each_target.name,
                                       product_name(each_target.name),
                                       XCodeTarget::STATIC_LIB,
                                       each_target.product_type,
                                       mach_o_type(each_target.name))
         )
       elsif dylib?(each_target.name)
-        result.append(XCodeTarget.new(each_target.name,
+        result.append(XCodeTarget.new(each_target.sdk,
+                                      each_target.name,
                                       product_name(each_target.name),
                                       XCodeTarget::DYNAMIC_LIB,
                                       each_target.product_type,
                                       mach_o_type(each_target.name))
         )
       elsif executable?(each_target.name)
-        result.append(XCodeTarget.new(each_target.name,
+        result.append(XCodeTarget.new(each_target.sdk,
+                                      each_target.name,
                                       product_name(each_target.name),
                                       XCodeTarget::EXECUTABLE,
                                       each_target.product_type,
@@ -96,6 +99,10 @@ class XcodeProject
     end
 
     result
+  end
+
+  def platform_type(type)
+
   end
 
   def schemes

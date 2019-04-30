@@ -9,7 +9,8 @@ class XcodeBuilder
   XCRUN_EXEC = 'xcrun'
   XCODE_BUILD_EXEC = 'xcodebuild'
 
-  def initialize; end
+  def initialize;
+  end
 
   # @param [XcodeBuildConfigure] xcode_config
   # @return [Bool] YES if every thing is fine.
@@ -23,10 +24,8 @@ class XcodeBuilder
     FileUtils.mkdir_p universal_path.to_s unless File.exist? universal_path.to_s
 
     # build the iphone and the iphone simulator arch library
-    [
-        XcodeBuildConfigure::IPHONEOS,
-        XcodeBuildConfigure::IPHONE_SIMULATOR
-    ].each do |sdk|
+    XcodeSDKRoot.sdk_root(xcode_config.platform_sdk)
+        .each do |sdk|
       xcode_config.sdk = sdk
       result &&= build(xcode_config)
     end
@@ -39,23 +38,23 @@ class XcodeBuilder
                              force: true
     end
     # 1, let iphoneos library as base one.
-    FileUtils.copy_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeBuildConfigure::IPHONEOS}/#{xcode_config.scheme}.framework",
+    FileUtils.copy_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONEOS}/#{xcode_config.scheme}.framework",
                          "#{universal_path}/#{xcode_config.scheme}.framework",
                          remove_destination: true
 
     # 2, let iphone simulator library as ext one
-    FileUtils.copy_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeBuildConfigure::IPHONE_SIMULATOR}/#{xcode_config.scheme}.framework/Modules/#{xcode_config.scheme}.swiftmodule",
+    FileUtils.copy_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONE_SIMULATOR}/#{xcode_config.scheme}.framework/Modules/#{xcode_config.scheme}.swiftmodule",
                          "#{universal_path}/#{xcode_config.scheme}.framework/Modules/#{xcode_config.scheme}.swiftmodule",
                          remove_destination: true
 
     # create universal binary file by using `lipo`
     result &&= system([
-      "#{xcrun_bin} #{lipo_bin}",
-      '-create',
-      "-output #{universal_path}/#{xcode_config.scheme}.framework/#{xcode_config.scheme}",
-      "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeBuildConfigure::IPHONE_SIMULATOR}/#{xcode_config.scheme}.framework/#{xcode_config.scheme}",
-      "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeBuildConfigure::IPHONEOS}/#{xcode_config.scheme}.framework/#{xcode_config.scheme}"
-    ].join(' '))
+                          "#{xcrun_bin} #{lipo_bin}",
+                          '-create',
+                          "-output #{universal_path}/#{xcode_config.scheme}.framework/#{xcode_config.scheme}",
+                          "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONE_SIMULATOR}/#{xcode_config.scheme}.framework/#{xcode_config.scheme}",
+                          "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONEOS}/#{xcode_config.scheme}.framework/#{xcode_config.scheme}"
+                      ].join(' '))
 
     raise 'fatal: fails in create universal library' unless result
 
@@ -65,8 +64,8 @@ class XcodeBuilder
                          remove_destination: true
 
     # clear the env
-    FileUtils.remove_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeBuildConfigure::IPHONE_SIMULATOR}", force: true
-    FileUtils.remove_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeBuildConfigure::IPHONEOS}", force: true
+    FileUtils.remove_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONE_SIMULATOR}", force: true
+    FileUtils.remove_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONEOS}", force: true
 
     # save the SHA256 hash value.
     xcode_config.framework_version_hash = generate_digest(xcode_config)
@@ -75,65 +74,65 @@ class XcodeBuilder
   end
 
   private_class_method def self.check_lipo?
-    !`type #{LIPO_EXEC} 2> /dev/null;`.empty?
-  end
+                         !`type #{LIPO_EXEC} 2> /dev/null;`.empty?
+                       end
 
   private_class_method def self.lipo_bin
-    `which #{LIPO_EXEC}`.to_s.strip.freeze
-  end
+                         `which #{LIPO_EXEC}`.to_s.strip.freeze
+                       end
 
   private_class_method def self.check_xcrun?
-    !`type #{XCRUN_EXEC} 2> /dev/null;`.empty?
-  end
+                         !`type #{XCRUN_EXEC} 2> /dev/null;`.empty?
+                       end
 
   private_class_method def self.xcrun_bin
-    `which #{XCRUN_EXEC}`.to_s.strip.freeze
-  end
+                         `which #{XCRUN_EXEC}`.to_s.strip.freeze
+                       end
 
   private_class_method def self.check_xcode?
-    !`type #{XCODE_BUILD_EXEC} 2> /dev/null;`.empty?
-  end
+                         !`type #{XCODE_BUILD_EXEC} 2> /dev/null;`.empty?
+                       end
 
   private_class_method def self.xcode_build_bin
-    `which  #{XCODE_BUILD_EXEC}`.to_s.strip.freeze
-  end
+                         `which  #{XCODE_BUILD_EXEC}`.to_s.strip.freeze
+                       end
 
   private_class_method def self.build(xcode_config)
-    raise 'fatal: invalid xcode project build configuration' if xcode_config.nil?
-    raise 'fatal: could not find Xcode installed in current system' unless check_xcode? && check_xcrun?
-    raise "fatal: invalid xcode project path: '#{xcode_config.work_dir}'" unless File.exist? xcode_config.work_dir.to_s
+                         raise 'fatal: invalid xcode project build configuration' if xcode_config.nil?
+                         raise 'fatal: could not find Xcode installed in current system' unless check_xcode? && check_xcrun?
+                         raise "fatal: invalid xcode project path: '#{xcode_config.work_dir}'" unless File.exist? xcode_config.work_dir.to_s
 
-    unless File.exist? xcode_config.derived_path.to_s
-      FileUtils.mkdir_p xcode_config.derived_path.to_s
-    end
+                         unless File.exist? xcode_config.derived_path.to_s
+                           FileUtils.mkdir_p xcode_config.derived_path.to_s
+                         end
 
-    unless File.exist? xcode_config.dwarf_dSYM_path.to_s
-      FileUtils.mkdir_p xcode_config.dwarf_dSYM_path.to_s
-    end
+                         unless File.exist? xcode_config.dwarf_dSYM_path.to_s
+                           FileUtils.mkdir_p xcode_config.dwarf_dSYM_path.to_s
+                         end
 
-    unless File.exist? xcode_config.build_output.to_s
-      FileUtils.mkdir_p xcode_config.build_output.to_s
-    end
+                         unless File.exist? xcode_config.build_output.to_s
+                           FileUtils.mkdir_p xcode_config.build_output.to_s
+                         end
 
-    command = [
-      "cd #{xcode_config.work_dir};",
-      "#{xcrun_bin} #{xcode_build_bin}",
-      "#{xcode_config.to_xc}",
-      "#{xcode_config.to_xc_param}",
-      "#{xcode_config.to_xc_ext_param}"
-    ]
-    command.push("2> /dev/null ;") if xcode_config.quiet_mode
-    command = command.join(' ')
+                         command = [
+                             "cd #{xcode_config.work_dir};",
+                             "#{xcrun_bin} #{xcode_build_bin}",
+                             "#{xcode_config.to_xc}",
+                             "#{xcode_config.to_xc_param}",
+                             "#{xcode_config.to_xc_ext_param}"
+                         ]
+                         command.push("2> /dev/null ;") if xcode_config.quiet_mode
+                         command = command.join(' ')
 
-    puts "Build command: #{command}"
-    system(command)
-  end
+                         puts "Build command: #{command}"
+                         system(command)
+                       end
 
   private_class_method def self.generate_digest(xcode_config)
-    raise 'fatal: invalid xcode project build configuration' if xcode_config.nil?
+                         raise 'fatal: invalid xcode project build configuration' if xcode_config.nil?
 
-    bin_path = "#{xcode_config.build_output}/#{xcode_config.scheme}.framework/#{xcode_config.scheme}"
-    bin_data = File.read(bin_path.to_s)
-    Digest::SHA2.new(256).hexdigest(bin_data)
-  end
+                         bin_path = "#{xcode_config.build_output}/#{xcode_config.scheme}.framework/#{xcode_config.scheme}"
+                         bin_data = File.read(bin_path.to_s)
+                         Digest::SHA2.new(256).hexdigest(bin_data)
+                       end
 end
