@@ -111,14 +111,10 @@ class XcodeProject
       scheme_file = "#{File.absolute_path(xcode_project)}/xcshareddata/xcschemes/#{each_scheme}.xcscheme"
       next unless File.exist?(scheme_file)
 
-      scheme_json = XMLUtils.to_json(File.read(scheme_file))["Scheme"]
-      next unless !scheme_json.nil?
+      scheme_json_str = XMLUtils.to_json(File.read(scheme_file)).to_s.gsub(/=>/, ':')
+      scheme_json_str = scheme_json_str.gsub(/nil/, 'null')
 
-      scheme_obj = XcodeSchemeModel.new(scheme_json["LastUpgradeVersion"], scheme_json["version"], scheme_json["BuildAction"], scheme_json["TestAction"])
-
-      result.append(XCodeSchemeConfig.new(each_scheme.to_s,
-                                          scheme_obj.BuildAction.BuildActionEntries.BuildableReference.BlueprintName,
-                                          scheme_obj.BuildAction.BuildActionEntries.BuildableReference.ReferencedContainer))
+      result.append(XcodeSchemeEntryModel.parse scheme_json_str)
     end
 
     result

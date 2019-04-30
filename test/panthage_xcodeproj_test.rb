@@ -2,6 +2,7 @@
 
 require 'test/unit'
 require_relative '../tools/panthage_xcode_project'
+require_relative '../tools/models/panthage_xc_scheme_model'
 
 class TestXcodeProject < Test::Unit::TestCase
   attr_reader :xcode_proj_path,

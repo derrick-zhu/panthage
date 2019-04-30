@@ -20,6 +20,9 @@ GEM
     git (1.5.0)
     htmlentities (4.3.4)
     jaro_winkler (1.5.2)
+    json (2.2.0)
+    json_mapper (0.2.1)
+      json (>= 1.4.3)
     kramdown (1.17.0)
     mini_portile2 (2.4.0)
     nanaimo (0.2.6)
@@ -87,6 +90,7 @@ DEPENDENCIES
   down (~> 4.4)
   git
   jaro_winkler (>= 1.5.2)
+  json_mapper (>= 0.2.1)
   rubocop
   ruby-debug-ide
   ruby-lint

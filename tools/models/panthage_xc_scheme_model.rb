@@ -1,147 +1,84 @@
 #!/usr/bin/ruby
 #
-class SERIALIZABLE
+
+require 'json'
+require 'json_mapper'
+require 'rubygems'
+require 'date'
+
+class XSBuildableReference
+  include JSONMapper
+
+  json_attribute :BuildableIdentifier, String
+  json_attribute :BlueprintIdentifier, String
+  json_attribute :BuildableName, String
+  json_attribute :BlueprintName, String
+  json_attribute :ReferencedContainer, String
 end
 
-class XcodeSchemeModel < SERIALIZABLE
-  attr_reader :LastUpgradeVersion, :version, :BuildAction, :TestAction
+class XSBuildActionEntry
+  include JSONMapper
 
-  def initialize(lastUpgradeVersion, version, buildAction, testActions)
-    @LastUpgradeVersion = lastUpgradeVersion
-    @version = version
-    @BuildAction = XSBuildAction.new(buildAction["parallelizeBuildables"],
-                                     buildAction['buildImplicitDependencies'],
-                                     buildAction["BuildActionEntries"])
-    @TestAction = XSTestAction.new(testActions["Testables"],
-                                   testActions["MacroExpansion"],
-                                   testActions["AdditionalOptions"],
-                                   testActions["buildConfiguration"],
-                                   testActions["selectedDebuggerIdentifier"],
-                                   testActions["selectedLauncherIdentifier"],
-                                   testActions["codeCoverageEnabled"],
-                                   testActions["shouldUseLaunchSchemeArgsEnv"])
-  end
+  json_attribute :buildForTesting, String
+  json_attribute :buildForRunning, String
+  json_attribute :buildForProfiling, String
+  json_attribute :buildForArchiving, String
+  json_attribute :buildForAnalyzing, String
+  json_attribute :BuildableReference, XSBuildableReference
 end
 
-class XSBuildAction < SERIALIZABLE
-  attr_reader :parallelizeBuildables, :buildImplicitDependencies, :BuildActionEntries
+class XSBuildActionEntries
+  include JSONMapper
 
-  def initialize(parallelizeBuildables, buildImplicitDependencies, buildActionEntries)
-    @parallelizeBuildables = parallelizeBuildables
-    @buildImplicitDependencies = buildImplicitDependencies
-    build_entry = buildActionEntries['BuildActionEntry'] unless buildActionEntries.nil? || !buildActionEntries.key?('BuildActionEntry')
-    unless build_entry.nil? || build_entry.empty?
-      @BuildActionEntries = XSBuildActionEntry.new(build_entry["buildForTesting"],
-                                                   build_entry["buildForRunning"],
-                                                   build_entry["buildForProfiling"],
-                                                   build_entry["buildForArchiving"],
-                                                   build_entry["buildForAnalyzing"],
-                                                   build_entry["BuildableReference"])
-    end
-  end
+  json_attribute :BuildActionEntry, XSBuildActionEntry
 end
 
-class XSBuildActionEntry < SERIALIZABLE
-  attr_reader :buildForTesting,
-                :buildForRunning,
-                :buildForProfiling,
-                :buildForArchiving,
-                :buildForAnalyzing,
-                :BuildableReference
+class XSBuildAction
+  include JSONMapper
 
-  def initialize(build_for_testing, build_for_running,
-                 build_for_profiling, build_for_archiving,
-                 build_for_analyzing, buildable_reference)
-    @buildForTesting = build_for_testing
-    @buildForRunning = build_for_running
-    @buildForProfiling = build_for_profiling
-    @buildForArchiving = build_for_archiving
-    @buildForAnalyzing = build_for_analyzing
-    unless buildable_reference.nil?
-      @BuildableReference = XSBuildableReference.new(buildable_reference["BuildableIdentifier"],
-                                                     buildable_reference["BlueprintIdentifier"],
-                                                     buildable_reference["BuildableName"],
-                                                     buildable_reference["BlueprintName"],
-                                                     buildable_reference["ReferencedContainer"])
-    end
-  end
+  json_attribute :parallelizeBuildables, String
+  json_attribute :buildImplicitDependencies, String
+  json_attribute :BuildActionEntries, XSBuildActionEntries
 end
 
-class XSBuildableReference < SERIALIZABLE
-  attr_reader :BuildableIdentifier,
-                :BlueprintIdentifier,
-                :BuildableName,
-                :BlueprintName,
-                :ReferencedContainer
+class XSTestableReference
+  include JSONMapper
 
-  def initialize(buildable_identifier, blueprint_identifier, buildable_name, blueprint_name, reference_container)
-    @BuildableIdentifier = buildable_identifier
-    @BlueprintIdentifier = blueprint_identifier
-    @BuildableName = buildable_name
-    @BlueprintName = blueprint_name
-    @ReferencedContainer = reference_container
-  end
+  json_attribute :BuildableReference, XSBuildableReference
+  json_attribute :skipped, String
+  json_attribute :testExecutionOrdering, String
 end
 
-class XSTestAction < SERIALIZABLE
-  attr_reader :Testables,
-                :MacroExpansion,
-                :AdditionalOptions,
-                :buildConfiguration,
-                :selectedDebuggerIdentifier,
-                :selectedLauncherIdentifier,
-                :codeCoverageEnabled,
-                :shouldUseLaunchSchemeArgsEnv
+class XSMacroExpansion
+  include JSONMapper
 
-  def initialize(testables,
-                 macroExpansion,
-                 additionalOptions,
-                 buildConfiguration,
-                 selectedDebuggerIdentifier,
-                 selectedLauncherIdentifier,
-                 codeCoverageEnabled,
-                 shouldUseLaunchSchemeArgsEnv)
-
-    unless testables.nil? || !testables.key?('TestableReference')
-      testables_data = testables["TestableReference"]
-      @Testables = XSTestableReference.new(testables_data["BuildableReference"],
-                                           testables_data["skipped"],
-                                           testables_data["testExecutionOrdering"])
-    end
-    @MacroExpansion = XSMacroExpansion.new(macroExpansion["BuildableReference"]) unless macroExpansion.nil? || !macroExpansion.key?('BuildableReference')
-    @AdditionalOptions = additionalOptions
-    @buildConfiguration = buildConfiguration
-    @selectedDebuggerIdentifier = selectedDebuggerIdentifier
-    @selectedLauncherIdentifier = selectedLauncherIdentifier
-    @codeCoverageEnabled = codeCoverageEnabled
-    @shouldUseLaunchSchemeArgsEnv = shouldUseLaunchSchemeArgsEnv
-  end
+  json_attribute :BuildableReference, XSBuildableReference
 end
 
-class XSTestableReference < SERIALIZABLE
-  attr_reader :BuildableReference, :skipped, :testExecutionOrdering
+class XSTestAction
+  include JSONMapper
 
-  def initialize(buildableReference, skipped, testExecutionOrdering)
-    @BuildableReference = XSBuildableReference.new(buildableReference["BuildableIdentifier"],
-                                                   buildableReference["BlueprintIdentifier"],
-                                                   buildableReference["BuildableName"],
-                                                   buildableReference["BlueprintName"],
-                                                   buildableReference["ReferencedContainer"])
-    @skipped = skipped
-    @testExecutionOrdering = testExecutionOrdering
-  end
+  json_attribute :Testables, XSTestableReference
+  json_attribute :MacroExpansion, XSMacroExpansion
+  json_attribute :AdditionalOptions, String
+  json_attribute :buildConfiguration, String
+  json_attribute :selectedDebuggerIdentifier, String
+  json_attribute :selectedLauncherIdentifier, String
+  json_attribute :codeCoverageEnabled, String
+  json_attribute :shouldUseLaunchSchemeArgsEnv, String
 end
 
-class XSMacroExpansion < SERIALIZABLE
-  attr_reader :BuildableReference
+class XcodeSchemeModel
+  include JSONMapper
 
-  def initialize(testableReference)
-    @BuildableReference = XSBuildableReference.new(
-        testableReference["BuildableIdentifier"],
-        testableReference["BlueprintIdentifier"],
-        testableReference["BuildableName"],
-        testableReference["BlueprintName"],
-        testableReference["ReferencedContainer"]
-    )
-  end
+  json_attribute :LastUpgradeVersion, String
+  json_attribute :version, String
+  json_attribute :BuildAction, XSBuildAction
+  json_attribute :TestAction, XSTestAction
+end
+
+class XcodeSchemeEntryModel
+  include JSONMapper
+
+  json_attribute :Scheme, XcodeSchemeModel
 end

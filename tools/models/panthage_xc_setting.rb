@@ -43,22 +43,22 @@ class XCodeTarget
   def exec?
     bin_type == EXECUTABLE
   end
-end
 
-def iOS?
-  @platform_type == FOR_IOS
-end
+  def iOS?
+    @platform_type == FOR_IOS
+  end
 
-def macOS?
-  @platform_type == FOR_MACOS
-end
+  def macOS?
+    @platform_type == FOR_MACOS
+  end
 
-def watchOS?
-  @platform_type == FOR_WATCHOS
-end
+  def watchOS?
+    @platform_type == FOR_WATCHOS
+  end
 
-def tvOS?
-  @platform_type == FOR_TVOS
+  def tvOS?
+    @platform_type == FOR_TVOS
+  end
 end
 
 class XCodeSchemeConfig
