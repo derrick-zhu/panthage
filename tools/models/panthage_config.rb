@@ -35,7 +35,6 @@ class ExecuteConfig
     argv.each do |each_arg|
       if REG_FLAG.match?(each_arg)
         match = REG_FLAG.match(each_arg)
-        puts "#{match[:key]}"
         case match[:key]
         when EXEC_FLAG_SYNC
           @using_sync = true
@@ -47,7 +46,6 @@ class ExecuteConfig
 
       elsif REG_PARAM.match?(each_arg)
         match = REG_PARAM.match(each_arg)
-        puts "#{match[:key]}=#{match[:value]}"
         case match[:key]
         when EXEC_WORKSPACE
           @current_dir = match[:value]

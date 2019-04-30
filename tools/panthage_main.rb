@@ -107,7 +107,6 @@ until repo_framework.nil? || repo_framework.is_ready || repo_framework.framework
                                         "#{build_dir_path}",
                                         rt_config.platform)
     xc_config.quiet_mode = true
-    # xc_config.sdk = XcodeProjectConfigure::IPHONEOS
     puts '-------------------------------------------------'
 
     xc_build_result &&= XcodeBuilder.build_universal(xc_config)

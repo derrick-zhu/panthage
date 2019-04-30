@@ -111,7 +111,7 @@ class XcodeProject
       scheme_file = "#{File.absolute_path(xcode_project)}/xcshareddata/xcschemes/#{each_scheme}.xcscheme"
       next unless File.exist?(scheme_file)
 
-      scheme_json_str = XMLUtils.to_json(File.read(scheme_file)).to_s.gsub(/=>/, ':')
+      scheme_json_str = XMLUtils::to_json(File.read(scheme_file)).to_s.gsub(/=>/, ':')
       scheme_json_str = scheme_json_str.gsub(/nil/, 'null')
 
       result.append(XcodeSchemeEntryModel.parse scheme_json_str)

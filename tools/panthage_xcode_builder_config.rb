@@ -108,7 +108,7 @@ class XcodeBuildConfigure
         "-configuration": @configuration,
         "-sdk": @sdk,
         "-derivedDataPath": @derived_path
-    }.to_xc_s(' ') + ' ' + arches(simulator_mode)
+    }.to_xc_s(' ') + ' ' + arches
   end
 
   def to_xc_param
@@ -118,7 +118,7 @@ class XcodeBuildConfigure
         "DWARF_DSYM_FOLDER_PATH": "'#{@dwarf_dSYM_path}'",
         "DEBUG_INFORMATION_FORMAT": "'#{@dwarf_type}'",
         "CONFIGURATION_BUILD_DIR": "'#{@build_output}/#{@configuration}_#{@sdk}'"
-    }.merge(valid_archs(@simulator_mode)).to_xc_s('=')
+    }.merge(valid_archs).to_xc_s('=')
   end
 
   def to_xc_ext_param
@@ -131,23 +131,23 @@ class XcodeBuildConfigure
 
   private
 
-  def arches(is_simulator)
-    if is_simulator
+  def arches
+    if iOSSimulator?
       %w[-arch x86_64 -arch i386].join(' ')
-    else
+    elsif iOS?
       %w[-arch arm64 -arch armv7 -arch armv7s].join(' ')
+    else
+      ''
     end
   end
 
-  def valid_archs(is_simulator)
-    if is_simulator
-      {
-          "VALID_ARCHS": "'i386 x86_64'"
-      }
+  def valid_archs
+    if iOSSimulator?
+      {"VALID_ARCHS": "'i386 x86_64'"}
+    elsif iOS?
+      {"VALID_ARCHS": "'arm64 arm64e armv7 armv7s'"}
     else
-      {
-          "VALID_ARCHS": "'arm64 arm64e armv7 armv7s'"
-      }
+      {}
     end
   end
 end
