@@ -56,9 +56,13 @@ class CartFileBase
   end
 
   def description
-    dependency_descs = []
-    dependency.each { |lib| dependency_descs.push(lib.name) }
-    "Library: #{name} from #{parent_project_name} Type:#{lib_type} Dependency: [#{dependency_descs.join( ',')}]"
+    dependency_decs = []
+    dependency.each { |lib| dependency_decs.push(lib.is_private ? "#{lib.name}(*)" : "#{lib.name}") }
+    "Library: #{name} from #{parent_project_name} Type:#{lib_type} Private:#{is_private ? true : false} Dependency: [#{dependency_decs.join( ',')}]"
+  end
+
+  def to_resolved
+    warn "warning: should be implemented in sub-classes."
   end
 end
 
@@ -98,6 +102,14 @@ class CartFileGit < CartFileBase
       super + ", Repo:#{repo_type}, Branch:#{branch}, Hash: #{hash}"
     end
   end
+
+  def to_resolved
+    if self.hash&.empty?
+      super
+    else
+      "git \"#{self.url}\" \"#{self.hash}\""
+    end
+  end
 end
 
 # CartFileGithub
@@ -108,6 +120,14 @@ class CartFileGithub < CartFileGit
 
   def description
     super
+  end
+
+  def to_resolved
+    if self.hash&.empty?
+      super
+    else
+      "github \"#{self.url}\" \"#{self.hash}\""
+    end
   end
 end
 
@@ -129,6 +149,14 @@ class CartFileBinary < CartFileBase
 
   def description
     super + ", Version: #{version}, Final Version: #{hash}"
+  end
+
+  def to_resolved
+    if self.hash&.empty?
+      super
+    else
+      "binary \"#{self.url}\" \"#{self.hash}\""
+    end
   end
 end
 

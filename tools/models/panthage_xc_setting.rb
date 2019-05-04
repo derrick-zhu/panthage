@@ -1,22 +1,48 @@
 #!/usr/bin/ruby
 
-class XCodeTarget
-  FOR_IOS = 0
+module XcodePlatformSDK
+  FOR_UNKNOWN = 0
+  FOR_IOS = FOR_UNKNOWN + 1
   FOR_MACOS = FOR_IOS + 1
   FOR_WATCHOS = FOR_MACOS + 1
   FOR_TVOS = FOR_WATCHOS + 1
 
+  def self.to_s(sdk)
+    case sdk
+    when FOR_IOS
+      'iOS'
+    when FOR_MACOS
+      'macOS'
+    when FOR_TVOS
+      'tvOS'
+    when FOR_WATCHOS
+      'watchOS'
+    else
+      'unknown'
+    end
+  end
+
+  def self.nil?
+    self == FOR_UNKNOWN
+  end
+
+  def self.empty?
+    self == FOR_UNKNOWN
+  end
+end
+
+class XCodeTarget
   STATIC_LIB = 0
   DYNAMIC_LIB = STATIC_LIB + 1
   EXECUTABLE = DYNAMIC_LIB + 1
 
-  attr_accessor :sdk_root,
-                :target_name,
-                :product_name,
-                :product_type,
-                :mach_o_type,
-                :bin_type,
-                :platform_type
+  attr_reader :sdk_root,
+              :target_name,
+              :product_name,
+              :product_type,
+              :mach_o_type,
+              :bin_type,
+              :platform_type
 
   def initialize(sdk_root, target_name, product_name, bin_type, product_type, mach_o_type)
     @sdk_root = sdk_root
@@ -44,25 +70,22 @@ class XCodeTarget
     bin_type == EXECUTABLE
   end
 
-  def iOS?
-    @platform_type == FOR_IOS
+  def mach_o_static?
+    @mach_o_type == XcodeProjectMachOType::STATIC_LIB
   end
 
-  def macOS?
-    @platform_type == FOR_MACOS
+  def mach_o_dylib?
+    @mach_o_type == XcodeProjectMachOType::DYNAMIC_LIB
   end
 
-  def watchOS?
-    @platform_type == FOR_WATCHOS
-  end
-
-  def tvOS?
-    @platform_type == FOR_TVOS
+  def mach_o_exec?
+    @mach_o_type == XcodeProjectMachOType::EXECUTE
   end
 end
 
 class XCodeSchemeConfig
   attr_reader :name, :target_name, :ref_container
+
   def initialize(name, target_name, ref_container)
     @name = name
     @target_name = target_name

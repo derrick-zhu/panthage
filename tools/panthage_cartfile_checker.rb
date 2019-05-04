@@ -74,6 +74,9 @@ class CartFileChecker
       else
         new_data.conflict_type = ConflictType::IGNORE
       end
+    else
+      raise "fatal: unknown lib type: #{old_data.lib_type}"
+      # type code here
     end
   end
 

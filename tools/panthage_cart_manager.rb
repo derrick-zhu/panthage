@@ -14,17 +14,21 @@ class FrameworkBuildInfo
   attr_accessor :is_ready
 
   def initialize(name, framework)
+    raise "fatal: could not create a FrameworkBuildInfo without framework body." if framework.nil?
+
     @name = name
-    @is_ready = false
+    @is_ready = ((LibType::BINARY == framework.lib_type) ? true : false)
     @framework = framework
   end
 
   def need_build
-    false if framework.nil?
-    true if framework.dependency.empty?
+    return false if @framework.nil?
+    return false if @framework.lib_type == LibType::BINARY
+
+    return true if @framework.dependency.empty?
 
     result = true
-    framework.dependency.each do |each_lib|
+    @framework.dependency.each do |each_lib|
       result &&= ProjectCartManager.instance.framework_ready?(each_lib.name)
       break unless result
     end
@@ -33,7 +37,7 @@ class FrameworkBuildInfo
   end
 
   def description
-    "Framework :#{name}, is_ready:#{is_ready}, info:#{framework.description}"
+    "Framework :#{name}, is_ready:#{is_ready}, info:#{@framework.description}"
   end
 end
 
@@ -45,15 +49,19 @@ class ProjectCartManager
 
   def initialize
     @frameworks = {}
+    # just the index for the frameworks' picker
+    @idx_latest_repo = 0
   end
 
   def description
     result = ''
+    frameworks.each {|_, each_lib| result += "#{each_lib.description}\n"}
+    result
+  end
 
-    frameworks.each do |_, each_lib|
-      result += each_lib.description + "\n"
-    end
-
+  def resolved_info
+    result = ''
+    frameworks.each { |_, each_lib| result += "#{each_lib.framework&.to_resolved}\n" }
     result
   end
 
@@ -72,21 +80,31 @@ class ProjectCartManager
   end
 
   def framework_ready?(name)
-    false if frameworks.nil? || frameworks.empty?
-    false unless frameworks.key?(name)
+    return false if frameworks&.empty?
+    return false unless frameworks&.has_key?(name)
+
+    return true if frameworks[name]&.framework.is_private   #private framework is optional one, skip building.
 
     build_info_with_name(name).is_ready
   end
 
   # fetch any binary framework needs to be download.
-  def any_binary_framework
-    tmp = frameworks.select { |_, value| value.is_ready == false && value.framework.lib_type == LibType::BINARY }
-    tmp.values[0] unless tmp.empty?
-  end
+  # def any_binary_framework
+  #   tmp = frameworks.select {|_, value| value.is_ready == false && value.framework.lib_type == LibType::BINARY}
+  #   tmp.values.first unless tmp.empty?
+  # end
 
   def any_repo_framework
-    tmp = frameworks.select { |_, value| value.is_ready == false && value.need_build }
-    tmp.values[0] unless tmp.empty?
+    old_idx = @idx_latest_repo
+
+    loop do
+      next_name = self.next_repo_name
+
+      fw_info = @frameworks[next_name]
+      return fw_info if fw_info&.is_ready == false && fw_info&.need_build
+
+      return nil if old_idx == @idx_latest_repo
+    end
   end
 
   def verify_library_compatible(new_lib, old_lib)
@@ -96,4 +114,23 @@ class ProjectCartManager
 
     CartFileChecker.check_library_by(new_lib, old_lib)
   end
+
+  def all_repos
+    @frameworks.select {|_, fw| fw.framework.lib_type == LibType::GIT || fw.framework.lib_type == LibType::GITHUB}
+  end
+
+  def next_repo_name
+    result = nil
+    all_repo_names = self.all_repos&.keys
+
+    if all_repo_names&.empty?
+      @idx_latest_repo = 0
+    else
+      result = all_repo_names[@idx_latest_repo]
+      @idx_latest_repo = (@idx_latest_repo + 1) % all_repo_names.count
+    end
+
+    result
+  end
+
 end

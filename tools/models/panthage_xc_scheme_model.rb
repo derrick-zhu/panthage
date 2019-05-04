@@ -30,7 +30,7 @@ end
 class XSBuildActionEntries
   include JSONMapper
 
-  json_attribute :BuildActionEntry, XSBuildActionEntry
+  json_attributes :BuildActionEntry, XSBuildActionEntry
 end
 
 class XSBuildAction
@@ -79,6 +79,8 @@ end
 
 class XcodeSchemeEntryModel
   include JSONMapper
+
+  attr_accessor :name
 
   json_attribute :Scheme, XcodeSchemeModel
 end

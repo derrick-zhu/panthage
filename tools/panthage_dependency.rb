@@ -24,22 +24,3 @@ class PanConstants
   def initialize; end
 end
 
-# main command
-class Command
-  CMD_UNKNOWN = ''
-  CMD_INSTALL = 'install'
-  CMD_UPDATE = 'update'
-  CMD_BOOTSTRAP = 'bootstrap'
-
-  def self.command_install?(cmd)
-    cmd == CMD_INSTALL
-  end
-
-  def self.command_update?(cmd)
-    cmd == CMD_UPDATE
-  end
-
-  def self.command_bootstrap?(cmd)
-    cmd == CMD_BOOTSTRAP
-  end
-end

@@ -10,7 +10,7 @@ class TestXcodeProject < Test::Unit::TestCase
 
   def setup
     @xcode_proj_path = './sample/Kingfisher.xcodeproj' #'./sample/OHHTTPStubs.xcodeproj'
-    @xcode_proj = XcodeProject.new(@xcode_proj_path, 'Debug', XcodePlatformSDK::IPHONE)
+    @xcode_proj = XcodeProject.new(@xcode_proj_path, 'Debug', XcodePlatformSDK::FOR_IOS)
     # puts @xcode_proj.description
   end
 
@@ -40,10 +40,17 @@ class TestXcodeProject < Test::Unit::TestCase
     assert(true)
   end
 
+  def test_xc_proj_scheme_find
+    scheme = xcode_proj.scheme_for_target('Kingfisher-iOS')
+    assert(!scheme.nil?)
+    scheme = xcode_proj.scheme_for_target('Kingfisher')
+    assert(scheme.nil? || scheme.empty?)
+  end
+
   def test_sdk_identifier
-    assert(XcodePlatformSDK.to_s(XcodePlatformSDK::IPHONE) == 'iOS')
-    assert(XcodePlatformSDK.to_s(XcodePlatformSDK::MACOS) == 'macOS')
-    assert(XcodePlatformSDK.to_s(XcodePlatformSDK::TVOS) == 'tvOS')
-    assert(XcodePlatformSDK.to_s(XcodePlatformSDK::WATCHOS) == 'watchOS')
+    assert(XcodePlatformSDK.to_s(XcodePlatformSDK::FOR_IOS) == 'iOS')
+    assert(XcodePlatformSDK.to_s(XcodePlatformSDK::FOR_MACOS) == 'macOS')
+    assert(XcodePlatformSDK.to_s(XcodePlatformSDK::FOR_TVOS) == 'tvOS')
+    assert(XcodePlatformSDK.to_s(XcodePlatformSDK::FOR_WATCHOS) == 'watchOS')
   end
 end

@@ -7,7 +7,7 @@ require_relative 'extensions/nil_ext'
 require_relative 'extensions/hash_ext'
 require_relative 'panthage_dependency'
 require_relative 'models/panthage_cartfile_model'
-require_relative 'panthage_project_cart'
+require_relative 'panthage_cart_manager'
 require_relative 'panthage_ver_helper'
 require_relative 'panthage_repo_helpers'
 require_relative 'panthage_downloader'
@@ -259,7 +259,6 @@ def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target,
   # analysis the Cartfile to grab workspace's basic information
   cart_file_data = load_cart_file(current_dir, scheme_target)
 
-  # current_cart_data = CartFileBase.new(scheme_target, parent_name)
   # setup and sync git repo
   git_repo_for_checkout = {}
 
@@ -285,8 +284,7 @@ def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target,
       ProjectCartManager.instance.update_framework(new_lib)
       git_repo_for_checkout[new_name] = new_lib
     else
-      # replace the old cart data, although these two data is the same
-      # ProjectCartManager.instance.update_framework(new_lib)
+      # ignore?
     end
 
     # add each cartfile data into current_cart_data's dependency
@@ -312,7 +310,7 @@ def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target,
   end
 
   # generate Cartfile.resolved file.
-  solve_cart_file(current_dir.to_s, cart_file_data)
+  # solve_cart_file(current_dir.to_s, cart_file_data)
 
   git_repo_for_checkout.each do |name, value|
     if value.lib_type == LibType::BINARY
