@@ -115,21 +115,21 @@ class XcodeProject
   end
 
   def static?(target_name = @target_name)
-    warn "using product_static? instead."
+    deprecate_methods "using product_static? instead."
     raise "fatal: target name is needed." if target_name.nil? || target_name.empty?
 
     product_static?(target_name)
   end
 
   def dylib?(target_name = @target_name)
-    warn "using dylib?? instead."
+    deprecate_methods "using dylib?? instead."
     raise "fatal: target name is needed." if target_name.nil? || target_name.empty?
 
     product_dylib?(target_name)
   end
 
   def executable?(target_name = @target_name)
-    warn "using executable?? instead."
+    deprecate_methods "using executable?? instead."
     raise "fatal: target name is needed." if target_name.nil? || target_name.empty?
 
     product_exec?(target_name)

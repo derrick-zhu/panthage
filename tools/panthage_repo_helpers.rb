@@ -29,7 +29,7 @@ class RepoHelper
 
     command = [
         "cd #{repo_dir}/#{repo_name}.git; ",
-        "git branch #{branch} 2> /dev/null; ",
+        "git branch #{branch} >/dev/null 2>&1 ; ",
         "git symbolic-ref HEAD refs/heads/#{branch}; ",
         "git branch --set-upstream-to=origin/#{branch} #{branch}; "
     ].join(' ').strip.freeze

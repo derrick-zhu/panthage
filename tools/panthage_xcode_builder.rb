@@ -144,10 +144,9 @@ class XcodeBuilder
                              "#{xcrun_bin} #{xcode_build_bin}",
                              "#{xcode_config.to_xc}",
                              "#{xcode_config.to_xc_param}",
-                             "#{xcode_config.to_xc_ext_param}"
-                         ]
-                         command.push("2> /dev/null ;") if xcode_config.quiet_mode
-                         command = command.join(' ')
+                             "#{xcode_config.to_xc_ext_param}",
+                             "#{CommandLine.instance.verbose_flag};"
+                         ].join(' ')
 
                          puts "Build command: #{command}"
                          system(command)
