@@ -60,9 +60,12 @@ class ProjectCartManager
   end
 
   def resolved_info
-    result = ''
-    frameworks.each { |_, each_lib| result += "#{each_lib.framework&.to_resolved}\n" }
-    result
+    result = []
+    frameworks.each do |_, each_lib|
+      result.push"#{each_lib.framework&.to_resolved}"
+    end
+    result = result.sort!
+    result.join "\n"
   end
 
   def update_framework(new_lib)

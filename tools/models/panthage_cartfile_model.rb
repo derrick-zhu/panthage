@@ -126,7 +126,8 @@ class CartFileGithub < CartFileGit
     if self.hash&.empty?
       super
     else
-      "github \"#{self.url}\" \"#{self.hash}\""
+      meta = %r/git@github.com:([\w]+\/[\w]+).git/.match self.url
+      (meta&.size >= 2) ?  "github \"#{meta[1]}\" \"#{self.hash}\"" : ""
     end
   end
 end

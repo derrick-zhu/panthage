@@ -57,14 +57,17 @@ solve_project_dependency(
 
 puts ProjectCartManager.instance.description.reverse_color.to_s
 
-puts '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@'
 puts ProjectCartManager.instance.resolved_info
-puts '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@'
+FileUtils.remove_entry "#{rt_config.current_dir}/Cartfile.resolved" if File.exist?"#{rt_config.current_dir}/Cartfile.resolved"
+File.open "#{rt_config.current_dir}/Cartfile.resolved", File::RDWR|File::CREAT, 0644 do |fp|
+  fp.rewind
+  fp.write ProjectCartManager.instance.resolved_info
+  fp.flush
+  fp.truncate(fp.pos)
+end
 
 # build the source dependency framework
 repo_framework = ProjectCartManager.instance.any_repo_framework
-puts "name: #{repo_framework&.framework&.name}, ready?: #{repo_framework&.is_ready}"
-
 until repo_framework&.is_ready || repo_framework&.framework.nil?
   repo_name = repo_framework.name.to_s
 

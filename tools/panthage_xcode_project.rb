@@ -49,7 +49,7 @@ class XcodeProject
   def targets
     result = []
     project.targets.select do |each_target|
-      if static?(each_target.name)
+      if product_static?(each_target.name)
         result.append(XCodeTarget.new(each_target.sdk,
                                       each_target.name,
                                       product_name(each_target.name),
@@ -57,7 +57,7 @@ class XcodeProject
                                       each_target.product_type,
                                       mach_o_type(each_target.name))
         )
-      elsif dylib?(each_target.name)
+      elsif product_dylib?(each_target.name)
         result.append(XCodeTarget.new(each_target.sdk,
                                       each_target.name,
                                       product_name(each_target.name),
@@ -65,7 +65,7 @@ class XcodeProject
                                       each_target.product_type,
                                       mach_o_type(each_target.name))
         )
-      elsif executable?(each_target.name)
+      elsif product_exec?(each_target.name)
         result.append(XCodeTarget.new(each_target.sdk,
                                       each_target.name,
                                       product_name(each_target.name),
@@ -77,10 +77,6 @@ class XcodeProject
     end
 
     result
-  end
-
-  def platform_type(type)
-
   end
 
   def schemes
@@ -114,27 +110,6 @@ class XcodeProject
     !meta.nil? ? target_name : name
   end
 
-  def static?(target_name = @target_name)
-    deprecate_methods "using product_static? instead."
-    raise "fatal: target name is needed." if target_name.nil? || target_name.empty?
-
-    product_static?(target_name)
-  end
-
-  def dylib?(target_name = @target_name)
-    deprecate_methods "using dylib?? instead."
-    raise "fatal: target name is needed." if target_name.nil? || target_name.empty?
-
-    product_dylib?(target_name)
-  end
-
-  def executable?(target_name = @target_name)
-    deprecate_methods "using executable?? instead."
-    raise "fatal: target name is needed." if target_name.nil? || target_name.empty?
-
-    product_exec?(target_name)
-  end
-
   def mach_o_static?(target_name = @target_name)
     mach_o_type(target_name) == XcodeProjectMachOType::STATIC_LIB
   end
@@ -161,16 +136,6 @@ class XcodeProject
 
   def save
     project.save
-  end
-
-  def add_link_framework(target_scheme, framework_path)
-    raise "fatal: target name is needed." if target_name.nil? || target_name.empty?
-
-    found_scheme_target = target_with(target_scheme)
-    raise "fatal: could not find target '#{target_scheme}'" if found_scheme_target.nil?
-
-    framework_ref = project.frameworks_group.new_file(framework_path)
-    found_scheme_target.frameworks_build_phases.add_file_reference(framework_ref)
   end
 
   private

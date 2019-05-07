@@ -80,13 +80,11 @@ class CartFileChecker
     end
   end
 
-  private
-
-  def msg_conflict_tag(new_data, old_data)
-    "conflict framework version:\n\t#{new_data.version} by #{new_data.name}\tand\n\t#{old_data.version} by #{old_data.name}"
+  private_class_method def self.msg_conflict_tag(new_data, old_data)
+    "conflict framework \"#{new_data.name}\" version:\n\t#{new_data.version} by #{new_data.parent_project_name}\nand\n\t#{old_data.version} by #{old_data.parent_project_name}"
   end
 
-  def msg_conflict_branch(new_data, old_data)
-    "conflict framework version:\n\t#{new_data.branch} by #{new_data.name}\tand\n\t#{old_data.branch} by #{old_data.name}"
+  private_class_method def self.msg_conflict_branch(new_data, old_data)
+    "conflict framework \"#{new_data.name}\" version:\n\t#{new_data.branch} by #{new_data.parent_project_name}\nand\n\t#{old_data.branch} by #{old_data.parent_project_name}"
   end
 end
