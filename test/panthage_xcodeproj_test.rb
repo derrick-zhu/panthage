@@ -53,4 +53,11 @@ class TestXcodeProject < Test::Unit::TestCase
     assert(XcodePlatformSDK.to_s(XcodePlatformSDK::FOR_TVOS) == 'tvOS')
     assert(XcodePlatformSDK.to_s(XcodePlatformSDK::FOR_WATCHOS) == 'watchOS')
   end
+
+  def test_xc_proj_references
+    puts xcode_proj.project.objects_by_uuid.to_json
+    # xcode_proj.project.root_object.project_references.each do |each_references|
+    #   puts each_references[:product_group].uuid.to_s
+    # end
+  end
 end

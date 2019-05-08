@@ -28,14 +28,14 @@ module XcodeProjectProductType
 end
 
 class XcodeProject
-  attr_reader :xcode_project,
+  attr_reader :project_path,
               :project,
               :platform,
               :configuration,
               :target_name
 
   def initialize(xcode_proj_path, configure, platform)
-    @xcode_project = xcode_proj_path
+    @project_path = xcode_proj_path
     @project = Xcodeproj::Project.open(xcode_proj_path.to_s)
     @platform = (XcodePlatformSDK::FOR_UNKNOWN != platform) ? platform : XcodePlatformSDK::FOR_IOS
     @target_name = ""
@@ -81,8 +81,8 @@ class XcodeProject
 
   def schemes
     result = []
-    Xcodeproj::Project.schemes(xcode_project).each do |each_scheme|
-      scheme_file = "#{File.absolute_path(xcode_project)}/xcshareddata/xcschemes/#{each_scheme}.xcscheme"
+    Xcodeproj::Project.schemes(project_path).each do |each_scheme|
+      scheme_file = "#{File.absolute_path(project_path)}/xcshareddata/xcschemes/#{each_scheme}.xcscheme"
       next unless File.exist?(scheme_file)
 
       origin_scheme_json = XMLUtils::to_json(File.read(scheme_file)).to_s
@@ -147,7 +147,7 @@ class XcodeProject
   end
 
   def target_with(target_name)
-    raise "fatal: invalid XcodeProj instance for #{xcode_project}" if project.nil?
+    raise "fatal: invalid XcodeProj instance for #{project_path}" if project.nil?
 
     project.targets.each_with_index do |each_target, idx|
       if each_target.name == target_name || target_name == product_name(each_target.name)
