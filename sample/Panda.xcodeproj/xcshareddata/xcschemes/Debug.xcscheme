@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1010"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -33,40 +33,11 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "C66BBA9D1C845DFB001F75C8"
-               BuildableName = "PandaUITests.xctest"
-               BlueprintName = "PandaUITests"
-               ReferencedContainer = "container:Panda.xcodeproj">
-            </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "FFSBagUITest">
-               </Test>
-               <Test
-                  Identifier = "FFSNetworkReport">
-               </Test>
-               <Test
-                  Identifier = "FFSSearchUITest/testSearchSuggestionCategory()">
-               </Test>
-            </SkippedTests>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "C66BBA921C845DFB001F75C8"
                BuildableName = "PandaUnitTests.xctest"
                BlueprintName = "PandaUnitTests"
                ReferencedContainer = "container:Panda.xcodeproj">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "FFSBagModelHelpersUnitTests">
-               </Test>
-               <Test
-                  Identifier = "FFSHomeModularLocationPromotedProductsDataSourceUnitTests">
-               </Test>
-            </SkippedTests>
          </TestableReference>
       </Testables>
       <MacroExpansion>
@@ -101,13 +72,6 @@
             ReferencedContainer = "container:Panda.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "XcodeColors"
-            value = "YES"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
