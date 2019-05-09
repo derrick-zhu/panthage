@@ -41,10 +41,15 @@ class TestXcodeProject < Test::Unit::TestCase
   end
 
   def test_xc_proj_scheme_find
+    @xcode_proj_path = './sample/Kingfisher.xcodeproj' #'./sample/OHHTTPStubs.xcodeproj'
+    @xcode_proj = XcodeProject.new(@xcode_proj_path, 'Debug', XcodePlatformSDK::FOR_IOS)
+
     scheme = xcode_proj.scheme_for_target('Kingfisher-iOS')
     assert(!scheme.nil?)
     scheme = xcode_proj.scheme_for_target('Kingfisher')
     assert(scheme.nil? || scheme.empty?)
+
+    self.setup
   end
 
   def test_sdk_identifier
@@ -53,11 +58,25 @@ class TestXcodeProject < Test::Unit::TestCase
     assert(XcodePlatformSDK.to_s(XcodePlatformSDK::FOR_TVOS) == 'tvOS')
     assert(XcodePlatformSDK.to_s(XcodePlatformSDK::FOR_WATCHOS) == 'watchOS')
   end
-  
+
   def test_xc_proj_references
-    puts xcode_proj.project.objects_by_uuid.to_json
+    xcode_proj_path = './sample/Panda.xcodeproj' #'./sample/OHHTTPStubs.xcodeproj'
+    xcode_proj = XcodeProject.new(xcode_proj_path, 'Debug', XcodePlatformSDK::FOR_IOS)
+
+    # xcode_proj.project.root_object.main_group.groups.each { |each_group| puts each_group.to_s }
+    puts xcode_proj.project.objects_by_uuid.each { |uuid| puts uuid.to_json }
+    xcode_proj.project.root_object.project_references.each do |each_ref|
+      puts each_ref.to_s
+      puts each_ref[:product_group].uuid.to_s
+
+      xcode_proj.project.objects_by_uuid[each_ref[:product_group].uuid].children.each do |each_child|
+        puts each_child.path
+      end
+    end
     # xcode_proj.project.root_object.project_references.each do |each_references|
     #   puts each_references[:product_group].uuid.to_s
     # end
+
+    self.setup
   end
 end

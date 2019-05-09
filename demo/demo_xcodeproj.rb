@@ -3,7 +3,7 @@
 require 'fileutils'
 require 'xcodeproj'
 
-file_path = FileUtils.getwd + "/Panda.xcodeproj"
+file_path = FileUtils.getwd + "/sample/Panda.xcodeproj"
 puts file_path
 
 xcodeproj = Xcodeproj::Project.open(file_path)

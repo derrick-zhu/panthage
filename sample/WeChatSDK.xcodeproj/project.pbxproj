@@ -46,13 +46,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				441A12F321B674730084BFE8 /* CFNetwork.framework in Frameworks */,
-				441A12F121B674620084BFE8 /* libc++.tbd in Frameworks */,
-				441A12EF21B6745B0084BFE8 /* Security.framework in Frameworks */,
 				441A12ED21B674570084BFE8 /* CoreTelephony.framework in Frameworks */,
-				441A12EB21B674520084BFE8 /* SystemConfiguration.framework in Frameworks */,
+				441A12F121B674620084BFE8 /* libc++.tbd in Frameworks */,
 				441A12E921B6744C0084BFE8 /* libsqlite3.0.tbd in Frameworks */,
-				441A12E721B674470084BFE8 /* libz.tbd in Frameworks */,
 				441A12E421B673900084BFE8 /* libWeChatSDK.a in Frameworks */,
+				441A12E721B674470084BFE8 /* libz.tbd in Frameworks */,
+				441A12EF21B6745B0084BFE8 /* Security.framework in Frameworks */,
+				441A12EB21B674520084BFE8 /* SystemConfiguration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,9 +62,9 @@
 		441A129B21B6680D0084BFE8 = {
 			isa = PBXGroup;
 			children = (
-				441A12A721B6680D0084BFE8 /* WeChatSDK */,
-				441A12A621B6680D0084BFE8 /* Products */,
 				441A12E521B674470084BFE8 /* Frameworks */,
+				441A12A621B6680D0084BFE8 /* Products */,
+				441A12A721B6680D0084BFE8 /* WeChatSDK */,
 			);
 			sourceTree = "<group>";
 		};
@@ -79,8 +79,8 @@
 		441A12A721B6680D0084BFE8 /* WeChatSDK */ = {
 			isa = PBXGroup;
 			children = (
-				441A12DC21B6738F0084BFE8 /* WechatOpenSDK */,
 				441A12A921B6680D0084BFE8 /* Info.plist */,
+				441A12DC21B6738F0084BFE8 /* WechatOpenSDK */,
 				441A12A821B6680D0084BFE8 /* WeChatSDK.h */,
 				441A12DA21B6734C0084BFE8 /* WeChatSDK.swift */,
 			);
@@ -102,12 +102,12 @@
 			isa = PBXGroup;
 			children = (
 				441A12F221B674730084BFE8 /* CFNetwork.framework */,
-				441A12F021B674620084BFE8 /* libc++.tbd */,
-				441A12EE21B6745B0084BFE8 /* Security.framework */,
 				441A12EC21B674570084BFE8 /* CoreTelephony.framework */,
-				441A12EA21B674510084BFE8 /* SystemConfiguration.framework */,
+				441A12F021B674620084BFE8 /* libc++.tbd */,
 				441A12E821B6744C0084BFE8 /* libsqlite3.0.tbd */,
 				441A12E621B674470084BFE8 /* libz.tbd */,
+				441A12EE21B6745B0084BFE8 /* Security.framework */,
+				441A12EA21B674510084BFE8 /* SystemConfiguration.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -119,10 +119,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				441A12E121B673900084BFE8 /* WXApi.h in Headers */,
 				441A12E321B673900084BFE8 /* WechatAuthSDK.h in Headers */,
-				441A12E221B673900084BFE8 /* WXApiObject.h in Headers */,
 				441A12AA21B6680D0084BFE8 /* WeChatSDK.h in Headers */,
+				441A12E121B673900084BFE8 /* WXApi.h in Headers */,
+				441A12E221B673900084BFE8 /* WXApiObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
