@@ -1,0 +1,2 @@
+git "git@gitee.com:delun-zhu/panthage_libA.git" ~> 1.0.0
+git "git@gitee.com:delun-zhu/panthage_libB.git" ~> 1.0.0
