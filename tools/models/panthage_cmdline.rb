@@ -14,6 +14,8 @@ class CommandLine
   OUTPUT_INFO = '2>/dev/null'
   OUTPUT_MUTE = '>/dev/null 2>&1'
 
+  EXEC_DOCTOR = 'doctor'  # analytic the run-time env, checking ruby 3rd party list.
+  EXEC_BRIEF = 'brief'  # check and show current project's has the dependent loop or not
   EXEC_INSTALL = 'install'
   EXEC_UPDATE = 'update'
   EXEC_BOOTSTRAP = 'bootstrap'
@@ -35,7 +37,7 @@ class CommandLine
               :build_base,
               :platform,
               :scheme_target,
-              :job_command,
+              :command,
               :using_sync,
               :verbose,
               :verbose_level
@@ -82,7 +84,7 @@ class CommandLine
           @verbose_level = match[:key]
 
         when EXEC_INSTALL, EXEC_UPDATE, EXEC_BOOTSTRAP
-          @job_command = match[:key]
+          @command = match[:key]
         else
           raise "invalid parameter #{match[:key]}"
         end
@@ -123,5 +125,7 @@ class CommandLine
     @repo_base = "#{@current_dir}/Carthage/Repo"
     @checkout_base = "#{@current_dir}/Carthage/Checkouts"
     @build_base = "#{@current_dir}/Carthage/Build"
+
+    self
   end
 end

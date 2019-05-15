@@ -1,8 +1,10 @@
 #!/usr/bin/ruby
 
 require 'test/unit'
-require_relative '../tools/panthage_xcode_project'
-require_relative '../tools/models/panthage_xc_scheme_model'
+
+require_relative '../tools/xcode_proj/models/panthage_xc_scheme_model'
+require_relative '../tools/xcode_proj/panthage_xcode_project'
+require_relative '../tools/xcode_proj/panthage_xcode_project_utils'
 
 class TestXcodeProject < Test::Unit::TestCase
   attr_reader :xcode_proj_path,
@@ -78,5 +80,19 @@ class TestXcodeProject < Test::Unit::TestCase
     # end
 
     self.setup
+  end
+
+  def test_xc_project_has_swift
+    # test swift project
+    xcode_proj_path = './sample/panthage_foo/panthage_foo.xcodeproj'
+    xcode_proj = XcodeProject.new(xcode_proj_path, 'Debug', XcodePlatformSDK::FOR_IOS)
+
+    assert(xcode_proj.is_swift_project? 'panthage_foo')
+
+    # test objective-c project
+    xcode_proj_path = './sample/panthage_foo_objc/panthage_foo_objc.xcodeproj'
+    xcode_proj = XcodeProject.new(xcode_proj_path, 'Debug', XcodePlatformSDK::FOR_IOS)
+
+    assert(!xcode_proj.is_swift_project?('panthage_foo_objc'))
   end
 end

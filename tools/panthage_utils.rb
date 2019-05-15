@@ -11,7 +11,7 @@ require_relative 'panthage_cart_manager'
 require_relative 'panthage_ver_helper'
 require_relative 'panthage_repo_helpers'
 require_relative 'panthage_downloader'
-require_relative 'panthage_xcode_project'
+require_relative 'xcode_proj/panthage_xcode_project'
 
 # setup_carthage_env check and setup the environments
 def setup_carthage_env(current_dir)

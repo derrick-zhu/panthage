@@ -2,9 +2,10 @@
 #
 
 require 'xcodeproj'
-require_relative 'utils/panthage_xml'
+require_relative '../utils/panthage_xml'
 require_relative 'models/panthage_xc_setting'
 require_relative 'models/panthage_xc_scheme_model'
+require_relative 'panthage_xcode_project_utils'
 
 module XcodeProjectBuildSettings
   MACH_O_TYPE = "MACH_O_TYPE"
@@ -98,9 +99,9 @@ class XcodeProject
   end
 
   def scheme_for_target(target_name)
-    self.schemes.select {|each_scheme|
+    self.schemes.find {|each_scheme|
       each_scheme&.Scheme&.BuildAction&.BuildActionEntries&.BuildActionEntry&.first.BuildableReference&.BlueprintName == target_name
-    }.first
+    }
   end
 
   def product_name(target_name, configure = @configuration)
@@ -134,8 +135,12 @@ class XcodeProject
     product_type(target_name) == XcodeProjectProductType::APPLICATION
   end
 
+  def sort
+    project.sort unless project.nil?
+  end
+
   def save
-    project.save
+    project.save unless project.nil?
   end
 
   private

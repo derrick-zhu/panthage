@@ -2,7 +2,7 @@ require 'test/unit'
 require 'json'
 require 'crack'
 require 'rubygems'
-require_relative '../tools/models/panthage_xc_scheme_model'
+require_relative '../tools/models/roj/panthage_xc_scheme_model'
 require_relative '../tools/utils/panthage_xml'
 
 class TestXcodeScheme < Test::Unit::TestCase

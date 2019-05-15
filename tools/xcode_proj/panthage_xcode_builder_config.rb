@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 require 'json'
-require_relative 'panthage_xcode_builder_config.rb'
+# require_relative 'panthage_xcode_builder_config.rb'
 
 module XcodeSDKRoot
   SDK_IPHONEOS = 'iphoneos'
@@ -54,11 +54,12 @@ class XcodeBuildConfigure
               :dwarf_dSYM_path,
               :dwarf_type,
               :build_output,
-              :platform_sdk
+              :platform_sdk,
+              :is_swift_project
 
   attr_accessor :quiet_mode, :sdk, :simulator_mode, :framework_version_hash
 
-  def initialize(work_dir, xcode_project, scheme, config, derived_path, dwarf_dSYM_path, dwarf_type, build_output, platform_sdk)
+  def initialize(work_dir, xcode_project, scheme, config, derived_path, dwarf_dSYM_path, build_output, platform_sdk, is_swift_project)
     @work_dir = work_dir
     @project = xcode_project
     @scheme = scheme
@@ -66,9 +67,10 @@ class XcodeBuildConfigure
     @sdk = ''
     @derived_path = derived_path
     @dwarf_dSYM_path = dwarf_dSYM_path
-    @dwarf_type = dwarf_type
+    @dwarf_type = 'dwarf-with-dsym'
     @build_output = build_output
     @platform_sdk = platform_sdk
+    @is_swift_project = is_swift_project
   end
 
   def sdk=(new_sdk)

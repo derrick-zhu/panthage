@@ -40,9 +40,11 @@ class XcodeBuilder
                            remove_destination: true
 
       # 2, let iphone simulator library as ext one
-      FileUtils.copy_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONE_SIMULATOR}/#{target_config.product_name}.framework/Modules/#{target_config.product_name}.swiftmodule",
-                           "#{universal_path}/#{target_config.product_name}.framework/Modules/#{target_config.product_name}.swiftmodule",
-                           remove_destination: true
+      if xcode_config.is_swift_project
+        FileUtils.copy_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONE_SIMULATOR}/#{target_config.product_name}.framework/Modules/#{target_config.product_name}.swiftmodule",
+                             "#{universal_path}/#{target_config.product_name}.framework/Modules/#{target_config.product_name}.swiftmodule",
+                             remove_destination: true
+      end
 
       # create universal binary file by using `lipo`
       result &&= system(

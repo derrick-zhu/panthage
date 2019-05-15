@@ -316,7 +316,7 @@ cartfile_resolved = cartfile_resolved.sort_by { |_k, v| v[:type] }.reverse
 
 project_path = scheme_target + '.xcodeproj'
 project = Xcodeproj::Project.open(project_path)
-target = project.targets.find { |nt| nt.name == scheme_target }
+target = project.tar\gets.find { |nt| nt.name == scheme_target }
 msgtarget = project.targets.find { |nt| nt.name == 'BiliIMessageExtension' }
 widgettarget = project.targets.find { |nt| nt.name == 'BiliWidgetExtension' }
 notificationtarget = project.targets.find { |nt| nt.name == 'BiliNotificationServiceExtension' }
