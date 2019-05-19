@@ -62,10 +62,47 @@ class ProjectCartManager
   def resolved_info
     result = []
     frameworks.each do |_, each_lib|
-      result.push"#{each_lib.framework&.to_resolved}"
+      result.push "#{each_lib.framework&.to_resolved}"
     end
     result = result.sort!
     result.join "\n"
+  end
+
+  def write_solved_info(file_path)
+    FileUtils.remove_entry file_path if File.exist? file_path
+    File.open file_path, File::RDWR | File::CREAT, 0644 do |fp|
+      fp.rewind
+      fp.write ProjectCartManager.instance.resolved_info
+      fp.flush
+      fp.truncate(fp.pos)
+    end
+  end
+
+  # read_cart_solved_file - read the data of the solved cartfile
+  def read_solved_info(file_path)
+    nil if File.exist? file_path
+
+    cart_file_resolved = {}
+    IO.foreach(file_path.to_s) do |block|
+      block = block.strip
+      next if (block == '') || (block == "\n")
+
+      meta = /((?i)binary|git|github)\s+"([^"]+)"\s+"([^"]+)"/.match(block)
+
+      if meta
+        type = meta[1]
+        f_name = %r{/([^./]+)((?i).git|.json)?$}.match(meta[2])[1]
+        url = meta[2]
+        hash = meta[3]
+      else
+        puts "#{'***'.cyan} warning could not analysis #{block}"
+        next
+      end
+
+      cart_file_resolved[f_name] = CartFileResolved.new_cart_solved(f_name, type, url, hash)
+    end
+
+    cart_file_resolved
   end
 
   def update_framework(new_lib)
@@ -86,7 +123,7 @@ class ProjectCartManager
     return false if frameworks&.empty?
     return false unless frameworks&.has_key?(name)
 
-    return true if frameworks[name]&.framework.is_private   #private framework is optional one, skip building.
+    return true if frameworks[name]&.framework.is_private #private framework is optional one, skip building.
 
     build_info_with_name(name).is_ready
   end

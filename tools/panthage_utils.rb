@@ -100,32 +100,6 @@ def read_cart_file(project_name, cart_file, is_private = false)
   cart_file_data
 end
 
-# read_cart_solved_file - read the data of the solved cartfile
-def read_cart_solved_file(current_dir)
-  cart_file_resolved = {}
-
-  IO.foreach("#{current_dir}/Cartfile.resolved") do |block|
-    block = block.strip
-    next if (block == '') || (block == "\n")
-
-    meta = /((?i)binary|git|github)\s+"([^"]+)"\s+"([^"]+)"/.match(block)
-
-    if meta
-      type = meta[1]
-      f_name = %r{/([^./]+)((?i).git|.json)?$}.match(meta[2])[1]
-      url = meta[2]
-      hash = meta[3]
-    else
-      puts "#{'***'.cyan} warning could not analysis #{block}"
-      next
-    end
-
-    cart_file_resolved[f_name] = CartFileResolved.new_cart_solved(f_name, type, url, hash)
-  end
-
-  cart_file_resolved
-end
-
 # solve_cart_file solve and analysis the cartfile
 def solve_cart_file(current_dir, cartfile)
   array_cartfile_resolve = []

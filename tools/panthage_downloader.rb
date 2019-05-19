@@ -5,8 +5,10 @@ require 'rubygems'
 require 'zip'
 require 'down'
 require 'json'
-require_relative 'extensions/string_ext'
+
 require_relative 'panthage_ver_helper'
+require_relative 'extensions/string_ext'
+require_relative 'utils/panthage_progress_bar'
 
 class BinaryDownloader
   def self.check_prepare_binary(lib_data)
@@ -24,26 +26,53 @@ class BinaryDownloader
     (info_file&.close)
   end
 
-  def self.download_binary_file(url, version, dst_file_path)
-    puts "download binary: #{url} with version: #{version}" if PanConstants.debugging
+  def self.fetch_remote_content_length(url)
+    remote_io = Down.open(url)
+    result = remote_io.size
+    remote_io.close
 
-    uri = URI(url)
-    json_raw = Net::HTTP.get(uri)
-    json_data = JSON.parse(json_raw)
-    binary_uri = json_data[version]
+    result
+  end
+
+  def self.download_binary_file(url, version, dst_file_path)
+    remote_json_raw = Down.open(url)
+    remote_json = JSON.parse(remote_json_raw.read)
+    binary_uri = remote_json[version]
+    remote_json_raw.close
 
     dst_file_path = './' + File.basename(URI(binary_uri).path) if dst_file_path.nil? || dst_file_path.empty?
 
-    command = [
-      wget_bin.to_s,
-      "-O #{dst_file_path}",
-      "#{binary_uri}",
-      '--no-check-certificate',
-      '-q',
-      '--show-progress;'
-    ].join(' ').strip.freeze
+    # 如果已经存在本地文件，比较和远程文件的大小之后，在判断是否需要下载
+    if File.exists? dst_file_path
+      local_file_size = File.size? dst_file_path
+      remote_file_size = fetch_remote_content_length(binary_uri)
+      return unless local_file_size != remote_file_size
+    end
 
-    system(command)
+    puts "download binary: #{url} with version: #{version}" if PanConstants.debugging
+
+    remote_file_size = 0
+    idx = 0
+    piece_download = 0
+    Down.download binary_uri,
+                  content_length_proc: -> (content_length) {remote_file_size = content_length},
+                  progress_proc: -> (progress) do
+                    if remote_file_size != progress
+                      print "\r#{Bar.moon[idx]}\t#{progress * 100 / remote_file_size}% downloading..." unless remote_file_size == 0
+
+                      piece_download += progress
+                      if piece_download > 1024
+                        idx = (idx + 1) % Bar.moon.size
+                        piece_download = 0
+                      end
+
+                    else
+                      print "\rDone."
+                      print "\n"
+                    end
+
+                  end,
+                  destination: dst_file_path
   end
 
   def self.unzip(zip_file, file_to_unzip, dir)
@@ -73,10 +102,10 @@ class BinaryDownloader
   end
 
   private_class_method def self.check_wget
-    !`type wget 2> /dev/null;`.empty?
-  end
+                         !`type wget 2> /dev/null;`.empty?
+                       end
 
   private_class_method def self.wget_bin
-    `which wget`.to_s.strip.freeze
-  end
+                         `which wget`.to_s.strip.freeze
+                       end
 end

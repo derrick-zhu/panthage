@@ -20,7 +20,7 @@ class CartFileChecker
           new_data.conflict_type = ConflictType::ERROR
           new_data.error_msg = msg_conflict_tag(new_data, old_data)
         elsif (new_minor > old_minor) ||
-              ((new_minor == old_minor) && (new_build > old_build))
+            ((new_minor == old_minor) && (new_build > old_build))
           new_data.conflict_type = ConflictType::ACCEPT
         else
           new_data.conflict_type = ConflictType::IGNORE
@@ -81,10 +81,10 @@ class CartFileChecker
   end
 
   private_class_method def self.msg_conflict_tag(new_data, old_data)
-    "conflict framework \"#{new_data.name}\" version:\n\t#{new_data.version} by #{new_data.parent_project_name}\nand\n\t#{old_data.version} by #{old_data.parent_project_name}"
-  end
+                         "conflict framework \"#{new_data.name}\" version:\n\t#{new_data.version} by #{new_data.parent_project_name}\nand\n\t#{old_data.version} by #{old_data.parent_project_name}"
+                       end
 
   private_class_method def self.msg_conflict_branch(new_data, old_data)
-    "conflict framework \"#{new_data.name}\" version:\n\t#{new_data.branch} by #{new_data.parent_project_name}\nand\n\t#{old_data.branch} by #{old_data.parent_project_name}"
-  end
+                         "conflict framework \"#{new_data.name}\" version:\n\t#{new_data.branch} by #{new_data.parent_project_name}\nand\n\t#{old_data.branch} by #{old_data.parent_project_name}"
+                       end
 end
