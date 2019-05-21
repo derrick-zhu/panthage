@@ -181,6 +181,8 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
     puts "#{'***'.cyan} Finished!"
   end
 
+  RepoHelper.reset_repo_config(repo_dir_base, name, value.url)
+
   # fetch the commit hash value by using branch name or tags
   if value.repo_type == GitRepoType::TAG
     commit_hash = RepoHelper.clone_with_tag(
@@ -224,7 +226,7 @@ def load_cart_file(current_dir, scheme_target)
   cart_file_data
 end
 
-def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target, parent_name, current_dir, is_install, is_sync)
+def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target, current_dir, is_install, is_sync)
   raise 'fatal: invalid cartfile data, which is null' if current_cart_data.nil?
 
   puts ">>>>>>>>>>>>>> #{current_cart_data.name} <<<<<<<<<<<<<<<<"
@@ -311,7 +313,6 @@ def solve_project_dependency(project_cart_data, workspace_base_dir, is_install, 
     solve_project_carthage(each_cart_data,
                            workspace_base_dir.to_s,
                            each_cart_data.name.to_s,
-                           project_cart_data.name.to_s,
                            "#{workspace_base_dir}/Carthage/Checkouts/#{each_cart_data.name}",
                            is_install,
                            is_sync)

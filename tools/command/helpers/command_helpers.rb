@@ -8,15 +8,14 @@ require_relative '../../xcode_proj/models/panthage_xc_scheme_model'
 module CommandHelper
 
   def self.solve_dependency(current_dir, scheme_target, parent_name, command)
-    main_project_info = CartFileBase.new("#{scheme_target}", 'main')
+    main_project_info = CartFileBase.new(scheme_target, parent_name)
 
     solve_project_carthage(
         main_project_info,
         current_dir.to_s,
         scheme_target.to_s,
-        parent_name.to_s,
         current_dir.to_s,
-        CommandLine.install?(command),
+        CommandLine.install?(command.command),
         command.using_sync
     )
 
@@ -25,7 +24,7 @@ module CommandHelper
     solve_project_dependency(
         main_project_info,
         current_dir.to_s,
-        CommandLine.install?(command),
+        CommandLine.install?(command.command),
         command.using_sync
     )
   end
