@@ -102,7 +102,7 @@ class RepoHelper
 
   def self.submodule_init(base_dir, repo_name)
     dest_repo_dir = "#{base_dir}/Checkouts/#{repo_name}"
-    return unless File.exist? "#{dest_repo_dir}/.gitmodules"
+    nil unless File.exist? "#{dest_repo_dir}/.gitmodules"
 
     system("cd #{dest_repo_dir}; #{git} submodule update --init #{PanConstants.disable_verbose};") if File.exist?(dest_repo_dir)
   end

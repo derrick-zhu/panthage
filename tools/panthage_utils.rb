@@ -265,26 +265,26 @@ def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target,
     current_cart_data.append_raw_dependency(new_lib)
   end
 
-  git_repo_for_checkout.select {|_, value| value.lib_type == LibType::GIT || value.lib_type == LibType::GITHUB}
-      .each do |name, value|
-    clone_bare_repo("#{workspace_base_dir}/Carthage/Repo", name, value, is_install)
+  git_repo_for_checkout.each do |name, value|
+    case value.lib_type
+    when LibType::GIT, LibType::GITHUB
+      clone_bare_repo("#{workspace_base_dir}/Carthage/Repo", name, value, is_install)
+
+    when LibType::BINARY
+      print "#{"***".cyan} Download #{value.name.green.bold}: "
+      BinaryDownloader.check_prepare_binary(value)
+      print "#{value.url}\n"
+
+      target_zip_file = "#{workspace_base_dir}/Carthage/.tmp/#{name}.zip"
+      BinaryDownloader.download_binary_file(value.url, value.hash, target_zip_file)
+
+      BinaryDownloader.unzip(target_zip_file, "*.framework", "#{workspace_base_dir}/Carthage/Build/iOS/") ||
+          BinaryDownloader.unzip(target_zip_file, "*.a", "#{workspace_base_dir}/Carthage/Build/iOS/")
+
+    else
+      # empty
+    end
   end
-
-  git_repo_for_checkout.select {|_, value| value.lib_type == LibType::BINARY}
-      .each do |name, value|
-    print "#{"***".cyan} Download #{value.name.green.bold}: "
-    BinaryDownloader.check_prepare_binary(value)
-    print "#{value.url}\n"
-
-    target_zip_file = "#{workspace_base_dir}/Carthage/.tmp/#{name}.zip"
-    BinaryDownloader.download_binary_file(value.url, value.hash, target_zip_file)
-
-    BinaryDownloader.unzip(target_zip_file, "*.framework", "#{workspace_base_dir}/Carthage/Build/iOS/") ||
-    BinaryDownloader.unzip(target_zip_file, "*.a", "#{workspace_base_dir}/Carthage/Build/iOS/")
-  end
-
-  # generate Cartfile.resolved file.
-  # solve_cart_file(current_dir.to_s, cart_file_data)
 
   git_repo_for_checkout.each do |name, value|
     if value.lib_type == LibType::BINARY
