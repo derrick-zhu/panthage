@@ -178,7 +178,6 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
   unless File.exist? repo_dir
     puts "#{'***'.cyan} Cloning #{name.green.bold}"
     RepoHelper.clone_bare(repo_dir_base, value.url, name, using_install, PanConstants.disable_verbose)
-    puts "#{'***'.cyan} Finished!"
   end
 
   RepoHelper.reset_repo_config(repo_dir_base, name, value.url)
@@ -195,7 +194,6 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
     )
 
   elsif value.repo_type == GitRepoType::BRANCH
-    print "#{'***'.cyan} "
     commit_hash = RepoHelper.clone_with_branch(
         value.url,
         name,
@@ -214,7 +212,7 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
   # save the commit's SHA1 hash.
   value.hash = commit_hash.strip.freeze
 
-  print "#{'***'.cyan} Fetch #{name.green.bold} Done.\n\n"
+  # print "#{'***'.cyan} Fetch #{name.green.bold} Done.\n\n"
 end
 
 def load_cart_file(current_dir, scheme_target)
