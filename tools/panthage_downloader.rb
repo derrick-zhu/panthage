@@ -27,6 +27,7 @@ class BinaryDownloader
   end
 
   def self.fetch_remote_content_length(url)
+    puts url
     remote_io = Down.open(url)
     result = remote_io.size
     remote_io.close
@@ -37,6 +38,9 @@ class BinaryDownloader
   def self.download_binary_file(url, version, dst_file_path)
     remote_json_raw = Down.open(url)
     remote_json = JSON.parse(remote_json_raw.read)
+
+    version = VersionHelper.find_fit_version(remote_json.keys, version, VersionHelper::HIGHER_EQUAL).first
+
     binary_uri = remote_json[version]
     remote_json_raw.close
 

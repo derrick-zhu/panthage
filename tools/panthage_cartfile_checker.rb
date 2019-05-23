@@ -6,6 +6,12 @@ require_relative 'panthage_ver_helper'
 # CartFileChecker for checking library's version acceptable logic
 class CartFileChecker
   def self.check_library_by(new_data, old_data)
+    if new_data.is_private
+      new_data.conflict_type = ConflictType::IGNORE
+      new_data.error_msg = "private library, ignore"
+      return
+    end
+
     case old_data.lib_type
     when LibType::GIT, LibType::GITHUB
       if !new_data.version.empty? && !old_data.version.empty?
