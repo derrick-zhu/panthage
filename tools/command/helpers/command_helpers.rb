@@ -57,9 +57,9 @@ module CommandHelper
         raise "#{"***".cyan} could not find and build #{repo_name.green.bold}"
       end
 
-      xcode_proj_file = xcode_project_file_path.first.to_s
+      xcode_file = xcode_project_file_path.first.to_s
 
-      p_xcode_project = XcodeProject.new(xcode_proj_file.to_s,
+      p_xcode_project = XcodeProject.new(xcode_file.to_s,
                                          XcodeBuildConfigure::DEBUG,
                                          cli.command_line.platform)
 
@@ -84,7 +84,7 @@ module CommandHelper
         end
 
         xc_config = XcodeBuildConfigure.new("#{cli.checkout_base}/#{repo_name}",
-                                            xcode_proj_file,
+                                            xcode_file,
                                             build_scheme_name,
                                             XcodeBuildConfigure::DEBUG,
                                             "#{cli.current_dir}/Carthage/.tmp/#{repo_name}",
@@ -104,7 +104,7 @@ module CommandHelper
       end
 
       repo_framework.is_ready = xc_build_result
-      raise "fatal: error in build '#{xcode_proj_file}." unless repo_framework.is_ready
+      raise "fatal: error in build '#{xcode_file}." unless repo_framework.is_ready
 
       # next one
       repo_framework = ProjectCartManager.instance.any_repo_framework
