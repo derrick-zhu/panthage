@@ -29,17 +29,18 @@ class RepoHelper
   end
 
   def self.clone_with_branch(repo_url, repo_name, branch, repo_dir, _using_install, disable_verbose)
-    `cd #{repo_dir}/#{repo_name}.git; #{git} fetch --all #{disable_verbose}; `
+    # `cd #{repo_dir}/#{repo_name}.git; #{git} fetch --all #{disable_verbose}; `
 
-    branches = `cd #{repo_dir}/#{repo_name}.git; #{git} branch --remote --list;`
-    branches_list = []
-    branches_list = branches.split("\n") unless branches.empty?
-    finded = !branches_list.select {|block| block.delete('*').strip == "origin/#{branch}"}.empty?
-
-    raise "could not find '#{branch}' in '#{repo_url}'. " unless finded
+    # branches = `cd #{repo_dir}/#{repo_name}.git; #{git} branch --remote --list;`
+    # branches_list = []
+    # branches_list = branches.split("\n") unless branches.empty?
+    # finded = !branches_list.select {|block| block.delete('*').strip == "origin/#{branch}"}.empty?
+    #
+    # raise "could not find '#{branch}' in '#{repo_url}'. " unless finded
 
     command = [
         "cd #{repo_dir}/#{repo_name}.git; ",
+        "#{git} fetch --all #{disable_verbose};",
         "#{git} branch #{branch} >/dev/null 2>&1; ",
         "#{git} symbolic-ref HEAD refs/heads/#{branch}; ",
         "#{git} branch --set-upstream-to=origin/#{branch} #{branch} >/dev/null 2>&1; "
@@ -104,7 +105,7 @@ class RepoHelper
     dest_repo_dir = "#{base_dir}/Checkouts/#{repo_name}"
     nil unless File.exist? "#{dest_repo_dir}/.gitmodules"
 
-    system("cd #{dest_repo_dir}; #{git} submodule update --init #{PanConstants.disable_verbose};") if File.exist?(dest_repo_dir)
+    system("cd #{dest_repo_dir}; #{git} submodule update --init #{PanConstants.disable_verbose} >/dev/null 2>&1;") if File.exist?(dest_repo_dir)
   end
 
   def self.setup_dependency(base_dir, dependency_libs)

@@ -149,8 +149,8 @@ class ProjectCartManager
 
   def verify_library_compatible(new_lib, old_lib)
     raise "could not verify library compatible between #{new_lib.name} and #{old_lib.name}" if new_lib.name != old_lib.name
-    raise "incompatible library type: \n\t#{new_lib.name}(#{new_lib.parent_project_name}) -> #{new_lib.lib_type}\n and \n\t#{old_lib.name}(#{old_lib.parent_project_name}) -> #{new_lib.lib_type}" if new_lib.lib_type != old_lib.lib_type
-    raise "incompatible library repo type: \n\t#{new_lib.name}(#{new_lib.parent_project_name}) -> #{new_lib.repo_type}\n and \n\t#{old_lib.name}(#{old_lib.parent_project_name}) -> #{new_lib.repo_type}" if new_lib.repo_type != old_lib.repo_type
+    raise "incompatible library type: \n\t#{new_lib.name}(#{new_lib.parent_project_name}) -> #{new_lib.lib_type}\n and \n\t#{old_lib.name}(#{old_lib.parent_project_name}) -> #{old_lib.lib_type}" if new_lib.lib_type != old_lib.lib_type
+    # raise "incompatible library repo type: \n\t#{new_lib.name}(#{new_lib.parent_project_name}) -> #{new_lib.repo_type}\n and \n\t#{old_lib.name}(#{old_lib.parent_project_name}) -> #{old_lib.repo_type}" if new_lib.repo_type != old_lib.repo_type
 
     CartFileChecker.check_library_by(new_lib, old_lib)
   end

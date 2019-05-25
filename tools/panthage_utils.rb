@@ -160,7 +160,7 @@ end
 
 # clone_bare_repo - clone the bare repo
 def clone_bare_repo(repo_dir_base, name, value, using_install)
-  puts "#{'***'.cyan} Start fetching #{name.green.bold}"
+  puts "#{'***'.cyan} fetching #{name.green.bold}"
   repo_dir = "#{repo_dir_base}/#{name}.git"
 
   # using tag or branch ?

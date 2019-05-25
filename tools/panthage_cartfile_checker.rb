@@ -45,7 +45,7 @@ class CartFileChecker
 
       elsif !new_data.branch.empty? && !old_data.version.empty?
         new_data.conflict_type = ConflictType::ACCEPT
-        new_data.error_msg = "warning: #{new_name} framework update: #{old_data.version} -> #{new_data.url}:#{new_data.branch}"
+        new_data.error_msg = "warning: #{new_data.name} framework update: #{old_data.version} -> #{new_data.url}:#{new_data.branch}"
 
       else
         raise "unknown condition: \n\t#{old_data.description}\nand\n\t#{new_data.description}"
