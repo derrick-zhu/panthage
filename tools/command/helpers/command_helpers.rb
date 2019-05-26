@@ -39,7 +39,7 @@ module CommandHelper
 
   def self.build_all(cli)
     repo_framework = ProjectCartManager.instance.any_repo_framework
-    until repo_framework&.is_ready || repo_framework&.framework.nil?
+    while !(repo_framework&.is_ready || repo_framework&.framework.nil?)
       repo_name = repo_framework.name.to_s
       repo_dir = "#{cli.checkout_base}/#{repo_name}/"
 
@@ -52,59 +52,84 @@ module CommandHelper
       # 将当前目录设置成操作目录。
       Dir.chdir("#{repo_dir}")
 
-      xcode_project_file_path = FileUtils.find_path_in_r("#{repo_name}.xcodeproj", '.', '')
-      if xcode_project_file_path.empty?
-        raise "#{"***".cyan} could not find and build #{repo_name.green.bold}"
-      end
+      xcode_project_file_path = ''
+      found_xcodeproj = false
+      %W(#{repo_name}.xcodeproj *.framework *.a).each do |each_file_path|
+        all_files = FileUtils.find_path_in_r(each_file_path, '.', '')
 
-      xcode_file = xcode_project_file_path.first.to_s
+        unless "#{all_files}".empty?
+          xcode_project_file_path = all_files.first
 
-      p_xcode_project = XcodeProject.new(xcode_file.to_s,
-                                         XcodeBuildConfigure::DEBUG,
-                                         cli.command_line.platform)
+          if "#{xcode_project_file_path}".end_with? '.xcodeproj'
+            found_xcodeproj = true
+            break
+          elsif "#{xcode_project_file_path}".end_with?('.framework') || "#{xcode_project_file_path}".end_with?('.a')
+            found_xcodeproj = false
 
-      xc_build_result = true
-      p_xcode_project.targets.each do |xc_target|
-        next if xc_target.platform_type != cli.command_line.platform
+            dst_file_path =  cli.build_base + "/#{XcodePlatformSDK::to_s(cli.command_line.platform)}/" + File.basename(URI(xcode_project_file_path).path)
+            `rm -rf #{dst_file_path}` if File.exist? dst_file_path
 
-        build_dir_path = ''
-        version_hash_filepath = ''
-        build_scheme_name = ''
-
-        if xc_target.static? or xc_target.mach_o_static?
-          build_dir_path = "#{cli.current_dir}/Carthage/Build/#{XcodePlatformSDK::to_s(xc_target.platform_type)}/Static"
-          version_hash_filepath = "#{cli.current_dir}/Carthage/Build/.#{xc_target.product_name}.static.version"
-          build_scheme_name = p_xcode_project.scheme_for_target(xc_target.target_name).name
-        elsif xc_target.dylib?
-          build_dir_path = "#{cli.current_dir}/Carthage/Build/#{XcodePlatformSDK::to_s(xc_target.platform_type)}"
-          version_hash_filepath = "#{cli.current_dir}/Carthage/Build/.#{xc_target.product_name}.dynamic.version"
-          build_scheme_name = p_xcode_project.scheme_for_target(xc_target.target_name).name
-        else
-          next
-        end
-
-        xc_config = XcodeBuildConfigure.new("#{cli.checkout_base}/#{repo_name}",
-                                            xcode_file,
-                                            build_scheme_name,
-                                            XcodeBuildConfigure::DEBUG,
-                                            "#{cli.current_dir}/Carthage/.tmp/#{repo_name}",
-                                            build_dir_path.to_s,
-                                            build_dir_path.to_s,
-                                            cli.command_line.platform,
-                                            p_xcode_project.is_swift_project?(xc_target.target_name))
-        xc_config.quiet_mode = !cli.command_line.verbose
-        puts '-------------------------------------------------'
-
-        xc_build_result &&= XcodeBuilder.build_universal(xc_config, xc_target)
-
-        unless version_hash_filepath.nil? || version_hash_filepath.empty?
-          framework_cache_version = CacheVersion.new(repo_framework.framework.hash, repo_name, xc_config.framework_version_hash)
-          File.write(version_hash_filepath.to_s, JSON.pretty_generate(framework_cache_version.to_json))
+            FileUtils.copy_entry "#{xcode_project_file_path}",
+                                 "#{dst_file_path}",
+                                 remove_destination: true
+          end
         end
       end
 
-      repo_framework.is_ready = xc_build_result
-      raise "fatal: error in build '#{xcode_file}." unless repo_framework.is_ready
+      raise "#{"***".cyan} could not find and build #{repo_name.green.bold}" if xcode_project_file_path.empty?
+
+      if found_xcodeproj
+        xcode_file = xcode_project_file_path
+        xc_build_result = true
+        p_xcode_project = XcodeProject.new(xcode_file.to_s,
+                                           XcodeBuildConfigure::DEBUG,
+                                           cli.command_line.platform)
+
+        p_xcode_project.targets.each do |xc_target|
+          next if xc_target.platform_type != cli.command_line.platform
+
+          build_dir_path = ''
+          version_hash_filepath = ''
+          build_scheme_name = ''
+
+          if xc_target.static? or xc_target.mach_o_static?
+            build_dir_path = "#{cli.current_dir}/Carthage/Build/#{XcodePlatformSDK::to_s(xc_target.platform_type)}/Static"
+            version_hash_filepath = "#{cli.current_dir}/Carthage/Build/.#{xc_target.product_name}.static.version"
+            build_scheme_name = p_xcode_project.scheme_for_target(xc_target.target_name).name
+          elsif xc_target.dylib?
+            build_dir_path = "#{cli.current_dir}/Carthage/Build/#{XcodePlatformSDK::to_s(xc_target.platform_type)}"
+            version_hash_filepath = "#{cli.current_dir}/Carthage/Build/.#{xc_target.product_name}.dynamic.version"
+            build_scheme_name = p_xcode_project.scheme_for_target(xc_target.target_name).name
+          else
+            next
+          end
+
+          xc_config = XcodeBuildConfigure.new("#{cli.checkout_base}/#{repo_name}",
+                                              xcode_file,
+                                              build_scheme_name,
+                                              XcodeBuildConfigure::DEBUG,
+                                              "#{cli.current_dir}/Carthage/.tmp/#{repo_name}",
+                                              build_dir_path.to_s,
+                                              build_dir_path.to_s,
+                                              cli.command_line.platform,
+                                              p_xcode_project.is_swift_project?(xc_target.target_name))
+          xc_config.quiet_mode = !cli.command_line.verbose
+          puts '-------------------------------------------------'
+
+          xc_build_result &&= XcodeBuilder.build_universal(xc_config, xc_target)
+
+          unless version_hash_filepath.nil? || version_hash_filepath.empty?
+            framework_cache_version = CacheVersion.new(repo_framework.framework.hash, repo_name, xc_config.framework_version_hash)
+            File.write(version_hash_filepath.to_s, JSON.pretty_generate(framework_cache_version.to_json))
+          end
+        end
+
+        repo_framework.is_ready = xc_build_result
+        raise "fatal: error in build '#{xcode_file}." unless repo_framework.is_ready
+
+      else
+        repo_framework.is_ready = true
+      end
 
       # next one
       repo_framework = ProjectCartManager.instance.any_repo_framework

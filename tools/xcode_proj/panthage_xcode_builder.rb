@@ -69,14 +69,14 @@ class XcodeBuilder
         FileUtils.remove_entry "#{universal_path}/lib#{target_config.product_name}.a", force: true
       end
 
-      result &&= system(
-          ["#{xcrun_bin} #{lipo_bin}",
-           '-create',
-           "-output #{universal_path}/lib#{target_config.product_name}.a",
-           "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONE_SIMULATOR}/lib#{target_config.product_name}.a",
-           "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONEOS}/lib#{target_config.product_name}.a"
-          ].join(' ')
-      )
+      lipo_command = ["#{xcrun_bin} #{lipo_bin}",
+                      '-create',
+                      "-output '#{universal_path}/lib#{target_config.product_name}.a'",
+                      "'#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONE_SIMULATOR}/lib#{target_config.product_name}.a'",
+                      "'#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONEOS}/lib#{target_config.product_name}.a'"
+      ].join(' ')
+      puts "LIPO command: #{lipo_command}"
+      result &&= system(lipo_command)
 
       raise 'fatal: fails in create universal library' unless result
 
