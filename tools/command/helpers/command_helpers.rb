@@ -54,8 +54,8 @@ module CommandHelper
 
       xcode_project_file_path = ''
       found_xcodeproj = false
-      %W(#{repo_name}.xcodeproj *.framework *.a).each do |each_file_path|
-        all_files = FileUtils.find_path_in_r(each_file_path, "#{repo_dir}", 'Carthage/Build/iOS/')
+      %W(*.xcodeproj *.framework *.a).each do |each_file_path|
+        all_files = FileUtils.find_path_in_r(each_file_path, "#{repo_dir}", "#{repo_dir}/Carthage/")
 
         unless all_files.empty?
           xcode_project_file_path = all_files.first
