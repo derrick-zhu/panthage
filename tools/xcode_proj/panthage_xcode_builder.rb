@@ -75,7 +75,7 @@ class XcodeBuilder
                       "'#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONE_SIMULATOR}/lib#{target_config.product_name}.a'",
                       "'#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONEOS}/lib#{target_config.product_name}.a'"
       ].join(' ')
-      puts "LIPO command: #{lipo_command}"
+      puts "LIPO command: #{lipo_command}" if PanConstants.debugging
       result &&= system(lipo_command)
 
       raise 'fatal: fails in create universal library' unless result
@@ -141,6 +141,8 @@ class XcodeBuilder
                            FileUtils.mkdir_p xcode_config.build_output.to_s
                          end
 
+                         puts "#{'***'.cyan} Building #{xcode_config.scheme}"
+
                          command = [
                              "cd #{xcode_config.work_dir};",
                              "#{xcrun_bin} #{xcode_build_bin}",
@@ -150,7 +152,7 @@ class XcodeBuilder
                              "#{CommandLine.instance.verbose_flag};"
                          ].join(' ')
 
-                         puts "Build command: #{command}"
+                         puts "build command: #{command}" if PanConstants.debugging
                          system(command)
                        end
 

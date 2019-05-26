@@ -49,29 +49,43 @@ module CommandHelper
         next
       end
 
-      # 将当前目录设置成操作目录。
+      # 将当前目录设置成操作目录.
       Dir.chdir("#{repo_dir}")
 
       xcode_project_file_path = ''
       found_xcodeproj = false
       %W(#{repo_name}.xcodeproj *.framework *.a).each do |each_file_path|
-        all_files = FileUtils.find_path_in_r(each_file_path, '.', '')
+        all_files = FileUtils.find_path_in_r(each_file_path, "#{repo_dir}", 'Carthage/Build/iOS/')
 
-        unless "#{all_files}".empty?
+        unless all_files.empty?
           xcode_project_file_path = all_files.first
+
+          # absolute path -> relative path
+          xcode_project_file_path = Pathname(xcode_project_file_path).relative_path_from(Pathname(repo_dir)).to_s
 
           if "#{xcode_project_file_path}".end_with? '.xcodeproj'
             found_xcodeproj = true
             break
-          elsif "#{xcode_project_file_path}".end_with?('.framework') || "#{xcode_project_file_path}".end_with?('.a')
+          elsif "#{xcode_project_file_path}".end_with?('.framework')
             found_xcodeproj = false
 
-            dst_file_path =  cli.build_base + "/#{XcodePlatformSDK::to_s(cli.command_line.platform)}/" + File.basename(URI(xcode_project_file_path).path)
+            dst_file_path =  cli.build_base + "/#{XcodePlatformSDK::to_s(cli.command_line.platform)}/" + File.basename(xcode_project_file_path)
             `rm -rf #{dst_file_path}` if File.exist? dst_file_path
 
             FileUtils.copy_entry "#{xcode_project_file_path}",
                                  "#{dst_file_path}",
                                  remove_destination: true
+            break
+          elsif "#{xcode_project_file_path}".end_with?('.a')
+            found_xcodeproj = false
+
+            dst_file_path =  cli.build_base + "/#{XcodePlatformSDK::to_s(cli.command_line.platform)}/Static/" + File.basename(xcode_project_file_path)
+            `rm -rf '#{dst_file_path}'` if File.exist? dst_file_path
+
+            FileUtils.copy_entry "#{xcode_project_file_path}",
+                                 "#{dst_file_path}",
+                                 remove_destination: true
+            break
           end
         end
       end
@@ -114,7 +128,7 @@ module CommandHelper
                                               cli.command_line.platform,
                                               p_xcode_project.is_swift_project?(xc_target.target_name))
           xc_config.quiet_mode = !cli.command_line.verbose
-          puts '-------------------------------------------------'
+          puts '-------------------------------------------------' if PanConstants.debugging
 
           xc_build_result &&= XcodeBuilder.build_universal(xc_config, xc_target)
 

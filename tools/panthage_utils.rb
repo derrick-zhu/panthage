@@ -227,8 +227,8 @@ end
 def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target, current_dir, is_install, is_sync)
   raise 'fatal: invalid cartfile data, which is null' if current_cart_data.nil?
 
-  puts ">>>>>>>>>>>>>> #{current_cart_data.name} <<<<<<<<<<<<<<<<"
-  puts "Solving project: #{current_cart_data.name}, which belongs #{current_cart_data.parent_project_name}"
+  puts ">>>>>>>>>>>>>> #{current_cart_data.name} <<<<<<<<<<<<<<<<" if PanConstants.debugging
+  puts "Solving project: #{current_cart_data.name}, which belongs #{current_cart_data.parent_project_name}" if PanConstants.debugging
 
   # analysis the Cartfile to grab workspace's basic information
   cart_file_data = load_cart_file(current_dir, scheme_target)
@@ -244,12 +244,12 @@ def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target,
       new_lib.hash = old_lib.hash
       new_lib.dependency = old_lib.dependency
 
-      puts "#{new_lib.name} had been there.\n\tNew library: #{new_lib.description}\n\tOld library: #{old_lib.description}".bg_blue
+      puts "#{new_lib.name} had been there.\n\tNew library: #{new_lib.description}\n\tOld library: #{old_lib.description}".bg_blue if PanConstants.debugging
     else
       new_lib.conflict_type == ConflictType::ACCEPT
     end
 
-    puts new_lib.description.to_s.reverse_color
+    puts new_lib.description.to_s.reverse_color if PanConstants.debugging
 
     case new_lib.conflict_type
     when ConflictType::ERROR
@@ -273,7 +273,7 @@ def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target,
     when LibType::BINARY
       print "#{"***".cyan} Download #{value.name.green.bold}: "
       BinaryDownloader.check_prepare_binary(value)
-      print "#{value.url}\n"
+      puts "#{value.url}\n" if PanConstants.debugging
 
       target_zip_file = "#{workspace_base_dir}/Carthage/.tmp/#{name}.zip"
       BinaryDownloader.download_binary_file(value.url, value.hash, target_zip_file)
@@ -320,7 +320,7 @@ def solve_project_dependency(project_cart_data, workspace_base_dir, is_install, 
 
   project_cart_data.dependency.select {|each_cart| each_cart.conflict_type == ConflictType::ACCEPT}
       .each do |each_cart_data|
-    puts "solving dependencies #{each_cart_data.name}"
+    puts "solving dependencies #{each_cart_data.name}" if PanConstants.debugging
     each_cart_data.conflict_type = ConflictType::IGNORE
     solve_project_dependency(each_cart_data, workspace_base_dir, is_install, is_sync)
   end
