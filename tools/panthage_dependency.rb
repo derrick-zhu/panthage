@@ -3,7 +3,7 @@
 
 # PanConstants constants for panthage
 class PanConstants
-  @@debugging = false
+  @@debugging = true
   @@maximum_dummy_number_in_template = 10
 
   @@quiet = '--quiet'
