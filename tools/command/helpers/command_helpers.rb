@@ -58,7 +58,15 @@ module CommandHelper
         all_files = FileUtils.find_path_in_r(each_file_path, "#{repo_dir}", "#{repo_dir}/Carthage/Build/")
 
         unless all_files.empty?
-          xcode_project_file_path = all_files.first
+          if all_files.size == 1
+            xcode_project_file_path = all_files.first
+          else
+            xcode_project_file_path = all_files.select do |ef|
+              fpn = Pathname(ef)
+              (fpn.dirname.to_s.end_with?("Carthage/Checkouts/#{repo_name}") || fpn.dirname.to_s.end_with?("Carthage/Checkouts/#{repo_name}/#{repo_name}")) &&
+                  fpn.basename.to_s.include?(repo_name)
+            end.first
+          end
 
           # absolute path -> relative path
           xcode_project_file_path = Pathname(xcode_project_file_path).relative_path_from(Pathname(repo_dir)).to_s
@@ -69,8 +77,8 @@ module CommandHelper
           elsif "#{xcode_project_file_path}".end_with?('.framework')
             found_xcodeproj = false
 
-            dst_file_path =  cli.build_base + "/#{XcodePlatformSDK::to_s(cli.command_line.platform)}/" + File.basename(xcode_project_file_path)
-            `rm -rf #{dst_file_path}` if File.exist? dst_file_path
+            dst_file_path = cli.build_base + "/#{XcodePlatformSDK::to_s(cli.command_line.platform)}/" + File.basename(xcode_project_file_path)
+            %x(rm -rf '#{dst_file_path}') if File.exist? dst_file_path
 
             FileUtils.copy_entry "#{xcode_project_file_path}",
                                  "#{dst_file_path}",
@@ -79,8 +87,8 @@ module CommandHelper
           elsif "#{xcode_project_file_path}".end_with?('.a')
             found_xcodeproj = false
 
-            dst_file_path =  cli.build_base + "/#{XcodePlatformSDK::to_s(cli.command_line.platform)}/Static/" + File.basename(xcode_project_file_path)
-            `rm -rf '#{dst_file_path}'` if File.exist? dst_file_path
+            dst_file_path = cli.build_base + "/#{XcodePlatformSDK::to_s(cli.command_line.platform)}/Static/" + File.basename(xcode_project_file_path)
+            %x(rm -rf '#{dst_file_path}') if File.exist? dst_file_path
 
             FileUtils.copy_entry "#{xcode_project_file_path}",
                                  "#{dst_file_path}",

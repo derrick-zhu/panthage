@@ -29,15 +29,6 @@ class RepoHelper
   end
 
   def self.clone_with_branch(repo_url, repo_name, branch, repo_dir, _using_install, disable_verbose)
-    # `cd #{repo_dir}/#{repo_name}.git; #{git} fetch --all #{disable_verbose}; `
-
-    # branches = `cd #{repo_dir}/#{repo_name}.git; #{git} branch --remote --list;`
-    # branches_list = []
-    # branches_list = branches.split("\n") unless branches.empty?
-    # finded = !branches_list.select {|block| block.delete('*').strip == "origin/#{branch}"}.empty?
-    #
-    # raise "could not find '#{branch}' in '#{repo_url}'. " unless finded
-
     command = [
         "cd #{repo_dir}/#{repo_name}.git; ",
         "#{git} fetch --all #{disable_verbose};",
@@ -47,16 +38,16 @@ class RepoHelper
     ].join(' ').strip.freeze
     system(command)
 
-    commit_hash = `cd #{repo_dir}/#{repo_name}.git; #{git} rev-parse HEAD 2> /dev/null;`.strip.freeze
+    commit_hash = %x(cd #{repo_dir}/#{repo_name}.git; #{git} rev-parse HEAD 2> /dev/null;).strip.freeze
     system("cd #{repo_dir}/#{repo_name}.git; #{git} update-ref refs/heads/#{branch} #{commit_hash}; ")
 
     commit_hash
   end
 
   def self.clone_with_tag(repo_url, repo_name, tag, repo_dir, compare_method, disable_verbose)
-    `cd #{repo_dir}/#{repo_name}.git; #{git} fetch --all #{disable_verbose}; `
+    %x(cd #{repo_dir}/#{repo_name}.git; #{git} fetch --all #{disable_verbose};)
 
-    tags = `cd #{repo_dir}/#{repo_name}.git; #{git} tag --list;`
+    tags = %x(cd #{repo_dir}/#{repo_name}.git; #{git} tag --list;)
     tags_list = []
     tags_list = tags.split("\n") unless tags.empty?
     tags_list = tags_list.each {|block| block.delete('*').strip}
