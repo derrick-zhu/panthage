@@ -3,22 +3,15 @@
 
 # PanConstants constants for panthage
 class PanConstants
-  @@debugging = true
-  @@maximum_dummy_number_in_template = 10
-
-  @@quiet = '--quiet'
+  DEBUGGING = false
+  QUIET = '--quiet'
 
   def self.disable_verbose
-    PanConstants.debugging ? '' : @@quiet
+    PanConstants.debugging ? '' : QUIET
   end
 
   def self.debugging
-    @@debugging
-  end
-
-  # dummy fw count (max)
-  def self.max_dummy_template
-    @@maximum_dummy_number_in_template
+    DEBUGGING
   end
 
   def initialize; end

@@ -1,5 +1,7 @@
 #!/usr/bin/ruby
 
+require_relative 'panthage_xcode_sdk'
+
 module XcodePlatformSDK
   FOR_UNKNOWN = 0
   FOR_IOS = FOR_UNKNOWN + 1
@@ -32,6 +34,8 @@ module XcodePlatformSDK
 end
 
 class XCodeTarget
+  include XcodeSDKRoot
+
   STATIC_LIB = 0
   DYNAMIC_LIB = STATIC_LIB + 1
   EXECUTABLE = DYNAMIC_LIB + 1
@@ -84,15 +88,11 @@ class XCodeTarget
 end
 
 class XCodeSchemeConfig
-  attr_reader :name, :target_name, :ref_container
+  attr_reader :name, :target_name, :app_name
 
-  def initialize(name, target_name, ref_container)
+  def initialize(name, target_name, app_name)
     @name = name
     @target_name = target_name
-    @ref_container = ref_container
-  end
-
-  def match_target(t_name)
-    target_name == t_name
+    @app_name = app_name
   end
 end

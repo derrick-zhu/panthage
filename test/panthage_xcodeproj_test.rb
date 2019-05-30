@@ -36,7 +36,7 @@ class TestXcodeProject < Test::Unit::TestCase
   end
 
   def test_xc_proj_schemes
-    xcode_proj.schemes.each do |each_scheme|
+    xcode_proj.xc_schemes.each do |each_scheme|
       puts each_scheme.to_s
     end
     assert(true)

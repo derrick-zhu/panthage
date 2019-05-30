@@ -39,8 +39,8 @@ class CommandInstall
 
     CommandHelper.solve_dependency(current_dir, scheme_target, 'main', self.command_line)
 
-    puts ProjectCartManager.instance.description.reverse_color.to_s
-    puts ProjectCartManager.instance.resolved_info
+    puts ProjectCartManager.instance.description.reverse_color.to_s if PanConstants.debugging
+    puts ProjectCartManager.instance.resolved_info if PanConstants.debugging
 
     CommandHelper.write_solved_info("#{self.command_line.current_dir}/Cartfile.resolved")
 

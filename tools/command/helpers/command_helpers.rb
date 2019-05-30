@@ -69,6 +69,7 @@ module CommandHelper
           end
 
           # absolute path -> relative path
+          puts "prepare build #{xcode_project_file_path}, #{repo_dir}"
           xcode_project_file_path = Pathname(xcode_project_file_path).relative_path_from(Pathname(repo_dir)).to_s
 
           if "#{xcode_project_file_path}".end_with? '.xcodeproj'
@@ -107,8 +108,17 @@ module CommandHelper
                                            XcodeBuildConfigure::DEBUG,
                                            cli.command_line.platform)
 
-        p_xcode_project.targets.each do |xc_target|
-          next if xc_target.platform_type != cli.command_line.platform
+        p_xcode_project.schemes.select do |each_xc_scheme|
+          xc_target = p_xcode_project.targets.find do |target|
+            target.target_name == each_xc_scheme.target_name && target.platform_type == cli.command_line.platform
+          end
+
+          next if xc_target.nil?
+
+        # end
+        #
+        # p_xcode_project.targets.each do |xc_target|
+        #   next if xc_target.platform_type != cli.command_line.platform
 
           build_dir_path = ''
           version_hash_filepath = ''
@@ -117,11 +127,11 @@ module CommandHelper
           if xc_target.static? or xc_target.mach_o_static?
             build_dir_path = "#{cli.current_dir}/Carthage/Build/#{XcodePlatformSDK::to_s(xc_target.platform_type)}/Static"
             version_hash_filepath = "#{cli.current_dir}/Carthage/Build/.#{xc_target.product_name}.static.version"
-            build_scheme_name = p_xcode_project.scheme_for_target(xc_target.target_name).name
+            build_scheme_name = each_xc_scheme.name #p_xcode_project.scheme_for_target(xc_target.target_name).name
           elsif xc_target.dylib?
             build_dir_path = "#{cli.current_dir}/Carthage/Build/#{XcodePlatformSDK::to_s(xc_target.platform_type)}"
             version_hash_filepath = "#{cli.current_dir}/Carthage/Build/.#{xc_target.product_name}.dynamic.version"
-            build_scheme_name = p_xcode_project.scheme_for_target(xc_target.target_name).name
+            build_scheme_name = each_xc_scheme.name #p_xcode_project.scheme_for_target(xc_target.target_name).name
           else
             next
           end

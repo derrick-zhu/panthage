@@ -82,6 +82,20 @@ class XcodeProject
 
   def schemes
     result = []
+    self.xc_schemes.each do |xc_scheme|
+      build_action = xc_scheme&.Scheme&.BuildAction.BuildActionEntries.BuildActionEntry.first.BuildableReference
+      result.append(XCodeSchemeConfig.new(
+          xc_scheme.name,
+          build_action&.BlueprintName,
+          build_action&.BuildableName)
+      )
+    end
+
+    result
+  end
+
+  def xc_schemes
+    result = []
     Xcodeproj::Project.schemes(project_path).each do |each_scheme|
       scheme_file = "#{File.absolute_path(project_path)}/xcshareddata/xcschemes/#{each_scheme}.xcscheme"
       next unless File.exist?(scheme_file)
@@ -99,7 +113,7 @@ class XcodeProject
   end
 
   def scheme_for_target(target_name)
-    self.schemes.find {|each_scheme|
+    self.xc_schemes.find {|each_scheme|
       each_scheme&.Scheme&.BuildAction&.BuildActionEntries&.BuildActionEntry&.first.BuildableReference&.BlueprintName == target_name
     }
   end
