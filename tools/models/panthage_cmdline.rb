@@ -8,6 +8,7 @@ class CommandLine
 
   REG_PARAM = /^-?-(?<key>[\w-]*?)(=(?<value>.*)|)$/.freeze
   REG_FLAG = /^-?-(?<key>[\w-]*?)$/.freeze
+  REG_CMD = /^(?<key>[\w\-_]*?)$/.freeze
 
   OUTPUT_ALL = ''
   OUTPUT_ERROR = '1>/dev/null'
@@ -20,6 +21,9 @@ class CommandLine
   EXEC_UPDATE = 'update'
   EXEC_BOOTSTRAP = 'bootstrap'
 
+=begin
+  FLAGS for config the panthage's behavior details.
+=end
   EXEC_FLAG_SYNC = 'sync'
 
   EXEC_FLAG_MUTE = 'mute'
@@ -40,12 +44,14 @@ class CommandLine
               :command,
               :using_sync,
               :verbose,
-              :verbose_level
+              :verbose_level,
+              :need_show_help
 
   def initialize
     @platform = XcodePlatformSDK::FOR_UNKNOWN
     @verbose = false
     @verbose_level = EXEC_FLAG_MUTE
+    @need_show_help = false
 
     @verbose_levels = {
         EXEC_FLAG_MUTE: OUTPUT_MUTE,
@@ -74,47 +80,14 @@ class CommandLine
   def parse(argv)
     argv.each do |each_arg|
       if REG_FLAG.match?(each_arg)
-        match = REG_FLAG.match(each_arg)
-        case match[:key]
-        when EXEC_FLAG_SYNC
-          @using_sync = true
-
-        when EXEC_FLAG_VERBOSE, EXEC_FLAG_ERROR, EXEC_FLAG_INFO
-          @verbose = true
-          @verbose_level = match[:key]
-
-        when EXEC_INSTALL, EXEC_UPDATE, EXEC_BOOTSTRAP
-          @command = match[:key]
-        else
-          raise "invalid parameter #{match[:key]}"
-        end
-
+        match_flag(each_arg)
       elsif REG_PARAM.match?(each_arg)
-        match = REG_PARAM.match(each_arg)
-        case match[:key]
-        when EXEC_WORKSPACE
-          @current_dir = match[:value]
-        when EXEC_SCHEME
-          @scheme_target = match[:value]
-        when EXEC_PLATFORM
-          case match[:value]
-          when 'iOS'
-            @platform = XcodePlatformSDK::FOR_IOS
-          when 'macOS'
-            @platform = XcodePlatformSDK::FOR_MACOS
-          when 'tvOS'
-            @platform = XcodePlatformSDK::FOR_TVOS
-          when 'watchOS'
-            @platform = XcodePlatformSDK::FOR_WATCHOS
-          else
-            raise "Fatal: invalid platform #{match[:value]}"
-          end
-        else
-          raise "invalid parameter #{match[:key]}=#{match[:value]}"
-        end
-
+        match_arguments(each_arg)
+      elsif REG_CMD.match?(each_arg)
+        match_command(each_arg)
       else
         puts "#{each_arg} ??"
+        @need_show_help = true
       end
     end
 
@@ -127,5 +100,62 @@ class CommandLine
     @build_base = "#{@current_dir}/Carthage/Build"
 
     self
+  end
+
+  private
+
+  def match_command(argument)
+  meta = REG_CMD.match(argument)
+  case meta[:key]
+  when EXEC_INSTALL, EXEC_UPDATE, EXEC_BOOTSTRAP
+      @command = meta[:key]
+  else
+    @need_show_help = true
+  end
+  end
+
+  def match_flag(argument)
+    match = REG_FLAG.match(argument)
+    case match[:key]
+    when EXEC_FLAG_SYNC
+      @using_sync = true
+
+    when EXEC_FLAG_VERBOSE, EXEC_FLAG_ERROR, EXEC_FLAG_INFO
+      @verbose = true
+      @verbose_level = match[:key]
+
+    # when EXEC_INSTALL, EXEC_UPDATE, EXEC_BOOTSTRAP
+    #   @command = match[:key]
+    else
+      puts "invalid parameter #{match[:key]}"
+      @need_show_help = true
+    end
+  end
+
+  def match_arguments(argument)
+    match = REG_PARAM.match(argument)
+    case match[:key]
+    when EXEC_WORKSPACE
+      @current_dir = match[:value]
+    when EXEC_SCHEME
+      @scheme_target = match[:value]
+    when EXEC_PLATFORM
+      case match[:value]
+      when 'iOS'
+        @platform = XcodePlatformSDK::FOR_IOS
+      when 'macOS'
+        @platform = XcodePlatformSDK::FOR_MACOS
+      when 'tvOS'
+        @platform = XcodePlatformSDK::FOR_TVOS
+      when 'watchOS'
+        @platform = XcodePlatformSDK::FOR_WATCHOS
+      else
+        puts "Fatal: invalid platform #{match[:value]}"
+        @need_show_help = true
+      end
+    else
+      puts "invalid parameter #{match[:key]}=#{match[:value]}"
+      @need_show_help = true
+    end
   end
 end

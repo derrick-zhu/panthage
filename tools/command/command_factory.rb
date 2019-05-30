@@ -7,6 +7,8 @@ require_relative 'command_bootstrap'
 
 class CommandFactory
   def self.get_command(p_cl)
+    nil if p_cl.need_show_help || p_cl.nil?
+
     case p_cl.command
     when CommandLine::EXEC_INSTALL
       CommandInstall.new(p_cl)

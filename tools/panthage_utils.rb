@@ -70,27 +70,39 @@ def read_cart_file(project_name, cart_file, is_private = false)
       block = block.strip
       next if (block == '') || (block[0] == "\#")
 
-      meta = /((?i)binary|git|github)\s+"([^"]+)"\s+(((~>|==|>=)\s?(\d+(\.\d+)+))|("([^"]+)"))/.match(block)
+      meta = /((?i)binary|git|github)\s+"([^"]+)"\s+(~>|==|>=)?\s?"?([\w.-]+)"?/.match(block)
 
       puts meta.to_s if PanConstants.debugging
 
       if meta && meta[1].casecmp?('git')
         f_name = %r{/([^./]+)((?i).git)?$}.match(meta[2])[1]
-        cart_file_data[f_name] = CartFileGit.new(f_name, project_name,
-                                                 meta[2], meta[6], meta[9], meta[5],
-                                                 is_private)
 
-      elsif meta && meta[1].casecmp?('binary')
-        f_name = %r{/([^./]+)((?i).json)?$}.match(meta[2])[1]
-        cart_file_data[f_name] = CartFileBinary.new(f_name, project_name,
-                                                    meta[2], meta[6], meta[5],
-                                                    is_private)
+        compare_method = meta[3]
+        tag = (compare_method.nil? || compare_method.empty?) ? nil : meta[4]
+        branch = (!compare_method.nil? && !compare_method.empty?) ? nil : meta[4]
+
+        cart_file_data[f_name] = CartFileGit.new(f_name, project_name,
+                                                 meta[2], tag, branch,
+                                                 compare_method, is_private)
 
       elsif meta && meta[1].casecmp?('github')
         f_name = %r{([^./]+)\/([^./]+)?$}.match(meta[2])[2]
+
+        compare_method = meta[3]
+        tag = (compare_method.nil? || compare_method.empty?) ? nil : meta[4]
+        branch = (!compare_method.nil? && !compare_method.empty?) ? nil : meta[4]
+
         cart_file_data[f_name] = CartFileGithub.new(f_name, project_name,
                                                     "git@github.com:#{meta[2]}.git",
-                                                    meta[6], meta[9], meta[5],
+                                                    tag, branch, compare_method,
+                                                    is_private)
+
+      elsif meta && meta[1].casecmp?('binary')
+        f_name = %r{/([^./]+)((?i).json)?$}.match(meta[2])[1]
+        tag = meta[4]
+        compare_method = meta[3]
+        cart_file_data[f_name] = CartFileBinary.new(f_name, project_name,
+                                                    meta[2], tag, compare_method,
                                                     is_private)
 
       end
@@ -98,64 +110,6 @@ def read_cart_file(project_name, cart_file, is_private = false)
   end
 
   cart_file_data
-end
-
-# solve_cart_file solve and analysis the cartfile
-def solve_cart_file(current_dir, cartfile)
-  array_cartfile_resolve = []
-  cartfile.each do |_, value|
-    if value.lib_type == LibType::BINARY
-      # begin
-      #   uri = URI(value.url)
-      #   raw = Net::HTTP.get(uri)
-
-      #   data = JSON.parse(raw)
-      #   finded = false
-      #   data.sort_by { |k, _v| Gem::Version.new(k) }.reverse_each do |ver|
-      #     case value.operator
-      #     when '~>'
-      #       ovn = to_i(ver[0])
-      #       tvn = to_i(value.version)
-
-      #       break if ovn < tvn
-
-      #       finded = true if (ovn - tvn < (1000**3 / 10)) && (tvn >= 1000**3)
-      #       finded = true if (ovn - tvn < (1000**2 / 10)) && (tvn < 1000**3)
-      #     when '=='
-      #       finded = true if ver[0] == value.version
-      #     when '>='
-      #       finded = true
-      #     else
-      #       raise "unknown operator #{value}"
-      #     end
-
-      #     raise "unsatisfied version for #{value}" unless finded
-
-      #     if finded
-      #       array_cartfile_resolve.push("binary \"#{value.url}\" \"#{ver[0]}\"")
-      #       break
-      #     end
-      #   end
-      # rescue StandardError => _
-      #   puts "fetch Url: #{value.url}, Data: #{raw}"
-      # end
-
-    elsif value.lib_type == LibType::GIT || value.lib_type == LibType::GITHUB
-      array_cartfile_resolve.push("git \"#{value.url}\" \"#{value.hash}\"")
-    else
-      raise "unknown type of cartfile #{value}"
-    end
-  end
-
-  carfile_resolve_content = array_cartfile_resolve.sort_by {|a, _b| a}.join("\n")
-
-  puts carfile_resolve_content.to_s if PanConstants.debugging
-
-  unless carfile_resolve_content.empty?
-    File.open("#{current_dir}/Cartfile.resolved", 'w+') do |fd|
-      fd.puts carfile_resolve_content
-    end
-  end
 end
 
 # clone_bare_repo - clone the bare repo

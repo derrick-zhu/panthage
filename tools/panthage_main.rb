@@ -11,9 +11,16 @@ require_relative 'models/panthage_cmdline'
 
 raise "fatal: wrong args usage #{ARGV}" unless ARGV.length >= 3
 
-cmd = CommandFactory.get_command(CommandLine.instance.parse(ARGV))
-unless cmd.nil?
-  cmd.setup
-  cmd.execute
-  cmd.finalize
+def show_help_info
+  puts "********** help screen ************"
 end
+
+cmd = CommandFactory.get_command(CommandLine.instance.parse(ARGV))
+if cmd.nil?
+  show_help_info
+  exit
+end
+
+cmd.setup
+cmd.execute
+cmd.finalize
