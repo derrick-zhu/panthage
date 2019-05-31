@@ -50,6 +50,8 @@ class XcodeProject
   def targets
     result = []
     project.targets.select do |each_target|
+      puts "get target: '#{each_target}' product type... '" if PanConstants.debugging
+
       if product_static?(each_target.name)
         result.append(XCodeTarget.new(each_target.sdk,
                                       each_target.name,
