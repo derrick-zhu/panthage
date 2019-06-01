@@ -1,0 +1,35 @@
+Framework :LoginSlice, is_ready:false, info:Library: LoginSlice from Debug Type:1 Private:false Dependency: [PandaKit,SocialSDK,DebugSetting(*)], Repo:1, Branch:develop, Hash: 3674ced29ef6f0c8fff260c7dc8d2b8348389e02
+Framework :HomeSlice, is_ready:false, info:Library: HomeSlice from Debug Type:1 Private:false Dependency: [PandaKit,panda-kit-ios,OHHTTPStubs(*),Genny(*)], Repo:1, Branch:develop, Hash: 84828c0d496c44ea2b283a4ec4315a31e6214af8
+Framework :PPDSlice-pdp-ios, is_ready:false, info:Library: PPDSlice-pdp-ios from Debug Type:1 Private:false Dependency: [PandaKit,panda-kit-ios,SocialSDK,DebugSetting(*),Genny(*)], Repo:1, Branch:develop, Hash: f65c0c1fca218ff2e175be50bb2ba9f9005b3f72
+Framework :AccountSlice, is_ready:false, info:Library: AccountSlice from Debug Type:1 Private:false Dependency: [PandaKit,panda-kit-ios,DebugSetting(*),LoginSlice(*),OHHTTPStubs(*)], Repo:1, Branch:develop, Hash: d8a1a626b616097c99f7ab14a09844beb60087d3
+Framework :CheckoutSlice, is_ready:false, info:Library: CheckoutSlice from Debug Type:1 Private:false Dependency: [PandaKit,PaymentSDK,panda-kit-ios,FFCardIO,LoginSlice(*),DebugSetting(*)], Repo:1, Branch:develop, Hash: 73eaab320d3777beb91d8a7ec777b0ef08b5adf4
+Framework :panda-ui-ios, is_ready:false, info:Library: panda-ui-ios from Debug Type:1 Private:false Dependency: [PDAppKit,ios-snapshot-test-case(*)], Repo:1, Branch:develop, Hash: c4a5981dd00e8d8da686ce05273cff0b95fc55fd
+Framework :panda-kit-ios, is_ready:false, info:Library: panda-kit-ios from Debug Type:1 Private:false Dependency: [PandaService,panda-ui-ios,certona-ios,OHHTTPStubs(*)], Repo:1, Branch:develop, Hash: 78ff7b33ea920e6cdf07f9a6f4231d49135216be
+Framework :PDFoundation, is_ready:false, info:Library: PDFoundation from Debug Type:1 Private:false Dependency: [], Repo:1, Branch:develop, Hash: 172e020627e0e74a1ac7b6b4e01dbf6db4461ace
+Framework :PDAppKit, is_ready:false, info:Library: PDAppKit from Debug Type:1 Private:false Dependency: [PDFoundation,SDWebImage,Kingfisher(*)], Repo:1, Branch:develop, Hash: 7bf4efd8bb04adb6b86c220d098981f374017e51
+Framework :PandaService, is_ready:false, info:Library: PandaService from Debug Type:1 Private:false Dependency: [PDFoundation,PromiseKit,DebugSetting(*),OHHTTPStubs(*)], Repo:1, Branch:develop, Hash: d3dd6d1b73a935a94daf6140776a97dfdcf5885f
+Framework :PandaKit, is_ready:false, info:Library: PandaKit from Debug Type:1 Private:false Dependency: [PDAppKit,PandaService,AnalyticsSDK], Repo:1, Branch:develop, Hash: c6cc42ebafa4b74f4c275c38ee541e115c375f64
+Framework :AnalyticsSDK, is_ready:false, info:Library: AnalyticsSDK from Debug Type:1 Private:false Dependency: [PDFoundation,RelevantBrands,OmniTracking,RiskifiedBeacon,Localytics,AppsFlyerTracker,DebugSetting(*)], Repo:1, Branch:develop, Hash: ce531948697a321b7d31590edc66f5475a500a3c
+Framework :SocialSDK, is_ready:false, info:Library: SocialSDK from Debug Type:1 Private:false Dependency: [WeChatSDK], Repo:1, Branch:develop, Hash: d586d2f3ebdf333be6f873108379324f53b476d9
+Framework :PaymentSDK, is_ready:false, info:Library: PaymentSDK from Debug Type:1 Private:false Dependency: [], Repo:1, Branch:develop, Hash: 3bde77565fa49c5b2e56842f379fb9076da4fb79
+Framework :NewRelic, is_ready:false, info:Library: NewRelic from Debug Type:1 Private:false Dependency: [], Repo:0, Tag:6.6.0, Hash: 6.6.0
+Framework :PushIOManager, is_ready:false, info:Library: PushIOManager from Debug Type:1 Private:false Dependency: [], Repo:0, Tag:6.40.1, Hash: 6.40.1
+Framework :Fabric, is_ready:true, info:Library: Fabric from Debug Type:2 Private:false Dependency: [], Version: 1.8.2, Final Version: 1.8.2
+Framework :Crashlytics, is_ready:true, info:Library: Crashlytics from Debug Type:2 Private:false Dependency: [], Version: 3.11.1, Final Version: 3.11.1
+Framework :DebugSetting, is_ready:false, info:Library: DebugSetting from Debug Type:1 Private:true Dependency: [PandaService,PDAppKit,Eureka,FLEX], Repo:1, Branch:develop, Hash: 267a3b610f2dfacca4cbc1b0bd5bdc5de7a3f011
+Framework :Genny, is_ready:false, info:Library: Genny from Debug Type:1 Private:true Dependency: [], Repo:0, Tag:0.4.0, Hash: 0.4.0
+Framework :OHHTTPStubs, is_ready:false, info:Library: OHHTTPStubs from Debug Type:1 Private:true Dependency: [], Repo:0, Tag:7.0.0, Hash: 7.0.0
+Framework :FFCardIO, is_ready:false, info:Library: FFCardIO from CheckoutSlice Type:1 Private:false Dependency: [], Repo:0, Tag:1.7.1, Hash: 1.7.1
+Framework :ios-snapshot-test-case, is_ready:false, info:Library: ios-snapshot-test-case from panda-ui-ios Type:1 Private:true Dependency: [], Repo:0, Tag:3.0.0, Hash: 3.0.0
+Framework :certona-ios, is_ready:false, info:Library: certona-ios from panda-kit-ios Type:1 Private:false Dependency: [], Repo:1, Branch:develop, Hash: f908dd9e9d8a4dd384df501a73fc2f64e503c9f4
+Framework :SDWebImage, is_ready:false, info:Library: SDWebImage from PDAppKit Type:1 Private:false Dependency: [], Repo:0, Tag:4.4.6, Hash: 4.4.6
+Framework :Kingfisher, is_ready:false, info:Library: Kingfisher from PDAppKit Type:1 Private:true Dependency: [], Repo:0, Tag:5.3.0, Hash: 5.3.0
+Framework :PromiseKit, is_ready:false, info:Library: PromiseKit from PandaService Type:1 Private:false Dependency: [], Repo:0, Tag:6.8.4, Hash: 6.8.4
+Framework :RelevantBrands, is_ready:false, info:Library: RelevantBrands from AnalyticsSDK Type:1 Private:false Dependency: [], Repo:1, Branch:develop, Hash: b4865b44d7c5ecaaafa205cb79c03a4d44fe63e2
+Framework :OmniTracking, is_ready:false, info:Library: OmniTracking from AnalyticsSDK Type:1 Private:false Dependency: [], Repo:1, Branch:develop, Hash: e5bc4af5f3e2b229b6e64d0368f3412f5d817686
+Framework :RiskifiedBeacon, is_ready:false, info:Library: RiskifiedBeacon from AnalyticsSDK Type:1 Private:false Dependency: [], Repo:0, Tag:1.0.1, Hash: 1.0.1
+Framework :Localytics, is_ready:true, info:Library: Localytics from AnalyticsSDK Type:2 Private:false Dependency: [], Version: 5.4.0, Final Version: 5.4.0
+Framework :AppsFlyerTracker, is_ready:true, info:Library: AppsFlyerTracker from AnalyticsSDK Type:2 Private:false Dependency: [], Version: 4.8.8, Final Version: 4.8.8
+Framework :WeChatSDK, is_ready:false, info:Library: WeChatSDK from SocialSDK Type:1 Private:false Dependency: [], Repo:0, Tag:1.8.3, Hash: 1.8.3
+Framework :Eureka, is_ready:false, info:Library: Eureka from DebugSetting Type:1 Private:false Dependency: [], Repo:0, Tag:4.3.1, Hash: 4.3.1
+Framework :FLEX, is_ready:false, info:Library: FLEX from DebugSetting Type:1 Private:false Dependency: [], Repo:0, Tag:2.0, Hash: 2.4.0

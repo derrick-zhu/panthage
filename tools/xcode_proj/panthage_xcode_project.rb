@@ -49,13 +49,13 @@ class XcodeProject
 
   def targets
     result = []
-    project.targets.select do |each_target|
+    project.native_targets.select do |each_target|
       puts "get target: '#{each_target}' product type... '" if PanConstants.debugging
 
       if product_static?(each_target.name)
         result.append(XCodeTarget.new(each_target.sdk,
                                       each_target.name,
-                                      product_name(each_target.name),
+                                      each_target.product_name,
                                       XCodeTarget::STATIC_LIB,
                                       each_target.product_type,
                                       mach_o_type(each_target.name))
@@ -63,7 +63,7 @@ class XcodeProject
       elsif product_dylib?(each_target.name)
         result.append(XCodeTarget.new(each_target.sdk,
                                       each_target.name,
-                                      product_name(each_target.name),
+                                      each_target.product_name,
                                       XCodeTarget::DYNAMIC_LIB,
                                       each_target.product_type,
                                       mach_o_type(each_target.name))
@@ -71,7 +71,7 @@ class XcodeProject
       elsif product_exec?(each_target.name)
         result.append(XCodeTarget.new(each_target.sdk,
                                       each_target.name,
-                                      product_name(each_target.name),
+                                      each_target.product_name,
                                       XCodeTarget::EXECUTABLE,
                                       each_target.product_type,
                                       mach_o_type(each_target.name))
@@ -120,12 +120,12 @@ class XcodeProject
     }
   end
 
-  def product_name(target_name, configure = @configuration)
-    name = build_setting_for(target_name, configure, XcodeProjectBuildSettings::PRODUCT_NAME)
-    meta = %r{^\$\(TARGET_NAME([:][\w]*)?\)$}.match(name)
-
-    !meta.nil? ? target_name : name
-  end
+  # def product_name(target_name, configure = @configuration)
+  #   name = build_setting_for(target_name, configure, XcodeProjectBuildSettings::PRODUCT_NAME)
+  #   meta = %r{^\$\(TARGET_NAME([:][\w]*)?\)$}.match(name)
+  #
+  #   !meta.nil? ? target_name : name
+  # end
 
   def mach_o_static?(target_name = @target_name)
     mach_o_type(target_name) == XcodeProjectMachOType::STATIC_LIB
@@ -170,9 +170,9 @@ class XcodeProject
   def target_with(target_name)
     raise "fatal: invalid XcodeProj instance for #{project_path}" if project.nil?
 
-    project.targets.each_with_index do |each_target, idx|
-      if each_target.name == target_name || target_name == product_name(each_target.name)
-        return project.targets[idx]
+    project.native_targets.each_with_index do |each_target, idx|
+      if each_target.name == target_name || target_name == each_target.product_name
+        return project.native_targets[idx]
       end
     end
   end

@@ -34,14 +34,14 @@ class CartFileChecker
 
       elsif !new_data.branch.empty? && !old_data.branch.empty?
         if (new_data.url == old_data.url) && (new_data.branch == old_data.branch)
-          new_data.conflict_type == ConflictType::IGNORE
+          new_data.conflict_type = ConflictType::IGNORE
         else
           new_data.conflict_type = ConflictType::ERROR
           new_data.error_msg = msg_conflict_branch(new_data, old_data)
         end
 
       elsif !new_data.version.empty? && !old_data.branch.empty?
-        new_data.conflict_type == ConflictType::IGNORE
+        new_data.conflict_type = ConflictType::IGNORE
 
       elsif !new_data.branch.empty? && !old_data.version.empty?
         new_data.conflict_type = ConflictType::ACCEPT
@@ -60,7 +60,7 @@ class CartFileChecker
 
       unless new_url == old_url
         new_data.conflict_type = ConflictType::ERROR
-        new_data.error_msg = "conflict framework library #{old_name} had the conflict url: \n #{old_data.url} \nand\n #{new_dat.url} "
+        new_data.error_msg = "conflict framework library #{old_name} had the conflict url: \n #{old_data.url} \nand\n #{new_data.url} "
       end
 
       new_major = VersionHelper.major_no(new_version)
@@ -83,6 +83,11 @@ class CartFileChecker
     else
       raise "fatal: unknown lib type: #{old_data.lib_type}"
       # type code here
+    end
+
+    if new_data.conflict_type == ConflictType::IGNORE
+      new_data.hash = old_data.hash
+      new_data.dependency = old_data.dependency
     end
   end
 

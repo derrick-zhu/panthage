@@ -95,4 +95,13 @@ class XCodeSchemeConfig
     @target_name = target_name
     @app_name = app_name
   end
+
+  def app_product_name
+    "" if app_name&.empty?
+
+    dot_idx = app_name.index(".")
+    app_name if dot_idx.nil?
+
+    app_name[0, dot_idx]
+  end
 end

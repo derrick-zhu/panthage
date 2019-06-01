@@ -32,20 +32,23 @@ class RepoHelper
     command = [
         "cd #{repo_dir}/#{repo_name}.git; ",
         "#{git} fetch --all #{disable_verbose};",
-        "#{git} branch #{branch} >/dev/null 2>&1; ",
         "#{git} symbolic-ref HEAD refs/heads/#{branch}; ",
         "#{git} branch --set-upstream-to=origin/#{branch} #{branch} >/dev/null 2>&1; "
     ].join(' ').strip.freeze
     system(command)
 
-    commit_hash = %x(cd #{repo_dir}/#{repo_name}.git; #{git} rev-parse HEAD 2> /dev/null;).strip.freeze
-    system("cd #{repo_dir}/#{repo_name}.git; #{git} update-ref refs/heads/#{branch} #{commit_hash}; ")
+    commit_hash = %x(cd #{repo_dir}/#{repo_name}.git; #{git} show-ref -s #{branch} 2> /dev/null;).strip
+    commit_hash = commit_hash.split("\n").first unless commit_hash.empty?
+
+    raise "could not find #{branch} in #{repo_name}" if commit_hash.empty? || commit_hash.size != 40
+
+    # system("cd #{repo_dir}/#{repo_name}.git; #{git} update-ref refs/heads/#{branch} #{commit_hash}; ")
 
     commit_hash
   end
 
   def self.clone_with_tag(repo_url, repo_name, tag, repo_dir, compare_method, disable_verbose)
-    %x(cd #{repo_dir}/#{repo_name}.git; #{git} fetch --all #{disable_verbose};)
+    %x(cd #{repo_dir}/#{repo_name}.git; #{git} fetch --all #{disable_verbose}; #{git} reset --hard >/dev/null 2>&1;)
 
     tags = %x(cd #{repo_dir}/#{repo_name}.git; #{git} tag --list;)
     tags_list = []
@@ -72,18 +75,19 @@ class RepoHelper
     FileUtils.mkdir_p src_bare_dir unless File.exist? src_bare_dir
 
     command = "cd #{dest_repo_dir}; #{git} init --separate-git-dir=#{src_bare_dir} #{disable_verbose}; "
-    command += if using_sync
-                 "#{git} reset --hard #{disable_verbose}; "
-               else
-                 "#{git} reset #{disable_verbose}; "
-               end
+    command += "#{git} reset --hard #{disable_verbose}; "
+    # command += if using_sync
+    #              "#{git} reset --hard #{disable_verbose}; "
+    #            else
+    #              "#{git} reset #{disable_verbose}; "
+    #            end
     command += "#{git} pull; " if using_sync && !repo_data.repo_type == GitRepoType::TAG
     command += "mkdir -p #{dest_repo_dir}/Carthage/Checkouts/; "
     command += "mkdir -p #{dest_repo_dir}/Carthage/; cd $_; \n"
     command += "if [ ! -d ./Build/ ] \n" \
-     + "then \n" \
-     + "ln -s #{src_binary_dir} .  \n" \
-     + "fi\n"
+       + "then \n" \
+       + "ln -s #{src_binary_dir} .  \n" \
+       + "fi\n"
 
     repo_data.dependency.each do |lib|
       command += "ln -s #{base_dir}/Checkouts/#{lib.name} . ;"
@@ -104,10 +108,10 @@ class RepoHelper
   end
 
   private_class_method def self.git?
-                         !`type git`.empty?
+                         !%x(type git).empty?
                        end
 
   private_class_method def self.git
-                         `which git`.to_s.strip.freeze
+                         %x(which git).to_s.strip.freeze
                        end
 end

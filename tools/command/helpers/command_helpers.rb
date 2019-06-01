@@ -16,7 +16,8 @@ module CommandHelper
         scheme_target.to_s,
         current_dir.to_s,
         CommandLine.install?(command.command),
-        command.using_sync
+        command.using_sync,
+        true
     )
 
     puts main_project_info.to_s if PanConstants.debugging
@@ -58,15 +59,9 @@ module CommandHelper
         all_files = FileUtils.find_path_in_r(each_file_path, "#{repo_dir}", "#{repo_dir}/Carthage/Build/")
 
         unless all_files.empty?
-          if all_files.size == 1
-            xcode_project_file_path = all_files.first
-          else
-            xcode_project_file_path = all_files.select do |ef|
-              fpn = Pathname(ef)
-              (fpn.dirname.to_s.end_with?("Carthage/Checkouts/#{repo_name}") || fpn.dirname.to_s.end_with?("Carthage/Checkouts/#{repo_name}/#{repo_name}")) &&
-                  fpn.basename.to_s.include?(repo_name)
-            end.first
-          end
+
+          all_files = all_files.sort_by(&:length)
+          xcode_project_file_path = all_files.first
 
           # absolute path -> relative path
           puts "prepare build #{xcode_project_file_path}, #{repo_dir}" if PanConstants.debugging
@@ -117,23 +112,22 @@ module CommandHelper
 
           build_dir_path = ''
           version_hash_filepath = ''
-          build_scheme_name = ''
 
           if xc_target.static? or xc_target.mach_o_static?
             build_dir_path = "#{cli.current_dir}/Carthage/Build/#{XcodePlatformSDK::to_s(xc_target.platform_type)}/Static"
             version_hash_filepath = "#{cli.current_dir}/Carthage/Build/.#{xc_target.product_name}.static.version"
-            build_scheme_name = each_xc_scheme.name
+
           elsif xc_target.dylib?
             build_dir_path = "#{cli.current_dir}/Carthage/Build/#{XcodePlatformSDK::to_s(xc_target.platform_type)}"
             version_hash_filepath = "#{cli.current_dir}/Carthage/Build/.#{xc_target.product_name}.dynamic.version"
-            build_scheme_name = each_xc_scheme.name
+
           else
             next
           end
 
           xc_config = XcodeBuildConfigure.new("#{cli.checkout_base}/#{repo_name}",
                                               xcode_file,
-                                              build_scheme_name,
+                                              each_xc_scheme,
                                               XcodeBuildConfigure::DEBUG,
                                               "#{cli.current_dir}/Carthage/.tmp/#{repo_name}",
                                               build_dir_path.to_s,

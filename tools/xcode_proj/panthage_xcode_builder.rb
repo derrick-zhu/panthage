@@ -23,7 +23,7 @@ class XcodeBuilder
     universal_path = "#{xcode_config.derived_path}/#{xcode_config.configuration}_universal"
 
     FileUtils.mkdir_p universal_path.to_s unless File.exist? universal_path.to_s
-    FileUtils.remove_entry "#{universal_path}/#{target_config.product_name}.framework", force: true if File.exist? "#{universal_path}/#{target_config.product_name}.framework"
+    FileUtils.remove_entry "#{universal_path}/#{xcode_config.app_name}", force: true if File.exist? "#{universal_path}/#{xcode_config.app_name}"
 
     # build the iphone and the iphone simulator arch library
     XcodeSDKRoot.sdk_root(xcode_config.platform_sdk)
@@ -34,47 +34,17 @@ class XcodeBuilder
 
     raise 'fatal: fails in build xcodeproj' unless result
 
-    if target_config.dylib?
-      # 1, let iphoneos library as base one.
-      FileUtils.copy_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONEOS}/#{target_config.product_name}.framework",
-                           "#{universal_path}/#{target_config.product_name}.framework",
-                           remove_destination: true
-
-      # 2, let iphone simulator library as ext one
-      if xcode_config.is_swift_project
-        FileUtils.copy_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONE_SIMULATOR}/#{target_config.product_name}.framework/Modules/#{target_config.product_name}.swiftmodule",
-                             "#{universal_path}/#{target_config.product_name}.framework/Modules/#{target_config.product_name}.swiftmodule",
-                             remove_destination: true
-      end
-
-      # create universal binary file by using `lipo`
-      result &&= system(
-          ["#{xcrun_bin} #{lipo_bin}",
-           '-create',
-           "-output #{universal_path}/#{target_config.product_name}.framework/#{target_config.product_name}",
-           "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONE_SIMULATOR}/#{target_config.product_name}.framework/#{target_config.product_name}",
-           "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONEOS}/#{target_config.product_name}.framework/#{target_config.product_name}"
-          ].join(' ')
-      )
-
-      raise 'fatal: fails in create universal library' unless result
-
-      # copy universal one into universal folder
-      FileUtils.copy_entry "#{universal_path}/#{target_config.product_name}.framework",
-                           "#{xcode_config.build_output}/#{target_config.product_name}.framework",
-                           remove_destination: true
-
-    elsif target_config.static?
+    if target_config.static?
       # copy the to universal folder
-      if File.exist? "#{universal_path}/lib#{target_config.product_name}.a"
-        FileUtils.remove_entry "#{universal_path}/lib#{target_config.product_name}.a", force: true
+      if File.exist? "#{universal_path}/#{xcode_config.app_name}"
+        FileUtils.remove_entry "#{universal_path}/#{xcode_config.app_name}", force: true
       end
 
       lipo_command = ["#{xcrun_bin} #{lipo_bin}",
                       '-create',
-                      "-output '#{universal_path}/lib#{target_config.product_name}.a'",
-                      "'#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONE_SIMULATOR}/lib#{target_config.product_name}.a'",
-                      "'#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONEOS}/lib#{target_config.product_name}.a'"
+                      "-output '#{universal_path}/#{xcode_config.app_name}'",
+                      "'#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONE_SIMULATOR}/#{xcode_config.app_name}'",
+                      "'#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONEOS}/#{xcode_config.app_name}'"
       ].join(' ')
       puts "LIPO command: #{lipo_command}" if PanConstants.debugging
       result &&= system(lipo_command)
@@ -82,15 +52,46 @@ class XcodeBuilder
       raise 'fatal: fails in create universal library' unless result
 
       # copy universal static library
-      FileUtils.copy_entry "#{universal_path}/lib#{target_config.product_name}.a",
-                           "#{xcode_config.build_output}/lib#{target_config.product_name}.a",
+      FileUtils.copy_entry "#{universal_path}/#{xcode_config.app_name}",
+                           "#{xcode_config.build_output}/#{xcode_config.app_name}",
                            remove_destination: true
 
       # copy header files
       FileUtils.copy_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONEOS}/include",
                            "#{xcode_config.build_output}/include",
                            remove_desination: true
+
+    elsif target_config.dylib?
+      # 1, let iphoneos library as base one.
+      FileUtils.copy_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONEOS}/#{xcode_config.app_name}",
+                           "#{universal_path}/#{xcode_config.app_name}",
+                           remove_destination: true
+
+      # 2, let iphone simulator library as ext one
+      if xcode_config.is_swift_project
+        FileUtils.copy_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONE_SIMULATOR}/#{xcode_config.app_name}/Modules/#{xcode_config.app_product_name}.swiftmodule",
+                             "#{universal_path}/#{xcode_config.app_name}/Modules/#{xcode_config.app_product_name}.swiftmodule",
+                             remove_destination: true
+      end
+
+      # create universal binary file by using `lipo`
+      result &&= system(
+          ["#{xcrun_bin} #{lipo_bin}",
+           '-create',
+           "-output #{universal_path}/#{xcode_config.app_name}/#{xcode_config.app_product_name}",
+           "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONE_SIMULATOR}/#{xcode_config.app_name}/#{xcode_config.app_product_name}",
+           "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONEOS}/#{xcode_config.app_name}/#{xcode_config.app_product_name}"
+          ].join(' ')
+      )
+
+      raise 'fatal: fails in create universal library' unless result
+
+      # copy universal one into universal folder
+      FileUtils.copy_entry "#{universal_path}/#{xcode_config.app_name}",
+                           "#{xcode_config.build_output}/#{xcode_config.app_name}",
+                           remove_destination: true
     end
+
     # clear the env
     FileUtils.remove_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONE_SIMULATOR}", force: true
     FileUtils.remove_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONEOS}", force: true
@@ -160,9 +161,9 @@ class XcodeBuilder
 
                          bin_path = ''
                          if target_config.dylib?
-                           bin_path = "#{xcode_config.build_output}/#{target_config.product_name}.framework/#{target_config.product_name}"
+                           bin_path = "#{xcode_config.build_output}/#{xcode_config.app_name}/#{xcode_config.app_product_name}"
                          elsif target_config.static?
-                           bin_path = "#{xcode_config.build_output}/lib#{target_config.product_name}.a"
+                           bin_path = "#{xcode_config.build_output}/#{xcode_config.app_name}"
                          else
                            raise "fatal: could not generate digest for #{bin_path}"
                          end

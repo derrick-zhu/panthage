@@ -169,23 +169,23 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
   # print "#{'***'.cyan} Fetch #{name.green.bold} Done.\n\n"
 end
 
-def load_cart_file(current_dir, scheme_target)
+def load_cart_file(current_dir, scheme_target, need_private = false)
   cart_file_data = {}
 
   cart_file_data = merge_cart_file(cart_file_data, read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile"))
-  cart_file_data = merge_cart_file(cart_file_data, read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile.private", true))
+  cart_file_data = merge_cart_file(cart_file_data, read_cart_file(scheme_target.to_s, "#{current_dir}/Cartfile.private", true)) if need_private
 
   cart_file_data
 end
 
-def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target, current_dir, is_install, is_sync)
+def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target, current_dir, is_install, is_sync, is_main = false)
   raise 'fatal: invalid cartfile data, which is null' if current_cart_data.nil?
 
   puts ">>>>>>>>>>>>>> #{current_cart_data.name} <<<<<<<<<<<<<<<<" if PanConstants.debugging
   puts "Solving project: #{current_cart_data.name}, which belongs #{current_cart_data.parent_project_name}" if PanConstants.debugging
 
   # analysis the Cartfile to grab workspace's basic information
-  cart_file_data = load_cart_file(current_dir, scheme_target)
+  cart_file_data = load_cart_file(current_dir, scheme_target, is_main)
 
   # setup and sync git repo
   git_repo_for_checkout = {}
@@ -195,10 +195,9 @@ def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target,
 
     if !old_lib.nil?
       ProjectCartManager.instance.verify_library_compatible(new_lib, old_lib)
-      new_lib.hash = old_lib.hash
-      new_lib.dependency = old_lib.dependency
-
-      puts "#{new_lib.name} had been there.\n\tNew library: #{new_lib.description}\n\tOld library: #{old_lib.description}".bg_blue if PanConstants.debugging
+      if new_lib.conflict_type != ConflictType::IGNORE
+        puts "#{new_lib.name} had been there.\n\tNew library: #{new_lib.description}\n\tOld library: #{old_lib.description}".bg_blue if PanConstants.debugging
+      end
     else
       new_lib.conflict_type == ConflictType::ACCEPT
     end
@@ -267,7 +266,8 @@ def solve_project_dependency(project_cart_data, workspace_base_dir, is_install, 
                            each_cart_data.name.to_s,
                            "#{workspace_base_dir}/Carthage/Checkouts/#{each_cart_data.name}",
                            is_install,
-                           is_sync)
+                           is_sync,
+                           false)
 
     project_cart_data.dependency.push(each_cart_data)
   end

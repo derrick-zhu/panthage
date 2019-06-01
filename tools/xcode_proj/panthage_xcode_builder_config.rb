@@ -11,6 +11,8 @@ class XcodeBuildConfigure
   attr_reader :work_dir,
               :project,
               :scheme,
+              :app_name,
+              :app_product_name,
               :configuration,
               :derived_path,
               :dwarf_dSYM_path,
@@ -21,10 +23,12 @@ class XcodeBuildConfigure
 
   attr_accessor :quiet_mode, :sdk, :simulator_mode, :framework_version_hash
 
-  def initialize(work_dir, xcode_project, scheme, config, derived_path, dwarf_dSYM_path, build_output, platform_sdk, is_swift_project)
+  def initialize(work_dir, xcode_project, xcode_scheme, config, derived_path, dwarf_dSYM_path, build_output, platform_sdk, is_swift_project)
     @work_dir = work_dir
     @project = xcode_project
-    @scheme = scheme
+    @scheme = xcode_scheme.name
+    @app_name = xcode_scheme.app_name
+    @app_product_name = xcode_scheme.app_product_name
     @configuration = config
     @sdk = ''
     @derived_path = derived_path
