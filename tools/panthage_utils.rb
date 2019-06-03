@@ -229,8 +229,8 @@ def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target,
       target_zip_file = "#{workspace_base_dir}/Carthage/.tmp/#{name}.zip"
       BinaryDownloader.download_binary_file(value.url, value.hash, target_zip_file)
 
-      BinaryDownloader.unzip(target_zip_file, "*.framework", "#{workspace_base_dir}/Carthage/Build/#{XcodeSDKRoot::to_s(CommandLine.instance.platform)}/") ||
-          BinaryDownloader.unzip(target_zip_file, "*.a", "#{workspace_base_dir}/Carthage/Build/#{XcodeSDKRoot::to_s(CommandLine.instance.platform)}/")
+      BinaryDownloader.unzip(target_zip_file, "*.framework", "#{workspace_base_dir}/Carthage/Build/#{XcodePlatformSDK::to_s(CommandLine.instance.platform)}/") ||
+          BinaryDownloader.unzip(target_zip_file, "*.a", "#{workspace_base_dir}/Carthage/Build/#{XcodePlatformSDK::to_s(CommandLine.instance.platform)}/")
 
     else
       # empty

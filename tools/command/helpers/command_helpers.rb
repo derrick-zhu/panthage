@@ -38,6 +38,28 @@ module CommandHelper
     ProjectCartManager.instance.read_solved_info(file_path.to_s)
   end
 
+  def self.link_carthage_fold(cli)
+    ProjectCartManager.instance.all_frameworks_name.each do |fw_name|
+      fw_lib = ProjectCartManager.instance.framework_with_name(fw_name)
+      repo_path = "#{cli.command_line.checkout_base}/#{fw_name}"
+      src_bin_path = "#{cli.command_line.build_base}"
+
+      command = "mkdir -p #{repo_path}/Carthage/Checkouts/ ; "
+      command += "mkdir -p #{repo_path}/Carthage ; cd $_ ;\n"
+      command += "if [ ! -d ./Build/ ] \n" \
+         + "then \n" \
+         + "ln -s #{src_bin_path} . \n" \
+         + "fi\n"
+
+        command += "cd #{repo_path}/Carthage/Checkouts/;"
+      fw_lib.dependency.each do |lib|
+        command += "ln -s #{cli.command_line.checkout_base}/#{lib.name} . ;"
+      end
+
+      system(command)
+    end
+  end
+
   def self.build_all(cli)
     repo_framework = ProjectCartManager.instance.any_repo_framework
     while !(repo_framework&.is_ready || repo_framework&.framework.nil?)

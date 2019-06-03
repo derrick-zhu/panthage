@@ -82,16 +82,16 @@ class RepoHelper
       end
     end
 
-    command += "mkdir -p #{dest_repo_dir}/Carthage/Checkouts/; "
-    command += "mkdir -p #{dest_repo_dir}/Carthage/; cd $_; \n"
-    command += "if [ ! -d ./Build/ ] \n" \
-          + "then \n" \
-          + "ln -s #{src_binary_dir} .  \n" \
-          + "fi\n"
-
-    repo_data.dependency.each do |lib|
-      command += "ln -s #{base_dir}/Checkouts/#{lib.name} . ;"
-    end
+    # command += "mkdir -p #{dest_repo_dir}/Carthage/Checkouts/; "
+    # command += "mkdir -p #{dest_repo_dir}/Carthage/; cd $_; \n"
+    # command += "if [ ! -d ./Build/ ] \n" \
+    #       + "then \n" \
+    #       + "ln -s #{src_binary_dir} .  \n" \
+    #       + "fi\n"
+    #
+    # repo_data.dependency.each do |lib|
+    #   command += "ln -s #{base_dir}/Checkouts/#{lib.name} . ;"
+    # end
 
     system(command)
   end

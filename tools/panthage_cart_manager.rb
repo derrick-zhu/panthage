@@ -128,11 +128,9 @@ class ProjectCartManager
     build_info_with_name(name).is_ready
   end
 
-  # fetch any binary framework needs to be download.
-  # def any_binary_framework
-  #   tmp = frameworks.select {|_, value| value.is_ready == false && value.framework.lib_type == LibType::BINARY}
-  #   tmp.values.first unless tmp.empty?
-  # end
+  def all_frameworks_name
+    frameworks.keys
+  end
 
   def any_repo_framework
     old_idx = @idx_latest_repo

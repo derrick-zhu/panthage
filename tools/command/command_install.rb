@@ -43,6 +43,7 @@ class CommandInstall
     puts ProjectCartManager.instance.resolved_info if PanConstants.debugging
 
     CommandHelper.write_solved_info("#{self.command_line.current_dir}/Cartfile.resolved")
+    CommandHelper.link_carthage_fold(self)
 
     # build the source dependency framework
     CommandHelper.build_all(self)
