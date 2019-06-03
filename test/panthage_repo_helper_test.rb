@@ -40,7 +40,7 @@ class RepoHelperTest < Test::Unit::TestCase
   def test_clone_bare_branch
     setup_env
 
-    result_hash = RepoHelper.clone_with_branch(repo_url, repo_name, repo_branch, "#{base_dir}/Repo", false, '')
+    result_hash = RepoHelper.clone_with_branch(repo_name, repo_branch, "#{base_dir}/Repo", false, '')
     hash = `cd #{base_dir}/Repo/#{repo_name}.git; git rev-parse HEAD`.strip.freeze
 
     result = File.exist? "#{base_dir}/Repo/#{repo_name}.git"
@@ -52,7 +52,7 @@ class RepoHelperTest < Test::Unit::TestCase
   def test_clone_bare_tag
     setup_env
 
-    result_hash = RepoHelper.clone_with_tag(repo_url, repo_name, repo_tag, "#{base_dir}/Repo/", '~>', "")
+    result_hash = RepoHelper.clone_with_tag(repo_name, repo_tag, "#{base_dir}/Repo/", '~>', "")
     hash = `cd #{base_dir}/Repo/#{repo_name}.git; git rev-parse HEAD`.strip.freeze
 
     result = File.exist? "#{base_dir}/Repo/#{repo_name}.git"

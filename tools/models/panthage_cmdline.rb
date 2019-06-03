@@ -24,7 +24,7 @@ class CommandLine
 =begin
   FLAGS for config the panthage's behavior details.
 =end
-  EXEC_FLAG_SYNC = 'sync'
+  EXEC_FLAG_NO_SYNC = 'no-sync'
 
   EXEC_FLAG_MUTE = 'mute'
   EXEC_FLAG_VERBOSE = 'verbose'
@@ -50,6 +50,7 @@ class CommandLine
   def initialize
     @platform = XcodePlatformSDK::FOR_UNKNOWN
     @verbose = false
+    @using_sync = true    # sync from the remote repo by default value
     @verbose_level = EXEC_FLAG_MUTE
     @need_show_help = false
 
@@ -117,8 +118,8 @@ class CommandLine
   def match_flag(argument)
     match = REG_FLAG.match(argument)
     case match[:key]
-    when EXEC_FLAG_SYNC
-      @using_sync = true
+    when EXEC_FLAG_NO_SYNC
+      @using_sync = false
 
     when EXEC_FLAG_VERBOSE, EXEC_FLAG_ERROR, EXEC_FLAG_INFO
       @verbose = true

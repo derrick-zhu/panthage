@@ -113,9 +113,9 @@ def read_cart_file(project_name, cart_file, is_private = false)
 end
 
 # clone_bare_repo - clone the bare repo
-def clone_bare_repo(repo_dir_base, name, value, using_install)
-  puts "#{'***'.cyan} fetching #{name.green.bold}"
-  repo_dir = "#{repo_dir_base}/#{name}.git"
+def clone_bare_repo(repo_dir_base, repo_name, value, using_install)
+  puts "#{'***'.cyan} fetching #{repo_name.green.bold}"
+  repo_dir = "#{repo_dir_base}/#{repo_name}.git"
 
   # using tag or branch ?
   if value.repo_type == GitRepoType::TAG
@@ -130,17 +130,16 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
 
   # clone
   unless File.exist? repo_dir
-    puts "#{'***'.cyan} Cloning #{name.green.bold}"
-    RepoHelper.clone_bare(repo_dir_base, value.url, name, using_install, PanConstants.disable_verbose)
+    puts "#{'***'.cyan} Cloning #{repo_name.green.bold}"
+    RepoHelper.clone_bare(repo_dir_base, value.url, repo_name, using_install, PanConstants.disable_verbose)
   end
 
-  RepoHelper.reset_repo_config(repo_dir_base, name, value.url)
+  RepoHelper.reset_repo_config(repo_dir_base, repo_name, value.url)
 
   # fetch the commit hash value by using branch name or tags
   if value.repo_type == GitRepoType::TAG
     commit_hash = RepoHelper.clone_with_tag(
-        value.url.to_s,
-        name,
+        repo_name,
         git_target_head,
         repo_dir_base,
         value.compare_method,
@@ -149,8 +148,7 @@ def clone_bare_repo(repo_dir_base, name, value, using_install)
 
   elsif value.repo_type == GitRepoType::BRANCH
     commit_hash = RepoHelper.clone_with_branch(
-        value.url,
-        name,
+        repo_name,
         git_target_head,
         repo_dir_base,
         using_install,
@@ -231,26 +229,26 @@ def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target,
       target_zip_file = "#{workspace_base_dir}/Carthage/.tmp/#{name}.zip"
       BinaryDownloader.download_binary_file(value.url, value.hash, target_zip_file)
 
-      BinaryDownloader.unzip(target_zip_file, "*.framework", "#{workspace_base_dir}/Carthage/Build/iOS/") ||
-          BinaryDownloader.unzip(target_zip_file, "*.a", "#{workspace_base_dir}/Carthage/Build/iOS/")
+      BinaryDownloader.unzip(target_zip_file, "*.framework", "#{workspace_base_dir}/Carthage/Build/#{XcodeSDKRoot::to_s(CommandLine.instance.platform)}/") ||
+          BinaryDownloader.unzip(target_zip_file, "*.a", "#{workspace_base_dir}/Carthage/Build/#{XcodeSDKRoot::to_s(CommandLine.instance.platform)}/")
 
     else
       # empty
     end
   end
 
-  git_repo_for_checkout.each do |name, value|
-    if value.lib_type == LibType::BINARY
+  git_repo_for_checkout.each do |repo_name, repo_data|
+    if repo_data.lib_type == LibType::BINARY
       # binary library had been checked and download previous step.
-    elsif (value.lib_type == LibType::GIT) || (value.lib_type == LibType::GITHUB)
+    elsif (repo_data.lib_type == LibType::GIT) || (repo_data.lib_type == LibType::GITHUB)
       RepoHelper.checkout_source("#{workspace_base_dir}/Carthage",
-                                 value,
+                                 repo_data,
                                  is_sync,
                                  PanConstants.disable_verbose)
       RepoHelper.submodule_init("#{workspace_base_dir}/Carthage",
-                                name.to_s)
+                                repo_name.to_s)
     else
-      puts "???#{value.url} -> #{value.lib_type}"
+      puts "???#{repo_data.url} -> #{repo_data.lib_type}"
     end
   end
 end
