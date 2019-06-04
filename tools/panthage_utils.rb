@@ -126,8 +126,6 @@ def clone_bare_repo(repo_dir_base, repo_name, value, using_install)
     raise 'no target branch or tag?'
   end
 
-  puts git_target_head.to_s if PanConstants.debugging
-
   # clone
   unless File.exist? repo_dir
     puts "#{'***'.cyan} Cloning #{repo_name.green.bold}"

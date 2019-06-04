@@ -62,8 +62,15 @@ class XcodeBuildConfigure
 
   def to_xc_param
     {
-        "only_active_arch": 'no',
-        "defines_module": 'yes',
+        # "defines_module": 'yes',
+        "ONLY_ACTIVE_ARCH": "NO",
+        "CODE_SIGNING_REQUIRED": "NO",
+        "CODE_SIGN_IDENTITY": "",
+        "CARTHAGE": "YES",
+        "SKIP_INSTALL": "YES",
+        "GCC_INSTRUMENT_PROGRAM_FLOW_ARCS": "NO",
+        "CLANG_ENABLE_CODE_COVERAGE": "NO",
+        "STRIP_INSTALLED_PRODUCT": "NO",
         "DWARF_DSYM_FOLDER_PATH": "'#{@dwarf_dSYM_path}'",
         "DEBUG_INFORMATION_FORMAT": "'#{@dwarf_type}'",
         "CONFIGURATION_BUILD_DIR": "'#{@build_output}/#{@configuration}_#{@sdk}'"
@@ -89,23 +96,25 @@ class XcodeBuildConfigure
 ref：https://blog.csdn.net/qq_24702189/article/details/79345387
 =end
   def arches
-    if iOSSimulator?
-      %w[-arch x86_64 -arch i386].join(' ')
-    elsif iOS?
-      %w[-arch arm64 -arch armv7].join(' ')
-    else
-      ''
-    end
+    ''
+    # if iOSSimulator?
+    #   %w[-arch x86_64 -arch i386].join(' ')
+    # elsif iOS?
+    #   %w[-arch arm64 -arch armv7].join(' ')
+    # else
+    #   ''
+    # end
   end
 
   def valid_archs
-    if iOSSimulator?
-      {"VALID_ARCHS": "'i386 x86_64'"}
-    elsif iOS?
-      {"VALID_ARCHS": "'armv7 armv7s arm64 arm64e'"}
-    else
-      {}
-    end
+    {}
+    # if iOSSimulator?
+    #   {"VALID_ARCHS": "'i386 x86_64'"}
+    # elsif iOS?
+    #   {"VALID_ARCHS": "'armv7 armv7s arm64 arm64e'"}
+    # else
+    #   {}
+    # end
   end
 
   def iOS?
