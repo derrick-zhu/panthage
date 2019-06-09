@@ -15,16 +15,8 @@ require_relative 'xcode_proj/panthage_xcode_project'
 
 # setup_carthage_env check and setup the environments
 def setup_carthage_env(current_dir)
-  env_paths = Array[
-      "#{current_dir}/Carthage",
-      "#{current_dir}/Carthage/.tmp",
-      "#{current_dir}/Carthage/Checkouts",
-      "#{current_dir}/Carthage/Build",
-      "#{current_dir}/Carthage/Repo"
-  ]
-
   # mkdir if folder is NOT existed.
-  env_paths.each do |each_path|
+  %W(#{current_dir}/Carthage #{current_dir}/Carthage/.tmp #{current_dir}/Carthage/Checkouts #{current_dir}/Carthage/Build #{current_dir}/Carthage/Repo).each do |each_path|
     FileUtils.mkdir_p each_path.to_s unless File.exist? each_path.to_s
   end
 end

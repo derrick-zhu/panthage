@@ -18,12 +18,13 @@ class XcodeBuildConfigure
               :dwarf_dSYM_path,
               :dwarf_type,
               :build_output,
+              :skip_clean,
               :platform_sdk,
               :is_swift_project
 
   attr_accessor :quiet_mode, :sdk, :simulator_mode, :framework_version_hash
 
-  def initialize(work_dir, xcode_project, xcode_scheme, config, derived_path, dwarf_dSYM_path, build_output, platform_sdk, is_swift_project)
+  def initialize(work_dir, xcode_project, xcode_scheme, config, derived_path, dwarf_dSYM_path, build_output, skip_clean, platform_sdk, is_swift_project)
     @work_dir = work_dir
     @project = xcode_project
     @scheme = xcode_scheme.name
@@ -35,6 +36,7 @@ class XcodeBuildConfigure
     @dwarf_dSYM_path = dwarf_dSYM_path
     @dwarf_type = 'dwarf-with-dsym'
     @build_output = build_output
+    @skip_clean = skip_clean
     @platform_sdk = platform_sdk
     @is_swift_project = is_swift_project
   end
@@ -50,7 +52,6 @@ class XcodeBuildConfigure
 
   def to_xc
     raise "fatal: invalid sdk #{@sdk}" if sdk.empty?
-
     {
         "-project": "'#{@project}'",
         "-scheme": "'#{@scheme}'",
@@ -62,7 +63,6 @@ class XcodeBuildConfigure
 
   def to_xc_param
     {
-        # "defines_module": 'yes',
         "ONLY_ACTIVE_ARCH": "NO",
         "CODE_SIGNING_REQUIRED": "NO",
         "CODE_SIGN_IDENTITY": "",
@@ -73,13 +73,15 @@ class XcodeBuildConfigure
         "STRIP_INSTALLED_PRODUCT": "NO",
         "DWARF_DSYM_FOLDER_PATH": "'#{@dwarf_dSYM_path}'",
         "DEBUG_INFORMATION_FORMAT": "'#{@dwarf_type}'",
-        "CONFIGURATION_BUILD_DIR": "'#{@build_output}/#{@configuration}_#{@sdk}'"
+        "CONFIGURATION_BUILD_DIR": "'#{@build_output}'"
     }.merge(valid_archs).to_xc_s('=')
   end
 
   def to_xc_ext_param
     result = []
-    result.push('clean build')
+    unless @skip_clean
+      result.push('clean build')
+    end
     result.push('-quiet') if quiet_mode
 
     result.join(' ').strip.freeze

@@ -82,7 +82,7 @@ module CommandHelper
 
         unless all_files.empty?
 
-          all_files = all_files.sort_by(&:length)
+          all_files = all_files.sort_by { |filename| filename.scan(/\//).count }  # find the root level project.
           xcode_project_file_path = all_files.first
 
           # absolute path -> relative path
@@ -122,14 +122,23 @@ module CommandHelper
         xcode_file = xcode_project_file_path
         xc_build_result = true
         p_xcode_project = XcodeProject.new(xcode_file.to_s,
-                                           XcodeBuildConfigure::DEBUG,
+                                           cli.command_line.configure,
                                            cli.command_line.platform)
-
         p_xcode_project.schemes.select do |each_xc_scheme|
-          xc_target = p_xcode_project.targets.find do |target|
-            target.target_name == each_xc_scheme.target_name && target.platform_type == cli.command_line.platform
+          # target data in panthage format
+          all_targets = p_xcode_project.targets
+
+          # find dylib target
+          xc_target = all_targets.find do |target|
+            target.dylib? && target.target_name == each_xc_scheme.target_name && target.platform_type == cli.command_line.platform
           end
 
+          # find static target if there is no dylib target
+          xc_target = all_targets.find do |target|
+            target.static? && target.target_name == each_xc_scheme.target_name && target.platform_type == cli.command_line.platform
+          end if xc_target.nil?
+
+          # skip if could not find any static or dynamic target
           next if xc_target.nil?
 
           build_dir_path = ''
@@ -150,10 +159,11 @@ module CommandHelper
           xc_config = XcodeBuildConfigure.new("#{cli.checkout_base}/#{repo_name}",
                                               xcode_file,
                                               each_xc_scheme,
-                                              XcodeBuildConfigure::DEBUG,
+                                              cli.command_line.configure,
                                               "#{cli.current_dir}/Carthage/.tmp/#{repo_name}",
                                               build_dir_path.to_s,
                                               build_dir_path.to_s,
+                                              cli.command_line.skip_clean,
                                               cli.command_line.platform,
                                               p_xcode_project.is_swift_project?(xc_target.target_name))
           xc_config.quiet_mode = !cli.command_line.verbose
@@ -165,6 +175,8 @@ module CommandHelper
             framework_cache_version = CacheVersion.new(repo_framework.framework.hash, repo_name, xc_config.framework_version_hash)
             File.write(version_hash_filepath.to_s, JSON.pretty_generate(framework_cache_version.to_json))
           end
+
+          break if xc_build_result
         end
 
         repo_framework.is_ready = xc_build_result

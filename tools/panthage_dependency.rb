@@ -3,17 +3,21 @@
 
 # PanConstants constants for panthage
 class PanConstants
-  DEBUGGING = true
-  QUIET = '--quiet'
+  @DEBUGGING = false
+  @QUIET = '--quiet'
+
+  def initialize; end
 
   def self.disable_verbose
-    PanConstants.debugging ? '' : QUIET
+    PanConstants.debugging ? '' : @QUIET
   end
 
   def self.debugging
-    DEBUGGING
+    @DEBUGGING
   end
 
-  def initialize; end
+  def self.debugging=(new_value)
+    @DEBUGGING = new_value
+  end
 end
 

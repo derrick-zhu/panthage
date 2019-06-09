@@ -22,14 +22,28 @@ class XcodeBuilder
     # check and build temporary universal dir
     universal_path = "#{xcode_config.derived_path}/#{xcode_config.configuration}_universal"
 
+    # clear the old temp binary fold before lipo
+    XcodeSDKRoot.sdk_root(xcode_config.platform_sdk).each do |sdk|
+      output_for_sdk = "#{xcode_config.build_output}/#{xcode_config.configuration}_#{sdk}"
+      FileUtils.remove_entry output_for_sdk if File.exist? output_for_sdk
+      FileUtils.mkdir_p output_for_sdk
+    end
     FileUtils.mkdir_p universal_path.to_s unless File.exist? universal_path.to_s
     FileUtils.remove_entry "#{universal_path}/#{xcode_config.app_name}", force: true if File.exist? "#{universal_path}/#{xcode_config.app_name}"
 
     # build the iphone and the iphone simulator arch library
     XcodeSDKRoot.sdk_root(xcode_config.platform_sdk)
         .each do |sdk|
+      output_for_sdk = "#{xcode_config.build_output}/#{xcode_config.configuration}_#{sdk}"
+      old_binary = "#{xcode_config.build_output}/#{xcode_config.app_name}"
+      FileUtils.remove_entry old_binary, force: true if File.exists? old_binary
+
       xcode_config.sdk = sdk
       result &&= build(xcode_config)
+
+      FileUtils.copy_entry("#{xcode_config.build_output}/#{xcode_config.app_name}",
+                           "#{output_for_sdk}/#{xcode_config.app_name}",
+                           remove_destination: true) if result
     end
 
     raise 'fatal: fails in build xcodeproj' unless result
@@ -62,12 +76,12 @@ class XcodeBuilder
                            remove_desination: true
 
     elsif target_config.dylib?
-      # 1, let iphoneos library as base one.
+      # let iphoneos library as base one.
       FileUtils.copy_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONEOS}/#{xcode_config.app_name}",
                            "#{universal_path}/#{xcode_config.app_name}",
                            remove_destination: true
 
-      # 2, let iphone simulator library as ext one
+      # let iphone simulator library as ext one
       if xcode_config.is_swift_project
         FileUtils.copy_entry "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONE_SIMULATOR}/#{xcode_config.app_name}/Modules/#{xcode_config.app_product_name}.swiftmodule",
                              "#{universal_path}/#{xcode_config.app_name}/Modules/#{xcode_config.app_product_name}.swiftmodule",
@@ -83,6 +97,30 @@ class XcodeBuilder
            "#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONEOS}/#{xcode_config.app_name}/#{xcode_config.app_product_name}"
           ].join(' ')
       )
+
+      # header
+      if xcode_config.is_swift_project
+        fat_header_path = "#{universal_path}/#{xcode_config.app_name}/Headers/#{xcode_config.app_product_name}-Swift.h"
+        FileUtils.remove_entry fat_header_path if File.exist? fat_header_path
+
+        fat_header = "#ifndef TARGET_OS_SIMULATOR\n"  \
+            "#include <TargetConditionals.h>\n" \
+            "#endif\n"  \
+            "#if TARGET_OS_SIMULATOR\n"
+        fat_header += File.read("#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONE_SIMULATOR}/#{xcode_config.app_name}/Headers/#{xcode_config.app_product_name}-Swift.h")
+        fat_header += "\n#else\n"
+        fat_header += File.read("#{xcode_config.build_output}/#{xcode_config.configuration}_#{XcodeSDKRoot::SDK_IPHONEOS}/#{xcode_config.app_name}/Headers/#{xcode_config.app_product_name}-Swift.h")
+        fat_header += "\n#endif\n"
+
+        File.open("#{fat_header_path}", File::WRONLY|File::CREAT, 0644) do |fp|
+          fp.rewind
+          fp.write(fat_header)
+          fp.flush
+          fp.close
+        end
+
+      end
+
 
       raise 'fatal: fails in create universal library' unless result
 

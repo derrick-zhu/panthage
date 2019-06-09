@@ -24,16 +24,20 @@ class CommandLine
 =begin
   FLAGS for config the panthage's behavior details.
 =end
+  EXEC_FLAG_GOD_IN_HEAVEN = 'supreme-power'
   EXEC_FLAG_NO_SYNC = 'no-sync'
+  EXEC_FLAG_QUICK = 'skip-clean'
 
   EXEC_FLAG_MUTE = 'mute'
   EXEC_FLAG_VERBOSE = 'verbose'
+  EXEC_FLAT_VERBOSE_SHORT = 'vvv'
   EXEC_FLAG_ERROR = 'show-error' # default output level
   EXEC_FLAG_INFO = 'show-info'
 
   EXEC_PLATFORM = 'platform'
   EXEC_WORKSPACE = 'workspace'
   EXEC_SCHEME = 'scheme'
+  EXEC_CONFIG = 'configure'
 
   attr_reader :current_dir,
               :repo_base,
@@ -41,8 +45,10 @@ class CommandLine
               :build_base,
               :platform,
               :scheme_target,
+              :configure,
               :command,
               :using_sync,
+              :skip_clean,
               :verbose,
               :verbose_level,
               :need_show_help
@@ -53,10 +59,13 @@ class CommandLine
     @using_sync = true    # sync from the remote repo by default value
     @verbose_level = EXEC_FLAG_MUTE
     @need_show_help = false
+    @skip_clean = false
+    @configure = 'Release'
 
     @verbose_levels = {
         EXEC_FLAG_MUTE: OUTPUT_MUTE,
         EXEC_FLAG_VERBOSE: OUTPUT_ALL,
+        EXEC_FLAG_VERBOSE_SHORT: OUTPUT_ALL,
         EXEC_FLAG_ERROR: OUTPUT_ERROR,
         EXEC_FLAG_INFO: OUTPUT_INFO
     }
@@ -118,15 +127,18 @@ class CommandLine
   def match_flag(argument)
     match = REG_FLAG.match(argument)
     case match[:key]
+    when EXEC_FLAG_GOD_IN_HEAVEN
+      PanConstants.debugging = true
+    when EXEC_FLAG_QUICK
+      @skip_clean = true
     when EXEC_FLAG_NO_SYNC
       @using_sync = false
-
-    when EXEC_FLAG_VERBOSE, EXEC_FLAG_ERROR, EXEC_FLAG_INFO
+    when EXEC_FLAG_VERBOSE, EXEC_FLAT_VERBOSE_SHORT, EXEC_FLAG_ERROR, EXEC_FLAG_INFO
       @verbose = true
       @verbose_level = match[:key]
 
     # when EXEC_INSTALL, EXEC_UPDATE, EXEC_BOOTSTRAP
-    #   @command = match[:key]
+    #     #   @command = match[:key]
     else
       puts "invalid parameter #{match[:key]}"
       @need_show_help = true
@@ -140,6 +152,8 @@ class CommandLine
       @current_dir = match[:value]
     when EXEC_SCHEME
       @scheme_target = match[:value]
+    when EXEC_CONFIG
+      @configure = match[:value]
     when EXEC_PLATFORM
       case match[:value]
       when 'iOS'
