@@ -120,13 +120,6 @@ class XcodeProject
     }
   end
 
-  # def product_name(target_name, configure = @configuration)
-  #   name = build_setting_for(target_name, configure, XcodeProjectBuildSettings::PRODUCT_NAME)
-  #   meta = %r{^\$\(TARGET_NAME([:][\w]*)?\)$}.match(name)
-  #
-  #   !meta.nil? ? target_name : name
-  # end
-
   def mach_o_static?(target_name = @target_name)
     mach_o_type(target_name) == XcodeProjectMachOType::STATIC_LIB
   end

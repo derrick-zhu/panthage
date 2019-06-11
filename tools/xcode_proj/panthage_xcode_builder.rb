@@ -16,7 +16,7 @@ class XcodeBuilder
   # @return [Bool] YES if every thing is fine.
   def self.build_universal(xcode_config, target_config)
     raise 'fatal: could not find Xcode installed in current system' unless check_xcrun? && check_lipo?
-    puts "#{'***'.cyan} building #{xcode_config.scheme}"
+    puts "#{'***'.cyan} Building scheme \"#{xcode_config.scheme.to_s.bold.green}\" in #{xcode_config.project.to_s.bold.white}" 
 
     result = true
     # check and build temporary universal dir
