@@ -62,7 +62,7 @@ module CommandHelper
 
   def self.build_all(cli)
     repo_framework = ProjectCartManager.instance.any_repo_framework
-    while !(repo_framework&.is_ready || repo_framework&.framework.nil?)
+    while !repo_framework&.is_ready && !repo_framework&.framework.nil?
       repo_name = repo_framework.name.to_s
       repo_dir = "#{cli.checkout_base}/#{repo_name}/"
 
@@ -189,5 +189,9 @@ module CommandHelper
       # next one
       repo_framework = ProjectCartManager.instance.any_repo_framework
     end
+  end
+
+  def self.setup_xcodeproj(cli)
+
   end
 end

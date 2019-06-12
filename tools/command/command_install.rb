@@ -48,6 +48,9 @@ class CommandInstall
     # build the source dependency framework
     CommandHelper.build_all(self)
 
+    # setup the xcode project with sub project's relation tree
+    CommandHelper.setup_xcodeproj(self)
+
     puts '-------------------------------------------------'
     puts 'DONE!!!DONE!!!DONE!!!DONE!!!DONE!!!DONE!!!DONE!!!'
 

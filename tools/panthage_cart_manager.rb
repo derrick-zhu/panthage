@@ -49,23 +49,16 @@ class ProjectCartManager
 
   def initialize
     @frameworks = {}
-    # just the index for the frameworks' picker
-    @idx_latest_repo = 0
+
+    self.reset_all_frameworks_status
   end
 
   def description
-    result = ''
-    frameworks.each {|_, each_lib| result += "#{each_lib.description}\n"}
-    result
-  end
 
-  def resolved_info
-    result = []
-    frameworks.each do |_, each_lib|
-      result.push "#{each_lib.framework&.to_resolved}"
-    end
-    result = result.sort!
-    result.join "\n"
+    frameworks.values.each_with_object([]) {|val, result| result.append(val.description)}.join "\n"
+    # result = ''
+    # frameworks.each {|_, each_lib| result += "#{each_lib.description}\n"}
+    # result
   end
 
   def write_solved_info(file_path)
@@ -123,7 +116,8 @@ class ProjectCartManager
     return false if frameworks&.empty?
     return false unless frameworks&.has_key?(name)
 
-    return true if frameworks[name]&.framework.is_private #private framework is optional one, skip building.
+    #private framework is optional one, skip building.
+    return true if frameworks[name]&.framework.is_private
 
     build_info_with_name(name).is_ready
   end
@@ -141,8 +135,31 @@ class ProjectCartManager
       fw_info = @frameworks[next_name]
       return fw_info if fw_info&.is_ready == false && fw_info&.need_build
 
+      # has scanned all repo framework if idx_latest_repo step in and hit the old idx
       return nil if old_idx == @idx_latest_repo
     end
+  end
+
+  def reset_all_frameworks_status
+    # just the index for the frameworks' picker
+    @idx_latest_repo = 0
+
+    self.frameworks.filter do |_, raw_fw|
+      raw_fw.framework.lib_type == LibType::GIT || raw_fw.framework.lib_type == LibType::GITHUB
+    end.each do |_, raw_fw|
+      raw_fw.is_ready = false
+    end
+  end
+
+  private
+
+  def resolved_info
+    result = []
+    frameworks.each do |_, each_lib|
+      result.push "#{each_lib.framework&.to_resolved}"
+    end
+    result = result.sort!
+    result.join "\n"
   end
 
   def verify_library_compatible(new_lib, old_lib)
@@ -162,7 +179,7 @@ class ProjectCartManager
     all_repo_names = self.all_repos&.keys
 
     if all_repo_names&.empty?
-      @idx_latest_repo = 0
+      self.reset_all_frameworks_status
     else
       result = all_repo_names[@idx_latest_repo]
       @idx_latest_repo = (@idx_latest_repo + 1) % all_repo_names.count
