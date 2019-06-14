@@ -28,6 +28,9 @@ module XcodeProjectProductType
   APP_EXTENSION = "com.apple.product-type.app-extension"
 end
 
+# scheme is XCodeSchemeConfig, target is XCodeTarget
+XcodeBuildableInfo = Struct.new(:scheme, :target)
+
 class XcodeProject
   attr_reader :project_path,
               :project,
@@ -150,6 +153,25 @@ class XcodeProject
 
   def save
     project.save unless project.nil?
+  end
+
+  # get buildable scheme and target which belongs to this scheme.
+  def buildable_scheme_and_target
+    result = []
+
+    schemes.each do |each_scheme|
+      target = targets.find do |t|
+        t.dylib? && t.target_name == each_scheme.target_name && t.platform_type == platform
+      end
+
+      target = targets.find do |t|
+        t.static? && t.target_name == each_scheme.target_name && t.platform_type == platform
+      end if target.nil?
+
+      result.append(XcodeBuildableInfo.new(each_scheme, target)) if target != nil
+    end
+
+    result
   end
 
   private

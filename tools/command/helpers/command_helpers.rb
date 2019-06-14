@@ -47,11 +47,11 @@ module CommandHelper
       command = "mkdir -p #{repo_path}/Carthage/Checkouts/ ; "
       command += "mkdir -p #{repo_path}/Carthage ; cd $_ ;\n"
       command += "if [ ! -d ./Build/ ] \n" \
-         + "then \n" \
-         + "ln -s #{src_bin_path} . \n" \
-         + "fi\n"
+          + "then \n" \
+          + "ln -s #{src_bin_path} . \n" \
+          + "fi\n"
 
-        command += "cd #{repo_path}/Carthage/Checkouts/;"
+      command += "cd #{repo_path}/Carthage/Checkouts/;"
       fw_lib.dependency.each do |lib|
         command += "ln -s #{cli.command_line.checkout_base}/#{lib.name} . ;"
       end
@@ -82,7 +82,7 @@ module CommandHelper
 
         unless all_files.empty?
 
-          all_files = all_files.sort_by { |filename| filename.scan(/\//).count }  # find the root level project.
+          all_files = all_files.sort_by {|filename| filename.scan(/\//).count} # find the root level project.
           xcode_project_file_path = all_files.first
 
           # absolute path -> relative path
@@ -124,22 +124,11 @@ module CommandHelper
         p_xcode_project = XcodeProject.new(xcode_file.to_s,
                                            cli.command_line.configure,
                                            cli.command_line.platform)
-        p_xcode_project.schemes.select do |each_xc_scheme|
-          # target data in panthage format
-          all_targets = p_xcode_project.targets
 
-          # find dylib target
-          xc_target = all_targets.find do |target|
-            target.dylib? && target.target_name == each_xc_scheme.target_name && target.platform_type == cli.command_line.platform
-          end
+        p_xcode_project.buildable_scheme_and_target.each do |buildable_st|
 
-          # find static target if there is no dylib target
-          xc_target = all_targets.find do |target|
-            target.static? && target.target_name == each_xc_scheme.target_name && target.platform_type == cli.command_line.platform
-          end if xc_target.nil?
-
-          # skip if could not find any static or dynamic target
-          next if xc_target.nil?
+          xc_scheme = buildable_st.scheme
+          xc_target = buildable_st.target
 
           build_dir_path = ''
           version_hash_filepath = ''
@@ -158,7 +147,7 @@ module CommandHelper
 
           xc_config = XcodeBuildConfigure.new("#{cli.checkout_base}/#{repo_name}",
                                               xcode_file,
-                                              each_xc_scheme,
+                                              xc_scheme,
                                               cli.command_line.configure,
                                               "#{cli.current_dir}/Carthage/.tmp/#{repo_name}",
                                               build_dir_path.to_s,
@@ -192,6 +181,13 @@ module CommandHelper
   end
 
   def self.setup_xcodeproj(cli)
-
+    ProjectCartManager.instance.frameworks.select do |fw|
+      fw.lib_type == LibType::GIT || fw.lib_type == LibType::GITHUB
+    end.each do |repo_fw|
+      repo_name = repo_fw.name
+      repo_dir = "#{cli.checkout_base}/#{repo_name}"
+      fw_scheme = repo_fw.framework.scheme
+      repo_fw
+    end
   end
 end
