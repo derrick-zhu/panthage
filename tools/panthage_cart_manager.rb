@@ -48,7 +48,7 @@ class ProjectCartManager
   attr_reader :frameworks
 
   def initialize
-    @frameworks = {}
+    @frameworks = Hash.new
 
     self.reset_all_frameworks_status
   end
@@ -65,7 +65,7 @@ class ProjectCartManager
     FileUtils.remove_entry file_path if File.exist? file_path
     File.open file_path, File::RDWR | File::CREAT, 0644 do |fp|
       fp.rewind
-      fp.write ProjectCartManager.instance.resolved_info
+      fp.write resolved_info
       fp.flush
       fp.truncate(fp.pos)
     end
@@ -130,7 +130,7 @@ class ProjectCartManager
     old_idx = @idx_latest_repo
 
     loop do
-      next_name = self.next_repo_name
+      next_name = next_repo_name
 
       fw_info = @frameworks[next_name]
       return fw_info if fw_info&.is_ready == false && fw_info&.need_build
@@ -144,11 +144,21 @@ class ProjectCartManager
     # just the index for the frameworks' picker
     @idx_latest_repo = 0
 
-    self.frameworks.filter do |_, raw_fw|
-      raw_fw.framework.lib_type == LibType::GIT || raw_fw.framework.lib_type == LibType::GITHUB
-    end.each do |_, raw_fw|
-      raw_fw.is_ready = false
+    unless self.frameworks.nil?
+      self.frameworks.select do |_, raw_fw|
+        raw_fw.framework.lib_type == LibType::GIT || raw_fw.framework.lib_type == LibType::GITHUB
+      end.each do |_, raw_fw|
+        raw_fw.is_ready = false
+      end
     end
+  end
+
+  def verify_library_compatible(new_lib, old_lib)
+    raise "could not verify library compatible between #{new_lib.name} and #{old_lib.name}" if new_lib.name != old_lib.name
+    raise "incompatible library type: \n\t#{new_lib.name}(#{new_lib.parent_project_name}) -> #{new_lib.lib_type}\n and \n\t#{old_lib.name}(#{old_lib.parent_project_name}) -> #{old_lib.lib_type}" if new_lib.lib_type != old_lib.lib_type
+    # raise "incompatible library repo type: \n\t#{new_lib.name}(#{new_lib.parent_project_name}) -> #{new_lib.repo_type}\n and \n\t#{old_lib.name}(#{old_lib.parent_project_name}) -> #{old_lib.repo_type}" if new_lib.repo_type != old_lib.repo_type
+
+    CartFileChecker.check_library_by(new_lib, old_lib)
   end
 
   private
@@ -162,21 +172,13 @@ class ProjectCartManager
     result.join "\n"
   end
 
-  def verify_library_compatible(new_lib, old_lib)
-    raise "could not verify library compatible between #{new_lib.name} and #{old_lib.name}" if new_lib.name != old_lib.name
-    raise "incompatible library type: \n\t#{new_lib.name}(#{new_lib.parent_project_name}) -> #{new_lib.lib_type}\n and \n\t#{old_lib.name}(#{old_lib.parent_project_name}) -> #{old_lib.lib_type}" if new_lib.lib_type != old_lib.lib_type
-    # raise "incompatible library repo type: \n\t#{new_lib.name}(#{new_lib.parent_project_name}) -> #{new_lib.repo_type}\n and \n\t#{old_lib.name}(#{old_lib.parent_project_name}) -> #{old_lib.repo_type}" if new_lib.repo_type != old_lib.repo_type
-
-    CartFileChecker.check_library_by(new_lib, old_lib)
-  end
-
   def all_repos
     @frameworks.select {|_, fw| fw.framework.lib_type == LibType::GIT || fw.framework.lib_type == LibType::GITHUB}
   end
 
   def next_repo_name
     result = nil
-    all_repo_names = self.all_repos&.keys
+    all_repo_names = all_repos&.keys
 
     if all_repo_names&.empty?
       self.reset_all_frameworks_status

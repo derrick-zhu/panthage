@@ -15,8 +15,8 @@ class CommandLine
   OUTPUT_INFO = '2>/dev/null'
   OUTPUT_MUTE = '>/dev/null 2>&1'
 
-  EXEC_DOCTOR = 'doctor'  # analytic the run-time env, checking ruby 3rd party list.
-  EXEC_BRIEF = 'brief'  # check and show current project's has the dependent loop or not
+  EXEC_DOCTOR = 'doctor' # analytic the run-time env, checking ruby 3rd party list.
+  EXEC_BRIEF = 'brief' # check and show current project's has the dependent loop or not
   EXEC_INSTALL = 'install'
   EXEC_UPDATE = 'update'
   EXEC_BOOTSTRAP = 'bootstrap'
@@ -56,7 +56,7 @@ class CommandLine
   def initialize
     @platform = XcodePlatformSDK::FOR_UNKNOWN
     @verbose = false
-    @using_sync = true    # sync from the remote repo by default value
+    @using_sync = true # sync from the remote repo by default value
     @verbose_level = EXEC_FLAG_MUTE
     @need_show_help = false
     @skip_clean = false
@@ -115,13 +115,13 @@ class CommandLine
   private
 
   def match_command(argument)
-  meta = REG_CMD.match(argument)
-  case meta[:key]
-  when EXEC_INSTALL, EXEC_UPDATE, EXEC_BOOTSTRAP
+    meta = REG_CMD.match(argument)
+    case meta[:key]
+    when EXEC_INSTALL, EXEC_UPDATE, EXEC_BOOTSTRAP
       @command = meta[:key]
-  else
-    @need_show_help = true
-  end
+    else
+      @need_show_help = true
+    end
   end
 
   def match_flag(argument)
@@ -137,8 +137,8 @@ class CommandLine
       @verbose = true
       @verbose_level = match[:key]
 
-    # when EXEC_INSTALL, EXEC_UPDATE, EXEC_BOOTSTRAP
-    #     #   @command = match[:key]
+      # when EXEC_INSTALL, EXEC_UPDATE, EXEC_BOOTSTRAP
+      #   @command = match[:key]
     else
       puts "invalid parameter #{match[:key]}"
       @need_show_help = true

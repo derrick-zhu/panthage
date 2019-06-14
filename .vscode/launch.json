@@ -9,7 +9,7 @@
       "program": "${file}",
       "args": [
         "--workspace=../PandaService/",
-        "--target=PandaService",
+        "--scheme=PandaService",
         "--command=1",
       ]
     },
@@ -27,7 +27,7 @@
       "program": "${file}",
       "args": [
         "--workspace=../panthage_foo",
-        "--target=panthage_foo",
+        "--scheme=panthage_foo",
         "--command=1",
       ]
     },
@@ -39,8 +39,21 @@
       "program": "${file}",
       "args": [
         "--workspace=../login/",
-        "--target=LoginSlice",
+        "--scheme=LoginSlice",
         "--command=1",
+      ]
+    },
+    {
+      "name": "Test Panda iOS",
+      "type": "Ruby",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "program": "${file}",
+      "args": [
+        "install",
+        "--workspace=../panda-ios/",
+        "--scheme=Debug",
+        "--verbose"
       ]
     }
   ]
