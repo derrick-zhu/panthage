@@ -45,11 +45,17 @@ class CommandInstall
     CommandHelper.write_solved_info("#{self.command_line.current_dir}/Cartfile.resolved")
     CommandHelper.link_carthage_fold(self)
 
+    CommandHelper.analysis_all(self)
+
+    ProjectCartManager.instance.all_repos.each do |repo|
+      puts repo.to_s
+    end
+
     # build the source dependency framework
-    CommandHelper.build_all(self)
+    # CommandHelper.build_all(self)
 
     # setup the xcode project with sub project's relation tree
-    CommandHelper.setup_xcodeproj(self)
+    # CommandHelper.setup_xcodeproj(self)
 
     puts '-------------------------------------------------'
     puts 'DONE!!!DONE!!!DONE!!!DONE!!!DONE!!!DONE!!!DONE!!!'

@@ -7,6 +7,19 @@ require_relative '../../xcode_proj/models/panthage_xc_scheme_model'
 
 module CommandHelper
 
+  def self.find_and_open_xcode_project(current_dir, config, platform)
+    nil unless File.exist? current_dir
+
+    all_file_paths = FileUtils.find_path_in_r "*.xcodeproj", current_dir, ''
+    nil if all_file_paths&.empty?
+
+    xcode_proj_path = all_file_paths.sort_by {|filename| filename.scan(/\//).count}.first
+
+    XcodeProject.new(xcode_proj_path,
+                     config,
+                     platform)
+  end
+
   def self.solve_dependency(current_dir, scheme_target, parent_name, command)
     main_project_info = CartFileBase.new(scheme_target, parent_name)
 
@@ -39,17 +52,17 @@ module CommandHelper
   end
 
   def self.link_carthage_fold(cli)
-    ProjectCartManager.instance.all_frameworks_name.each do |fw_name|
-      fw_lib = ProjectCartManager.instance.framework_with_name(fw_name)
+    ProjectCartManager.instance.all_libraries_name.each do |fw_name|
+      fw_lib = ProjectCartManager.instance.library_with_name(fw_name)
       repo_path = "#{cli.command_line.checkout_base}/#{fw_name}"
       src_bin_path = "#{cli.command_line.build_base}"
 
       command = "mkdir -p #{repo_path}/Carthage/Checkouts/ ; "
       command += "mkdir -p #{repo_path}/Carthage ; cd $_ ;\n"
       command += "if [ ! -d ./Build/ ] \n" \
-          + "then \n" \
-          + "ln -s #{src_bin_path} . \n" \
-          + "fi\n"
+            + "then \n" \
+            + "ln -s #{src_bin_path} . \n" \
+            + "fi\n"
 
       command += "cd #{repo_path}/Carthage/Checkouts/;"
       fw_lib.dependency.each do |lib|
@@ -60,15 +73,44 @@ module CommandHelper
     end
   end
 
+  def self.analysis_all(cli)
+    ProjectCartManager.instance.all_repos.each do |_, repo|
+      repo_name = repo.name.to_s
+      repo_dir = "#{cli.checkout_base}/#{repo_name}"
+
+      next unless File.exist? repo_dir.to_s
+      # 将当前目录设置成操作目录.
+      Dir.chdir("#{repo_dir}")
+      all_files = FileUtils.find_path_in_r("*.xcodeproj", repo_dir.to_s, "#{repo_dir}/Carthage/")
+      next if all_files.empty?
+
+      # find the root level project.
+      all_files = all_files.sort_by {|filename| filename.scan(/\//).count}
+      xcode_project_file_path = all_files.first
+
+      xcode_project_file_path = Pathname(xcode_project_file_path).relative_path_from(Pathname(repo_dir)).to_s
+      next unless xcode_project_file_path.end_with? ".xcodeproj"
+
+      p_xcode_proj = XcodeProject.new(xcode_project_file_path,
+                                      cli.command_line.configure,
+                                      cli.command_line.platform)
+      p_xcode_proj.buildable_scheme_and_target.each { |buildable_st|
+        repo.new_library_build_config(repo_name, xcode_project_file_path,
+                                      buildable_st.scheme.dup, buildable_st.target.dup,
+                                      cli.command_line.configure, cli.command_line.platform)
+      }
+    end
+  end
+
   def self.build_all(cli)
-    repo_framework = ProjectCartManager.instance.any_repo_framework
-    while !repo_framework&.is_ready && !repo_framework&.framework.nil?
+    repo_framework = ProjectCartManager.instance.any_repo_library
+    while !repo_framework&.is_ready && !repo_framework&.library.nil?
       repo_name = repo_framework.name.to_s
       repo_dir = "#{cli.checkout_base}/#{repo_name}/"
 
       # not exist? skip, find next repo to build
       unless File.exist? "#{repo_dir}"
-        repo_framework = ProjectCartManager.instance.any_repo_framework
+        repo_framework = ProjectCartManager.instance.any_repo_library
         next
       end
 
@@ -78,41 +120,41 @@ module CommandHelper
       xcode_project_file_path = ''
       found_xcodeproj = false
       %W(*.xcodeproj *.framework *.a).each do |each_file_path|
-        all_files = FileUtils.find_path_in_r(each_file_path, "#{repo_dir}", "#{repo_dir}/Carthage/Build/")
+        all_files = FileUtils.find_path_in_r(each_file_path, "#{repo_dir}", "#{repo_dir}/Carthage/")
 
-        unless all_files.empty?
+        next if all_files.empty?
 
-          all_files = all_files.sort_by {|filename| filename.scan(/\//).count} # find the root level project.
-          xcode_project_file_path = all_files.first
+        all_files = all_files.sort_by {|filename| filename.scan(/\//).count} # find the root level project.
 
-          # absolute path -> relative path
-          puts "prepare build #{xcode_project_file_path}, #{repo_dir}" if PanConstants.debugging
-          xcode_project_file_path = Pathname(xcode_project_file_path).relative_path_from(Pathname(repo_dir)).to_s
+        xcode_project_file_path = all_files.first
 
-          if "#{xcode_project_file_path}".end_with? '.xcodeproj'
-            found_xcodeproj = true
-            break
-          elsif "#{xcode_project_file_path}".end_with?('.framework')
-            found_xcodeproj = false
+        # absolute path -> relative path
+        puts "prepare build #{xcode_project_file_path}, #{repo_dir}" if PanConstants.debugging
+        xcode_project_file_path = Pathname(xcode_project_file_path).relative_path_from(Pathname(repo_dir)).to_s
 
-            dst_file_path = cli.build_base + "/#{XcodePlatformSDK::to_s(cli.command_line.platform)}/" + File.basename(xcode_project_file_path)
-            %x(rm -rf '#{dst_file_path}') if File.exist? dst_file_path
+        if "#{xcode_project_file_path}".end_with? '.xcodeproj'
+          found_xcodeproj = true
+          break
+        elsif "#{xcode_project_file_path}".end_with?('.framework')
+          found_xcodeproj = false
 
-            FileUtils.copy_entry "#{xcode_project_file_path}",
-                                 "#{dst_file_path}",
-                                 remove_destination: true
-            break
-          elsif "#{xcode_project_file_path}".end_with?('.a')
-            found_xcodeproj = false
+          dst_file_path = cli.build_base + "/#{XcodePlatformSDK::to_s(cli.command_line.platform)}/" + File.basename(xcode_project_file_path)
+          %x(rm -rf '#{dst_file_path}') if File.exist? dst_file_path
 
-            dst_file_path = cli.build_base + "/#{XcodePlatformSDK::to_s(cli.command_line.platform)}/Static/" + File.basename(xcode_project_file_path)
-            %x(rm -rf '#{dst_file_path}') if File.exist? dst_file_path
+          FileUtils.copy_entry "#{xcode_project_file_path}",
+                               "#{dst_file_path}",
+                               remove_destination: true
+          break
+        elsif "#{xcode_project_file_path}".end_with?('.a')
+          found_xcodeproj = false
 
-            FileUtils.copy_entry "#{xcode_project_file_path}",
-                                 "#{dst_file_path}",
-                                 remove_destination: true
-            break
-          end
+          dst_file_path = cli.build_base + "/#{XcodePlatformSDK::to_s(cli.command_line.platform)}/Static/" + File.basename(xcode_project_file_path)
+          %x(rm -rf '#{dst_file_path}') if File.exist? dst_file_path
+
+          FileUtils.copy_entry "#{xcode_project_file_path}",
+                               "#{dst_file_path}",
+                               remove_destination: true
+          break
         end
       end
 
@@ -161,7 +203,7 @@ module CommandHelper
           xc_build_result &&= XcodeBuilder.build_universal(xc_config, xc_target)
 
           unless version_hash_filepath.nil? || version_hash_filepath.empty?
-            framework_cache_version = CacheVersion.new(repo_framework.framework.hash, repo_name, xc_config.framework_version_hash)
+            framework_cache_version = CacheVersion.new(repo_framework.library.hash, repo_name, xc_config.framework_version_hash)
             File.write(version_hash_filepath.to_s, JSON.pretty_generate(framework_cache_version.to_json))
           end
 
@@ -176,18 +218,32 @@ module CommandHelper
       end
 
       # next one
-      repo_framework = ProjectCartManager.instance.any_repo_framework
+      repo_framework = ProjectCartManager.instance.any_repo_library
     end
   end
 
   def self.setup_xcodeproj(cli)
-    ProjectCartManager.instance.frameworks.select do |fw|
-      fw.lib_type == LibType::GIT || fw.lib_type == LibType::GITHUB
-    end.each do |repo_fw|
+    major_xcode_proj = CommandHelper.find_and_open_xcode_project(cli.current_dir,
+                                                                 cli.command_line.configure,
+                                                                 cli.command_line.platform)
+    raise "could not load major xcode project in #{cli.current_dir}" if major_xcode_proj.nil?
+
+    ProjectCartManager.instance.libraries.select do |_, fw|
+      fw.library.lib_type == LibType::GIT || fw.library.lib_type == LibType::GITHUB
+    end.each do |_, repo_fw|
       repo_name = repo_fw.name
       repo_dir = "#{cli.checkout_base}/#{repo_name}"
-      fw_scheme = repo_fw.framework.scheme
-      repo_fw
+      fw_scheme = repo_fw.library.scheme
+
+      major_xcode_proj.new_xcodeproj(fw_scheme, repo_dir, cli.command_line.configure)
+    end
+
+    ProjectCartManager.instance.libraries.select do |_, fw|
+      fw.library.lib_type == LibType::BINARY
+    end.each do |_, bin_fw|
+      # static or dylib?
+      fw_name = bin_fw.name
+      fw_dir = "#{cli.build_base}/#{XcodePlatformSDK::to_s(cli.command_line.platform)}/"
     end
   end
 end

@@ -98,7 +98,7 @@ class XcodeBuilder
           ].join(' ')
       )
 
-      # header
+      # Header file, important for universal framework
       if xcode_config.is_swift_project
         fat_header_path = "#{universal_path}/#{xcode_config.app_name}/Headers/#{xcode_config.app_product_name}-Swift.h"
         FileUtils.remove_entry fat_header_path if File.exist? fat_header_path
@@ -192,6 +192,10 @@ class XcodeBuilder
 
                          puts "build command: #{command}" if PanConstants.debugging
                          system(command)
+                       end
+
+  private_class_method def self.verify_digest(xcode_config, target_config)
+                         true
                        end
 
   private_class_method def self.generate_digest(xcode_config, target_config)

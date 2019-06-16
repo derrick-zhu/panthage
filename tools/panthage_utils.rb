@@ -179,7 +179,7 @@ def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target,
   git_repo_for_checkout = {}
 
   cart_file_data.each do |new_name, new_lib|
-    old_lib = ProjectCartManager.instance.framework_with_name(new_lib.name)
+    old_lib = ProjectCartManager.instance.library_with_name(new_lib.name)
 
     if !old_lib.nil?
       ProjectCartManager.instance.verify_library_compatible(new_lib, old_lib)
@@ -196,7 +196,7 @@ def solve_project_carthage(current_cart_data, workspace_base_dir, scheme_target,
     when ConflictType::ERROR
       raise "Halt !!! #{new_lib.error_msg}"
     when ConflictType::ACCEPT
-      ProjectCartManager.instance.update_framework(new_lib)
+      ProjectCartManager.instance.update_library(new_lib)
       git_repo_for_checkout[new_name] = new_lib
     else
       # ignore?

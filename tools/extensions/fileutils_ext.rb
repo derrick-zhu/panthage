@@ -26,8 +26,8 @@ module FileUtils
         idx += 1
       end
 
+      # skip the exclude path
       next if result.select {|already_found| filepath.start_with?(already_found)}.size.positive?
-
       if !exclude_dir.nil? && !exclude_dir.empty?
         final_exclude_dir = exclude_dir.gsub(/[.]/, '\.')
         final_exclude_dir = final_exclude_dir.gsub(/[*]/, '(.*)')
@@ -37,6 +37,7 @@ module FileUtils
         next unless exclude_meta.nil?
       end
 
+      # check and find target
       meta = %r{([\/._\-\w\d*]+\/)*(#{final_filepath}(\/)?$)}.match(filepath.to_s)
       if !meta.nil? && !meta[0].empty?
         result.append meta[0]
