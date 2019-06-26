@@ -118,8 +118,24 @@ def clone_bare_repo(repo_dir_base, repo_name, value, using_install)
     raise 'no target branch or tag?'
   end
 
-  # clone
-  unless File.exist? repo_dir
+  # check current repo had been cloned or not.
+  if File.exist? repo_dir
+
+    # check current git repo's status
+    if RepoHelper.is_status?(repo_dir, git_target_head)
+      case value.repo_type
+      when GitRepoType::TAG
+        value.hash = RepoHelper.current_status(repo_dir)
+      when GitRepoType::BRANCH
+        value.hash = RepoHelper.current_hash(repo_dir)
+      else
+        raise 'no target branch or tag?'
+      end
+
+      return
+    end
+  else
+    # clone
     puts "#{'***'.cyan} Cloning #{repo_name.green.bold}"
     RepoHelper.clone_bare(repo_dir_base, value.url, repo_name, using_install, PanConstants.disable_verbose)
   end

@@ -47,8 +47,8 @@ class CommandInstall
 
     CommandHelper.analysis_all(self)
 
-    ProjectCartManager.instance.all_repos.each do |repo|
-      puts repo.to_s
+    ProjectCartManager.instance.all_repos.each do |_, repo|
+      puts repo.description
     end
 
     # build the source dependency framework

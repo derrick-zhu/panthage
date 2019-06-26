@@ -7,6 +7,22 @@ require_relative 'panthage_ver_helper'
 
 # RepoHelper
 class RepoHelper
+  def self.current_hash(repo_dir)
+    %x(cd #{repo_dir}; #{git} rev-parse HEAD;).strip.freeze
+  end
+
+  def self.current_status(repo_dir)
+    %x(cd #{repo_dir}; #{git} rev-parse --abbrev-ref HEAD;).strip.freeze
+  end
+
+  def self.is_status?(repo_dir, status)
+    current_status(repo_dir) == status.to_s
+  end
+
+  def self.is_head?(repo_dir)
+    is_status?(repo_dir, "HEAD")
+  end
+
   def self.clone_bare(repo_dir, repo_url, repo_name, using_install, verbose)
     command = "cd #{repo_dir}; #{git} clone --bare -b master "
     command += '--depth 1 ' if using_install
@@ -78,7 +94,7 @@ class RepoHelper
       command += "#{git} reset --hard #{disable_verbose}; "
 
       if repo_data.repo_type != GitRepoType::TAG
-        command += "#{git} branch --set-upstream-to=origin/#{repo_data.branch}; "
+        command += "#{git} branch --set-upstream-to=origin/#{repo_data.branch} >/dev/null 2>&1; "
       end
     end
 

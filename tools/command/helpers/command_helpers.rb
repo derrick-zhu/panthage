@@ -60,13 +60,16 @@ module CommandHelper
       command = "mkdir -p #{repo_path}/Carthage/Checkouts/ ; "
       command += "mkdir -p #{repo_path}/Carthage ; cd $_ ;\n"
       command += "if [ ! -d ./Build/ ] \n" \
-            + "then \n" \
-            + "ln -s #{src_bin_path} . \n" \
-            + "fi\n"
+             + "then \n" \
+             + "ln -s #{src_bin_path} . \n" \
+             + "fi\n"
 
       command += "cd #{repo_path}/Carthage/Checkouts/;"
       fw_lib.dependency.each do |lib|
-        command += "ln -s #{cli.command_line.checkout_base}/#{lib.name} . ;"
+        command += "if [ ! -d ./#{lib.name}/ ] \n" \
+             + "then \n" \
+             + "ln -s #{cli.command_line.checkout_base}/#{lib.name} . \n" \
+             + "fi\n"
       end
 
       system(command)
@@ -94,7 +97,7 @@ module CommandHelper
       p_xcode_proj = XcodeProject.new(xcode_project_file_path,
                                       cli.command_line.configure,
                                       cli.command_line.platform)
-      p_xcode_proj.buildable_scheme_and_target.each { |buildable_st|
+      p_xcode_proj.buildable_scheme_and_target.each {|buildable_st|
         repo.new_library_build_config(repo_name, xcode_project_file_path,
                                       buildable_st.scheme.dup, buildable_st.target.dup,
                                       cli.command_line.configure, cli.command_line.platform)

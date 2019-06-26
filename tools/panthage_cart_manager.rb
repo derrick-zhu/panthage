@@ -72,13 +72,6 @@ class ProjectCartManager
 
   def resolved_info
     libraries.values.each_with_object([]) {|val, result| result.append(val.library&.to_resolved)}.sort!.join "\n"
-
-    # result = []
-    # libraries.each do |_, each_lib|
-    #   result.push "#{each_lib.framework&.to_resolved}"
-    # end
-    # result = result.sort!
-    # result.join "\n"
   end
 
   def write_solved_info(file_path)
