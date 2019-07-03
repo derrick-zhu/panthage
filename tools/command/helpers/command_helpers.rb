@@ -93,9 +93,9 @@ module CommandHelper
           all_files = all_files.sort_by {|filename| filename.scan(/\//).count}
 
           target_file_path = all_files.first
-          target_file_path = Pathname(target_file_path).relative_path_from(Pathname(repo_dir)).to_s
 
           if each_file.end_with? ".xcodeproj"
+            target_file_path = Pathname(target_file_path).relative_path_from(Pathname(repo_dir)).to_s
             p_xcode_proj = XcodeProject.new(target_file_path,
                                             cli.command_line.configure,
                                             cli.command_line.platform)
