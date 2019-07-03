@@ -8,6 +8,26 @@ require_relative 'panthage_ver_helper'
 require_relative 'panthage_cartfile_checker'
 
 LibraryBuildConfig = Struct.new(:name, :project_file_path, :scheme_info, :target_info, :configure, :platform)
+LibraryStaticConfig = Struct.new(:name, :source_file_path, :library_file_path)
+LibraryDynamicConfig = Struct.new(:name, :source_file_path, :dynamic_file_path)
+
+class LibraryBuildConfig
+  def description
+    "name: #{name}, path: #{project_file_path}, platform: #{configure}, scheme: #{scheme_info}, target: #{target_info}, configure: #{configure}"
+  end
+end
+
+class LibraryStaticConfig
+  def description
+    "name: #{name}, source path: #{source_file_path}, target path: #{library_file_path}"
+  end
+end
+
+class LibraryDynamicConfig
+  def description
+    "name: #{name}, source path: #{source_file_path}, target path: #{dynamic_file_path}"
+  end
+end
 
 # FrameworkBuildTable
 class LibraryInfo
@@ -35,6 +55,16 @@ class LibraryInfo
     buildable_configs.append(new_lbc)
   end
 
+  def new_library_static_config(name, source_file_path, lib_file_path)
+    new_lsc = LibraryStaticConfig.new(name, source_file_path, lib_file_path)
+    buildable_configs.append(new_lsc)
+  end
+
+  def new_library_dynamic_config(name, source_file_path, lib_file_path)
+    new_ldc = LibraryDynamicConfig.new(name, source_file_path, lib_file_path)
+    buildable_configs.append(new_ldc)
+  end
+
   def need_build
     return false if @library.nil?
     return false if @library.lib_type == LibType::BINARY
@@ -50,7 +80,8 @@ class LibraryInfo
   end
 
   def description
-    "Framework :#{name}, is_ready:#{is_ready}, info:#{@library.description}"
+    cfgs = @buildable_configs.each_with_object([]) {|val, result| result.append(val.description)}.join ", "
+    "Framework :#{name}, is_ready:#{is_ready}, info:#{@library.description}, buildableInfo: #{cfgs}"
   end
 end
 

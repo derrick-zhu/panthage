@@ -60,16 +60,16 @@ module CommandHelper
       command = "mkdir -p #{repo_path}/Carthage/Checkouts/ ; "
       command += "mkdir -p #{repo_path}/Carthage ; cd $_ ;\n"
       command += "if [ ! -d ./Build/ ] \n" \
-             + "then \n" \
-             + "ln -s #{src_bin_path} . \n" \
-             + "fi\n"
+              + "then \n" \
+              + "ln -s #{src_bin_path} . \n" \
+              + "fi\n"
 
       command += "cd #{repo_path}/Carthage/Checkouts/;"
       fw_lib.dependency.each do |lib|
         command += "if [ ! -d ./#{lib.name}/ ] \n" \
-             + "then \n" \
-             + "ln -s #{cli.command_line.checkout_base}/#{lib.name} . \n" \
-             + "fi\n"
+              + "then \n" \
+              + "ln -s #{cli.command_line.checkout_base}/#{lib.name} . \n" \
+              + "fi\n"
       end
 
       system(command)
@@ -77,31 +77,46 @@ module CommandHelper
   end
 
   def self.analysis_all(cli)
-    ProjectCartManager.instance.all_repos.each do |_, repo|
-      repo_name = repo.name.to_s
-      repo_dir = "#{cli.checkout_base}/#{repo_name}"
+    ProjectCartManager.instance.libraries.each do |_, repo|
+      if repo.library.lib_type == LibType::GIT || repo.library.lib_type == LibType::GITHUB
+        repo_name = repo.name.to_s
+        repo_dir = "#{cli.checkout_base}/#{repo_name}"
 
-      next unless File.exist? repo_dir.to_s
-      # 将当前目录设置成操作目录.
-      Dir.chdir("#{repo_dir}")
-      all_files = FileUtils.find_path_in_r("*.xcodeproj", repo_dir.to_s, "#{repo_dir}/Carthage/")
-      next if all_files.empty?
+        next unless File.exist? repo_dir.to_s
+        # 将当前目录设置成操作目录.
+        Dir.chdir("#{repo_dir}")
+        %W(.xcodeproj .framework .a).each do |each_file|
+          all_files = FileUtils.find_path_in_r("*#{each_file}", repo_dir.to_s, "#{repo_dir}/Carthage/")
+          next if all_files.empty?
 
-      # find the root level project.
-      all_files = all_files.sort_by {|filename| filename.scan(/\//).count}
-      xcode_project_file_path = all_files.first
+          # find the root level project.
+          all_files = all_files.sort_by {|filename| filename.scan(/\//).count}
 
-      xcode_project_file_path = Pathname(xcode_project_file_path).relative_path_from(Pathname(repo_dir)).to_s
-      next unless xcode_project_file_path.end_with? ".xcodeproj"
+          target_file_path = all_files.first
+          target_file_path = Pathname(target_file_path).relative_path_from(Pathname(repo_dir)).to_s
 
-      p_xcode_proj = XcodeProject.new(xcode_project_file_path,
-                                      cli.command_line.configure,
-                                      cli.command_line.platform)
-      p_xcode_proj.buildable_scheme_and_target.each {|buildable_st|
-        repo.new_library_build_config(repo_name, xcode_project_file_path,
-                                      buildable_st.scheme.dup, buildable_st.target.dup,
-                                      cli.command_line.configure, cli.command_line.platform)
-      }
+          if each_file.end_with? ".xcodeproj"
+            p_xcode_proj = XcodeProject.new(target_file_path,
+                                            cli.command_line.configure,
+                                            cli.command_line.platform)
+            p_xcode_proj.buildable_scheme_and_target.each do |buildable_st|
+              repo.new_library_build_config(repo_name, target_file_path,
+                                            buildable_st.scheme.dup, buildable_st.target.dup,
+                                            cli.command_line.configure, cli.command_line.platform)
+            end
+          elsif each_file.end_with? ".a"
+            dst_file_path = cli.build_base + "/#{XcodePlatformSDK::to_s(cli.command_line.platform)}/Static/" + File.basename(target_file_path)
+            repo.new_library_static_config(repo_name, target_file_path, dst_file_path)
+          elsif each_file.end_with? ".framework"
+            dst_file_path = cli.build_base + "/#{XcodePlatformSDK::to_s(cli.command_line.platform)}/" + File.basename(target_file_path)
+            repo.new_library_dynamic_config(repo_name, target_file_path, dst_file_path)
+          else
+            next
+          end
+        end
+      elsif repo.library.lib_type == LibType::BINARY
+        # TODO: need to be thinking about how to analysis the (3rd party) binary library
+      end
     end
   end
 
@@ -175,8 +190,8 @@ module CommandHelper
           xc_scheme = buildable_st.scheme
           xc_target = buildable_st.target
 
-          build_dir_path = ''
-          version_hash_filepath = ''
+          # build_dir_path = ''
+          # version_hash_filepath = ''
 
           if xc_target.static? or xc_target.mach_o_static?
             build_dir_path = "#{cli.current_dir}/Carthage/Build/#{XcodePlatformSDK::to_s(xc_target.platform_type)}/Static"
