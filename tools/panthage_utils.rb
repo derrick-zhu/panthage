@@ -62,7 +62,7 @@ def read_cart_file(project_name, cart_file, is_private = false)
       block = block.strip
       next if (block == '') || (block[0] == "\#")
 
-      meta = /((?i)binary|git|github)\s+"([^"]+)"\s+(~>|==|>=)?\s?"?([\w.-]+)"?/.match(block)
+      meta = /((?i)binary|git|github)\s+"([^"]+)"\s+(~>|==|>=)?\s?"?([\w\/.-]+)"?/.match(block)
 
       puts meta.to_s if PanConstants.debugging
 
